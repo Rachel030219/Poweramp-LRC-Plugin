@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:background="@drawable/window_background"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_margin="8dp"
+            android:contentDescription="close"
+            android:src="@drawable/ic_close"
+            tools:layout_editor_absoluteX="315dp" />
+
+    </LinearLayout>
+
+    <me.wcy.lrcview.LrcView
+        android:id="@+id/lrcview"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        app:lrcAnimationDuration="1000"
+        app:lrcCurrentTextColor="#FF1515"
+        app:lrcDividerHeight="20dp"
+        app:lrcLabel="找不到歌词(@_@)"
+        app:lrcNormalTextColor="#BDBDBD"
+        app:lrcNormalTextSize="14sp"
+        app:lrcPadding="16dp"
+        app:lrcTextGravity="center"
+        app:lrcTextSize="18sp"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="52dp" />
+
+</LinearLayout>

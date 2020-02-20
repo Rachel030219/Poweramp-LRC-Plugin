@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Poweramp 歌词插件</string>
+    <string name="main_title">在开始之前…</string>
+    <string name="main_message">这是一个用以弥补 Poweramp 本地歌词功能缺乏的，混合了各种神仙库的简单应用。它没有必要活在启动器应用列表里，所以当你摁下那个按键，它就会从启动器中消失，并完成初始化（Q 以下）。\n这还只是个开始，必然会含有相当多的 bug 。如果您发现了此前无人发觉的 bug ，请给它来个一星好评，并在酷安 / Play Store 向它开炮，或是在 GitHub 上开一个 issue 。您的意见真的很重要。\n\n感谢：\nlrcview by wangchenyan\nPowerampAPI by Maksim Petrov\nAndroidX by Google</string>
+    <string name="take_off">发射！</string>
+
+    <string name="notification_channel_name">入口</string>
+    <string name="notification_channel_desc">关掉了就用不了了</string>
+    <string name="notification_message_hide">点击隐藏</string>
+    <string name="notification_message_show">点击显示</string>
+</resources>
