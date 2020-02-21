@@ -8,7 +8,6 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import androidx.core.app.NotificationCompat
