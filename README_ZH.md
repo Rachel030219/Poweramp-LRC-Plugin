@@ -1,6 +1,6 @@
 # Poweramp 歌词插件
 
-这是一个用以弥补 Poweramp 本地歌词功能缺乏的，混合了各种神仙库的简单应用。
+这是一个用以弥补 Poweramp 本地歌词功能缺乏的，混合了各种神仙库的简单应用。当使用 Poweramp 播放音乐时，它会自动加载与音乐文件同名的 .lrc 同步歌词。
 
 这还只是个开始，必然会含有相当多的 bug 。如果您发现了此前无人发觉的 bug ，请给它来个一星好评，并在酷安 / Play Store 向它开炮，或是在 GitHub 上 [开一个 issue](https://github.com/Rachel030219/Poweramp-LRC-Plugin/issues/new) 。在 [这里](https://github.com/Rachel030219/Poweramp-LRC-Plugin/issues) 找到所有已被发现的 bug 。
 

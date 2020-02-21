@@ -1,6 +1,6 @@
 # Poweramp LRC Plugin
 
-This is a simple app combining amazing libraries and APIs together to make up for Poweramp\'s lack of local lyrics parser function.
+This is a simple app combining amazing libraries and APIs together to make up for Poweramp\'s lack of local lyrics parser function. When Poweramp starts to play, it automatically loads the corresponding .lrc lyric file.
 
 This is still an alpha version, and of course contains a lot of bugs. If you\'ve met with any which is not found previously, please give it a 1-star review and [open an issue on GitHub](https://github.com/Rachel030219/Poweramp-LRC-Plugin/issues/new) or write a critical comment on the Play Store page. View all bugs that have been found [here](https://github.com/Rachel030219/Poweramp-LRC-Plugin/issues) .
 
