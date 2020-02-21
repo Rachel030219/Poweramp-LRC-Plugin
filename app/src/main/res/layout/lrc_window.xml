@@ -16,14 +16,13 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <ImageButton
+        <Button
             android:id="@+id/close"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_gravity="end|center_vertical"
             android:layout_margin="8dp"
-            android:contentDescription="close"
-            android:src="@drawable/ic_close"
+            android:background="@drawable/ic_close"
             tools:layout_editor_absoluteX="315dp" />
 
     </LinearLayout>
@@ -33,10 +32,10 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         app:lrcAnimationDuration="1000"
-        app:lrcCurrentTextColor="#FF1515"
+        app:lrcCurrentTextColor="@color/lrc_current"
         app:lrcDividerHeight="20dp"
-        app:lrcLabel="找不到歌词(@_@)"
-        app:lrcNormalTextColor="#BDBDBD"
+        app:lrcLabel="@string/no_lrc_hint"
+        app:lrcNormalTextColor="@color/lrc_normal"
         app:lrcNormalTextSize="14sp"
         app:lrcPadding="16dp"
         app:lrcTextGravity="center"

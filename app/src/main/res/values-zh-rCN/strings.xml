@@ -10,4 +10,6 @@
     <string name="notification_channel_desc">关掉了就用不了了</string>
     <string name="notification_message_hide">点击隐藏</string>
     <string name="notification_message_show">点击显示</string>
+
+    <string name="no_lrc_hint">歌词不见了</string>
 </resources>

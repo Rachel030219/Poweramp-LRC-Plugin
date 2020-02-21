@@ -9,4 +9,6 @@
     <string name="notification_channel_desc">Which is vital if you want to use this app</string>
     <string name="notification_message_hide">Click to hide</string>
     <string name="notification_message_show">Click to show</string>
+
+    <string name="no_lrc_hint">WANTED: Lyrics</string>
 </resources>

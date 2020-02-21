@@ -9,7 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
-import android.widget.ImageButton
+import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
@@ -48,7 +48,7 @@ object LrcWindow {
                 else
                     params!!.type = WindowManager.LayoutParams.TYPE_TOAST
                 params!!.format = PixelFormat.TRANSLUCENT
-                val closeButton = layout.findViewById<ImageButton>(R.id.close)
+                val closeButton = layout.findViewById<Button>(R.id.close)
                 closeButton.setOnClickListener {
                     destroy(layout)
                     sendNotification(context, extras, false)

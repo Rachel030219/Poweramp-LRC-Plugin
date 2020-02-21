@@ -1,2 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <color name="lrc_current">#FF1515</color>
+    <color name="lrc_normal">#BDBDBD</color>
+</resources>
