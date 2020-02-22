@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: "[BUG]"
-labels: ''
+labels: bug
 assignees: ''
 
 ---
@@ -20,7 +20,7 @@ Steps to reproduce the behavior:
 **Device info:**
  - Device: [e.g. Pixel XL]
  - Android version: [e.g. MIUI 10(Oreo)]
- - Version [e.g. 22]
+ - Version: [e.g. 22]
 
 **Additional context**
 Add any other context about the problem here.
