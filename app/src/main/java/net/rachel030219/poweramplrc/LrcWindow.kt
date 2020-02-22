@@ -101,7 +101,6 @@ object LrcWindow {
     }
 
     fun refresh(layout: View, extras: Bundle) {
-        //TODO:解决暂停再打开会跳回原时间的问题
         this.extras = extras
         val path = extras.getString(PowerampAPI.Track.PATH)
         val lrcFile: File
@@ -166,6 +165,9 @@ object LrcWindow {
     }
 
     private fun extractAndReplaceExt (oldString: String): String {
-        return Environment.getExternalStorageDirectory().toString() + "/" + StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')).substringAfter('/') + ".lrc"
+        if (oldString.substringBefore('/', oldString) == "primary")
+            return Environment.getExternalStorageDirectory().toString() + "/" + StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')).substringAfter('/') + ".lrc"
+        else
+            return StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
     }
 }

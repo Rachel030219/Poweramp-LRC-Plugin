@@ -28,23 +28,29 @@ class MainActivity : Activity() {
         builder.create().show()
     }
     private fun init () {
-        Toast.makeText(this, R.string.main_hint, Toast.LENGTH_LONG).show()
-        Handler().postDelayed({
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Toast.makeText(this, R.string.main_hint, Toast.LENGTH_LONG).show()
+            Handler().postDelayed({
                 if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSION)
+                    requestPermissions(
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        REQUEST_PERMISSION
+                    )
                 }
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val name = resources.getString(R.string.notification_channel_name)
-                val descriptionText = resources.getString(R.string.notification_channel_desc)
-                val importance = NotificationManager.IMPORTANCE_LOW
-                val mChannel = NotificationChannel("ENTRANCE", name, importance)
-                mChannel.description = descriptionText
-                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.createNotificationChannel(mChannel)
-            }
-        }, 1000)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val name = resources.getString(R.string.notification_channel_name)
+                    val descriptionText = resources.getString(R.string.notification_channel_desc)
+                    val importance = NotificationManager.IMPORTANCE_LOW
+                    val mChannel = NotificationChannel("ENTRANCE", name, importance)
+                    mChannel.description = descriptionText
+                    val notificationManager =
+                        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    notificationManager.createNotificationChannel(mChannel)
+                }
+            }, 1000)
+        } else {
+            finish()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
