@@ -18,8 +18,8 @@ Steps to reproduce the behavior:
 4. See error
 
 **Device info:**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
+ - Device: [e.g. Pixel XL]
+ - Android version: [e.g. MIUI 10(Oreo)]
  - Version [e.g. 22]
 
 **Additional context**
