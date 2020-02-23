@@ -44,7 +44,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                     val extras = intent.extras
                     if (window != null) {
                         LrcWindow.refresh(window!!, extras!!)
-                        remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
+                        remoteTrackTime!!.updateTrackPosition(0)
                         remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
                         if (extras.getBoolean(PowerampAPI.PAUSED)) {
                             remoteTrackTime!!.stopSongProgress()

@@ -45,6 +45,7 @@ class APIReceiver: BroadcastReceiver() {
         val intents = Intent(context, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UPDATE).putExtras(bundle!!)
         context!!.startService(intents)
     }
+
     companion object {
         fun dumpBundle(bundle: Bundle?): String {
             if (bundle == null) {
