@@ -9,7 +9,6 @@ import android.util.Log
 import com.maxmpz.poweramp.player.PowerampAPI
 
 class APIReceiver: BroadcastReceiver() {
-    private val TAG = "APIReceiver"
 
     override fun onReceive(context: Context?, intent: Intent) {
         if (intent.action != null) {
@@ -24,7 +23,6 @@ class APIReceiver: BroadcastReceiver() {
                     } else {
                         refreshWindow(context, bundle)
                     }
-                    Log.i(TAG, dumpBundle(bundle))
                 }
 
                 PowerampAPI.ACTION_TRACK_CHANGED_EXPLICIT -> {
@@ -34,7 +32,6 @@ class APIReceiver: BroadcastReceiver() {
                         bundle!!.putInt(PowerampAPI.Track.POSITION, statusIntent!!.getIntExtra(PowerampAPI.Track.POSITION, -1))
                         bundle.putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
                         refreshWindow(context, bundle)
-                        Log.i(TAG, dumpBundle(bundle))
                     }
                 }
             }
@@ -44,26 +41,5 @@ class APIReceiver: BroadcastReceiver() {
     private fun refreshWindow (context: Context?, bundle: Bundle?) {
         val intents = Intent(context, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UPDATE).putExtras(bundle!!)
         context!!.startService(intents)
-    }
-
-    companion object {
-        fun dumpBundle(bundle: Bundle?): String {
-            if (bundle == null) {
-                return "null bundle"
-            }
-            val sb = StringBuilder()
-            val keys = bundle.keySet()
-            sb.append("\n")
-            for (key in keys) {
-                sb.append('\t').append(key).append("=")
-                val `val` = bundle.get(key)
-                sb.append(`val`)
-                if (`val` != null) {
-                    sb.append(" ").append(`val`.javaClass.simpleName)
-                }
-                sb.append("\n")
-            }
-            return sb.toString()
-        }
     }
 }

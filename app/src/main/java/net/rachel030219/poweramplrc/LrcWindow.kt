@@ -108,9 +108,8 @@ object LrcWindow {
             nowPlayingFile = path!!
             lrcFile = File(extractAndReplaceExt(path))
             layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrcFile)
-        } else {
-            refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
         }
+        refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
         if (!displaying) {
             layout.visibility = View.VISIBLE
             displaying = true

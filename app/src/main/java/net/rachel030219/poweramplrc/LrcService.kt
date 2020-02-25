@@ -25,26 +25,26 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             when (intent.getIntExtra("request", 0)) {
                 LrcWindow.REQUEST_WINDOW -> {
                     val extras = intent.extras
+                    if (extras!!.getBoolean(PowerampAPI.PAUSED)) {
+                        remoteTrackTime!!.stopSongProgress()
+                    } else {
+                        remoteTrackTime!!.startSongProgress()
+                    }
                     if (LrcWindow.displaying) {
                         LrcWindow.destroy(window!!)
                         LrcWindow.sendNotification(this, extras, false)
                     } else {
                         LrcWindow.sendNotification(this, extras, true)
                         LrcWindow.initialize(this, window!!)
-                        LrcWindow.refresh(window!!, extras!!)
+                        LrcWindow.refresh(window!!, extras)
                         remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
-                        if (extras.getBoolean(PowerampAPI.PAUSED)) {
-                            remoteTrackTime!!.stopSongProgress()
-                        } else {
-                            remoteTrackTime!!.startSongProgress()
-                        }
                     }
                 }
                 LrcWindow.REQUEST_UPDATE -> {
                     val extras = intent.extras
                     if (window != null) {
                         LrcWindow.refresh(window!!, extras!!)
-                        remoteTrackTime!!.updateTrackPosition(0)
+                        remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                         remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
                         if (extras.getBoolean(PowerampAPI.PAUSED)) {
                             remoteTrackTime!!.stopSongProgress()
