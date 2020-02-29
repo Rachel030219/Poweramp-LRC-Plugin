@@ -41,8 +41,7 @@ object LrcWindow {
                 params!!.width = WindowManager.LayoutParams.MATCH_PARENT
                 params!!.height = WindowManager.LayoutParams.WRAP_CONTENT
                 params!!.gravity = Gravity.TOP
-                params!!.flags =
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                params!!.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     params!!.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
                 else
@@ -100,7 +99,7 @@ object LrcWindow {
         }
     }
 
-    fun refresh(layout: View, extras: Bundle) {
+    fun refresh(layout: View, extras: Bundle, popup: Boolean) {
         this.extras = extras
         val path = extras.getString(PowerampAPI.Track.PATH)
         val lrcFile: File
@@ -110,11 +109,13 @@ object LrcWindow {
             layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrcFile)
         }
         refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
-        if (!displaying) {
+        if (popup && !displaying) {
             layout.visibility = View.VISIBLE
             displaying = true
         }
-        window!!.updateViewLayout(layout, params)
+        if (initialized) {
+            window!!.updateViewLayout(layout, params)
+        }
     }
 
     fun refreshTime(time: Int, layout: View) {

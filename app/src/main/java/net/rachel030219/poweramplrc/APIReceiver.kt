@@ -18,20 +18,24 @@ class APIReceiver: BroadcastReceiver() {
                     val bundle = trackIntent!!.getBundleExtra(PowerampAPI.TRACK)
                     bundle!!.putInt(PowerampAPI.Track.POSITION, intent.getIntExtra(PowerampAPI.Track.POSITION, -1))
                     bundle.putBoolean(PowerampAPI.PAUSED, intent.getBooleanExtra(PowerampAPI.PAUSED, true))
-                    if (!LrcWindow.displaying) {
-                        LrcWindow.sendNotification(context, bundle, false)
+                    refreshWindow(context, bundle)
+                    if (LrcWindow.displaying) {
+                        LrcWindow.sendNotification(context, bundle, true)
                     } else {
-                        refreshWindow(context, bundle)
+                        LrcWindow.sendNotification(context, bundle, false)
                     }
                 }
 
                 PowerampAPI.ACTION_TRACK_CHANGED_EXPLICIT -> {
+                    val statusIntent = context!!.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
+                    val bundle = intent.getBundleExtra(PowerampAPI.TRACK)
+                    bundle!!.putInt(PowerampAPI.Track.POSITION, statusIntent!!.getIntExtra(PowerampAPI.Track.POSITION, -1))
+                    bundle.putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
                     if (LrcWindow.displaying) {
-                        val statusIntent = context!!.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
-                        val bundle = intent.getBundleExtra(PowerampAPI.TRACK)
-                        bundle!!.putInt(PowerampAPI.Track.POSITION, statusIntent!!.getIntExtra(PowerampAPI.Track.POSITION, -1))
-                        bundle.putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
+                        LrcWindow.sendNotification(context, bundle, true)
                         refreshWindow(context, bundle)
+                    } else {
+                        LrcWindow.sendNotification(context, bundle, false)
                     }
                 }
             }

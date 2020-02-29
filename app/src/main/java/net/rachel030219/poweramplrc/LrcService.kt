@@ -36,14 +36,14 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                     } else {
                         LrcWindow.sendNotification(this, extras, true)
                         LrcWindow.initialize(this, window!!)
-                        LrcWindow.refresh(window!!, extras)
+                        LrcWindow.refresh(window!!, extras, true)
                         remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                     }
                 }
                 LrcWindow.REQUEST_UPDATE -> {
                     val extras = intent.extras
                     if (window != null) {
-                        LrcWindow.refresh(window!!, extras!!)
+                        LrcWindow.refresh(window!!, extras!!, false)
                         remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                         remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
                         if (extras.getBoolean(PowerampAPI.PAUSED)) {
