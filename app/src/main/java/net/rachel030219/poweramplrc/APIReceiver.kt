@@ -37,6 +37,8 @@ class APIReceiver: BroadcastReceiver() {
                     } else {
                         LrcWindow.sendNotification(context, bundle, false)
                     }
+                    android.util.Log.d("DEBUG-LRC-TRACK", "track bundle: \n" + LrcWindow.dumpBundle(bundle))
+                    android.util.Log.d("DEBUG-LRC-TRACK", "original status bundle: \n" + LrcWindow.dumpBundle(statusIntent.extras))
                 }
             }
         }

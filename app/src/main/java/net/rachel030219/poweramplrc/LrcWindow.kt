@@ -8,17 +8,18 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-
+import com.maxmpz.poweramp.player.PowerampAPI
+import me.wcy.lrcview.LrcView
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
-
-import me.wcy.lrcview.LrcView
-import com.maxmpz.poweramp.player.PowerampAPI
 
 object LrcWindow {
     var window: WindowManager? = null
@@ -109,6 +110,7 @@ object LrcWindow {
             layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrcFile)
         }
         refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
+        android.util.Log.d("DEBUG-LRC-TIME", "in refresh, bundle: \n" + dumpBundle(extras))
         if (popup && !displaying) {
             layout.visibility = View.VISIBLE
             displaying = true
@@ -165,9 +167,28 @@ object LrcWindow {
     }
 
     private fun extractAndReplaceExt (oldString: String): String {
-        if (oldString.substringBefore('/', oldString) == "primary")
-            return Environment.getExternalStorageDirectory().toString() + "/" + StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')).substringAfter('/') + ".lrc"
+        return if (oldString.substringBefore('/', oldString) == "primary")
+            Environment.getExternalStorageDirectory().toString() + "/" + StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')).substringAfter('/') + ".lrc"
         else
-            return StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
+            StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
+    }
+
+    fun dumpBundle(bundle: Bundle?): String? {
+        if (bundle == null) {
+            return "null bundle"
+        }
+        val sb = java.lang.StringBuilder()
+        val keys = bundle.keySet()
+        sb.append("\n")
+        for (key in keys) {
+            sb.append('\t').append(key).append("=")
+            val `val` = bundle[key]
+            sb.append(`val`)
+            if (`val` != null) {
+                sb.append(" ").append(`val`.javaClass.simpleName)
+            }
+            sb.append("\n")
+        }
+        return sb.toString()
     }
 }

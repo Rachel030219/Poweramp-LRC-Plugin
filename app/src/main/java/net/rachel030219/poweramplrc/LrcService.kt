@@ -10,46 +10,56 @@ import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
 
 class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
-    var window: View? = null
-    var remoteTrackTime: RemoteTrackTime? = null
+    var mWindow: View? = null
+    private var timerOn = false
+    var mCurrentPosition = -1
+    private var remoteTrackTime: RemoteTrackTime? = null
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (window == null) {
-            window = LayoutInflater.from(this).inflate(R.layout.lrc_window, null)
+        if (mWindow == null) {
+            mWindow = LayoutInflater.from(this).inflate(R.layout.lrc_window, null)
         }
         if (intent!!.hasExtra("request")) {
             when (intent.getIntExtra("request", 0)) {
                 LrcWindow.REQUEST_WINDOW -> {
                     val extras = intent.extras
-                    if (extras!!.getBoolean(PowerampAPI.PAUSED)) {
+                    timerOn = if (extras!!.getBoolean(PowerampAPI.PAUSED)) {
                         remoteTrackTime!!.stopSongProgress()
+                        false
                     } else {
                         remoteTrackTime!!.startSongProgress()
+                        true
                     }
                     if (LrcWindow.displaying) {
-                        LrcWindow.destroy(window!!)
+                        LrcWindow.destroy(mWindow!!)
                         LrcWindow.sendNotification(this, extras, false)
                     } else {
+                        LrcWindow.initialize(this, mWindow!!)
+                        if (timerOn) {
+                            extras.putInt(PowerampAPI.Track.POSITION, mCurrentPosition)
+                        } else {
+                            remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
+                        }
+                        LrcWindow.refresh(mWindow!!, extras, true)
                         LrcWindow.sendNotification(this, extras, true)
-                        LrcWindow.initialize(this, window!!)
-                        LrcWindow.refresh(window!!, extras, true)
-                        remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                     }
                 }
                 LrcWindow.REQUEST_UPDATE -> {
                     val extras = intent.extras
-                    if (window != null) {
-                        LrcWindow.refresh(window!!, extras!!, false)
+                    if (mWindow != null) {
+                        LrcWindow.refresh(mWindow!!, extras!!, false)
                         remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                         remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
-                        if (extras.getBoolean(PowerampAPI.PAUSED)) {
+                        timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
                             remoteTrackTime!!.stopSongProgress()
+                            false
                         } else {
                             remoteTrackTime!!.startSongProgress()
+                            true
                         }
                     }
                 }
@@ -70,7 +80,10 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     }
 
     override fun onTrackPositionChanged(position: Int) {
-        LrcWindow.refreshTime(position, window!!)
+        mCurrentPosition = position
+        LrcWindow.refreshTime(position, mWindow!!)
+        android.util.Log.d("DEBUG-LRC-TIME", "in onTrackPositionChanged: " + position.toString())
+        android.util.Log.d("DEBUG-LRC-TIME", "updated Current to: " + mCurrentPosition.toString())
     }
 
     override fun onTrackDurationChanged(duration: Int) {
