@@ -82,8 +82,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     override fun onTrackPositionChanged(position: Int) {
         mCurrentPosition = position
         LrcWindow.refreshTime(position, mWindow!!)
-        android.util.Log.d("DEBUG-LRC-TIME", "in onTrackPositionChanged: " + position.toString())
-        android.util.Log.d("DEBUG-LRC-TIME", "updated Current to: " + mCurrentPosition.toString())
     }
 
     override fun onTrackDurationChanged(duration: Int) {

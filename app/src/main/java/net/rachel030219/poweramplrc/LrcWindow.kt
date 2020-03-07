@@ -110,7 +110,6 @@ object LrcWindow {
             layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrcFile)
         }
         refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
-        android.util.Log.d("DEBUG-LRC-TIME", "in refresh, bundle: \n" + dumpBundle(extras))
         if (popup && !displaying) {
             layout.visibility = View.VISIBLE
             displaying = true
