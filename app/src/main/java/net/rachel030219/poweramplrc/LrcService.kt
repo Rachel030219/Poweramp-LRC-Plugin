@@ -1,5 +1,6 @@
 package net.rachel030219.poweramplrc
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
@@ -10,15 +11,16 @@ import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
 
 class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
-    var mWindow: View? = null
+    private var mWindow: View? = null
     private var timerOn = false
-    var mCurrentPosition = -1
+    private var mCurrentPosition = -1
     private var remoteTrackTime: RemoteTrackTime? = null
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
+    @SuppressLint("InflateParams")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (mWindow == null) {
             mWindow = LayoutInflater.from(this).inflate(R.layout.lrc_window, null)

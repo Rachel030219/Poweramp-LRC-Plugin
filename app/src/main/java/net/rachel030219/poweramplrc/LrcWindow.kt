@@ -35,68 +35,62 @@ object LrcWindow {
 
     @SuppressLint("ClickableViewAccessibility")
     fun initialize(context: Context, layout: View){
-        if (!displaying) {
-            if (!initialized) {
-                window = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-                params = WindowManager.LayoutParams()
-                params!!.width = WindowManager.LayoutParams.MATCH_PARENT
-                params!!.height = WindowManager.LayoutParams.WRAP_CONTENT
-                params!!.gravity = Gravity.TOP
-                params!!.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    params!!.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                else
-                    params!!.type = WindowManager.LayoutParams.TYPE_TOAST
-                params!!.format = PixelFormat.TRANSLUCENT
-                val closeButton = layout.findViewById<Button>(R.id.close)
-                closeButton.setOnClickListener {
-                    destroy(layout)
-                    sendNotification(context, extras, false)
+        if (!initialized) {
+            window = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            params = WindowManager.LayoutParams()
+            params!!.width = WindowManager.LayoutParams.MATCH_PARENT
+            params!!.height = WindowManager.LayoutParams.WRAP_CONTENT
+            params!!.gravity = Gravity.TOP
+            params!!.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                params!!.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                params!!.type = WindowManager.LayoutParams.TYPE_TOAST
+            params!!.format = PixelFormat.TRANSLUCENT
+            val closeButton = layout.findViewById<Button>(R.id.close)
+            closeButton.setOnClickListener {
+                destroy(layout)
+                sendNotification(context, extras, false)
+            }
+            var showingBg = true
+            layout.setOnClickListener {
+                if (showingBg) {
+                    layout.background = context.getDrawable(android.R.color.transparent)
+                    closeButton.visibility = View.INVISIBLE
+                    showingBg = false
+                } else {
+                    layout.background = context.getDrawable(R.drawable.window_background)
+                    closeButton.visibility = View.VISIBLE
+                    showingBg = true
                 }
-                var showingBg = true
-                layout.setOnClickListener {
-                    if (showingBg) {
-                        layout.background = context.getDrawable(android.R.color.transparent)
-                        closeButton.visibility = View.INVISIBLE
-                        showingBg = false
-                    } else {
-                        layout.background = context.getDrawable(R.drawable.window_background)
-                        closeButton.visibility = View.VISIBLE
-                        showingBg = true
-                    }
-                }
-                layout.setOnTouchListener { _, event ->
-                    if (displaying) {
-                        when (event!!.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                lastY = event.rawY
-                                lastYForClick = event.rawY
+            }
+            layout.setOnTouchListener { _, event ->
+                if (displaying) {
+                    when (event!!.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            lastY = event.rawY
+                            lastYForClick = event.rawY
+                        }
+                        MotionEvent.ACTION_MOVE -> {
+                            val rawY = event.rawY
+                            params!!.y += (rawY - lastY).toInt()
+                            lastY = rawY
+                            window!!.updateViewLayout(layout, params)
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            if (abs(event.rawY - lastYForClick) <= 5) {
+                                layout.callOnClick()
                             }
-                            MotionEvent.ACTION_MOVE -> {
-                                val rawY = event.rawY
-                                params!!.y += (rawY - lastY).toInt()
-                                lastY = rawY
-                                window!!.updateViewLayout(layout, params)
-                            }
-                            MotionEvent.ACTION_UP -> {
-                                if (abs(event.rawY - lastYForClick) <= 5) {
-                                    layout.callOnClick()
-                                }
-                                lastY = event.rawY
-                                lastYForClick = event.rawY
-                            }
+                            lastY = event.rawY
+                            lastYForClick = event.rawY
                         }
                     }
-                    true
                 }
-                window!!.addView(layout, params)
-                displaying = true
-                initialized = true
-            } else {
-                layout.visibility = View.VISIBLE
-                window!!.updateViewLayout(layout, params)
-                displaying = true
+                true
             }
+            window!!.addView(layout, params)
+            displaying = true
+            initialized = true
         }
     }
 
