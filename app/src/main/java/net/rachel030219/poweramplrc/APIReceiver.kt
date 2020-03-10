@@ -29,8 +29,8 @@ class APIReceiver: BroadcastReceiver() {
                 PowerampAPI.ACTION_TRACK_CHANGED_EXPLICIT -> {
                     val statusIntent = context!!.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
                     val bundle = intent.getBundleExtra(PowerampAPI.TRACK)
-                    bundle!!.putInt(PowerampAPI.Track.POSITION, statusIntent!!.getIntExtra(PowerampAPI.Track.POSITION, -1))
-                    bundle.putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
+                    bundle!!.putInt(PowerampAPI.Track.POSITION, 0)
+                    bundle.putBoolean(PowerampAPI.PAUSED, statusIntent!!.getBooleanExtra(PowerampAPI.PAUSED, true))
                     if (LrcWindow.displaying) {
                         LrcWindow.sendNotification(context, bundle, true)
                     } else {
