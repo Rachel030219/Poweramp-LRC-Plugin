@@ -140,7 +140,7 @@ object LrcWindow {
                 context,
                 REQUEST_WINDOW,
                 Intent(context, LrcService::class.java).putExtra("request", REQUEST_WINDOW).putExtras(realExtras),
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_CANCEL_CURRENT
             )
             builder.setContentText(context.resources.getString(R.string.notification_message_hide))
         } else {
@@ -149,7 +149,7 @@ object LrcWindow {
                 context,
                 REQUEST_WINDOW,
                 Intent(context, LrcService::class.java).putExtra("request", REQUEST_WINDOW).putExtras(realExtras),
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_CANCEL_CURRENT
             )
             builder.setContentText(context.resources.getString(R.string.notification_message_show))
         }
