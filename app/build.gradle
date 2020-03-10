@@ -9,8 +9,8 @@ android {
         applicationId "net.rachel030219.poweramplrc"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
-        versionName "0.1 ALPHA"
+        versionCode 2
+        versionName "0.2 ALPHA"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
