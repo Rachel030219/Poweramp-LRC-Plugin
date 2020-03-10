@@ -3,7 +3,7 @@
     <string name="app_name">Poweramp 歌词插件</string>
     <string name="main_title">在开始之前…</string>
     <string name="main_message">这是一个用以弥补 Poweramp 本地歌词功能缺乏的，混合了各种神仙库的简单应用。当你摁下那个按键，它就会从启动器中消失，并完成初始化（Q 以下）。当使用 Poweramp 播放音乐时，它会自动加载与音乐文件同名的 .lrc 同步歌词。\n这还只是个开始，必然会含有相当多的 bug 。如果您发现了此前无人发觉的 bug ，请给它来个一星好评，并在酷安 / Play Store 向它开炮，或是在 GitHub 上开一个 issue 。您的意见真的很重要。\n\n感谢：\nlrcview by wangchenyan\nPowerampAPI by Maksim Petrov\nAndroidX by Google</string>
-    <string name="q_message"><b>请确保 Poweramp 的底层文件夹设置在内置存储根目录，否则它将无法工作。这个问题将在未来得到解决。</b>\n\n</string>
+    <string name="q_message">请确保 Poweramp 的底层文件夹设置在内置存储根目录，否则它将无法工作。这个问题将在未来得到解决。\n\n</string>
     <string name="main_hint">请授予 Poweramp 歌词插件存储（只读）与悬浮窗权限。</string>
     <string name="take_off">发射！</string>
 
