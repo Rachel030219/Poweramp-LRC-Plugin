@@ -65,7 +65,7 @@ class MainActivity : Activity() {
                 )
             ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(permissionIntent)
-            //hide()
+            hide()
     }
 
     private fun hide(){
