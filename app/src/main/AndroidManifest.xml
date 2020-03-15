@@ -16,6 +16,10 @@
         android:requestLegacyExternalStorage="true" >
         <activity android:name=".MainActivity"
             android:excludeFromRecents="true">
+        </activity>
+
+        <activity android:name=".SetupActivity"
+            android:theme="@style/SuwThemeMaterial" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

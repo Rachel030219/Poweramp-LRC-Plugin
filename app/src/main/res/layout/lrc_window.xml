@@ -31,15 +31,15 @@
         android:id="@+id/lrcview"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        app:lrcAnimationDuration="1000"
+        app:lrcAnimationDuration="250"
         app:lrcCurrentTextColor="@color/lrc_current"
         app:lrcDividerHeight="20dp"
         app:lrcLabel="@string/no_lrc_hint"
         app:lrcNormalTextColor="@color/lrc_normal"
-        app:lrcNormalTextSize="14sp"
+        app:lrcNormalTextSize="16sp"
         app:lrcPadding="16dp"
         app:lrcTextGravity="center"
-        app:lrcTextSize="18sp"
+        app:lrcTextSize="16sp"
         tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="52dp" />
 
