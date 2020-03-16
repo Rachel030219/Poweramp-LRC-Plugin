@@ -1,6 +1,8 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="SuwThemeMaterial.Light">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_normal</item>
     </style>
 
 </resources>

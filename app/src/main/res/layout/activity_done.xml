@@ -3,28 +3,28 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main_setup">
+    android:id="@+id/done_setup">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="32dp"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:layout_gravity="top">
 
-        <TextView
-            android:id="@+id/main_hint"
-            android:text="@string/main_message"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <TextView
-            android:id="@+id/main_old"
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/main_old"
+            android:src="@drawable/ic_check"
+            android:tint="@color/text_success"
+            android:layout_marginEnd="8dp"/>
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/done_hint"
             android:textColor="@color/text_success"
-            android:textStyle="bold"
-            android:visibility="gone"/>
+            android:textSize="16sp"/>
 
     </LinearLayout>
 

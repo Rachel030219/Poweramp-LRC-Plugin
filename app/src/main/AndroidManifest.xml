@@ -13,18 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:requestLegacyExternalStorage="true" >
-        <activity android:name=".MainActivity"
-            android:excludeFromRecents="true">
-        </activity>
-
-        <activity android:name=".SetupActivity"
-            android:theme="@style/SuwThemeMaterial" >
+        android:requestLegacyExternalStorage="true">
+        <activity android:name=".SetupActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PermissionActivity" />
+        <activity android:name=".DoneActivity"
+            android:excludeFromRecents="true" />
 
         <receiver android:label="APIReceiver" android:name=".APIReceiver">
             <intent-filter>

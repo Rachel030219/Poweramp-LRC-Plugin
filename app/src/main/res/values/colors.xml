@@ -2,4 +2,8 @@
 <resources>
     <color name="lrc_current">#FF1515</color>
     <color name="lrc_normal">#BDBDBD</color>
+
+    <color name="text_success">#0D0</color>
+    <color name="text_failure">#D00</color>
+    <color name="text_normal">#222</color>
 </resources>
