@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 
 import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
@@ -38,16 +39,25 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                     }
                     if (LrcWindow.displaying) {
                         LrcWindow.destroy(mWindow!!)
+                        stopForeground(false)
                         LrcWindow.sendNotification(this, extras, false)
                     } else {
-                        LrcWindow.initialize(this, mWindow!!)
                         if (timerOn) {
                             extras.putInt(PowerampAPI.Track.POSITION, mCurrentPosition)
                         } else {
                             remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                         }
+                        if (!LrcWindow.initialized) {
+                            LrcWindow.initialize(this, mWindow!!)
+                            mWindow!!.findViewById<Button>(R.id.close).setOnClickListener {
+                                LrcWindow.destroy(mWindow!!)
+                                stopForeground(false)
+                                LrcWindow.sendNotification(this, extras, false)
+                            }
+                        }
                         LrcWindow.refresh(mWindow!!, extras, true)
-                        LrcWindow.sendNotification(this, extras, true)
+                        val notification = LrcWindow.sendNotification(this, extras, true)
+                        startForeground(212, notification)
                     }
                 }
                 LrcWindow.REQUEST_UPDATE -> {
