@@ -13,7 +13,7 @@ class DoneActivity: AppCompatActivity() {
         setContentView(R.layout.activity_done)
 
         done_setup.setIllustration(getDrawable(R.drawable.suw_layout_background))
-        done_setup.setIllustrationAspectRatio(4f)
+        done_setup.setIllustrationAspectRatio(2.5f)
         done_setup.navigationBar.setNavigationBarListener(
             object : NavigationBar.NavigationBarListener {
                 override fun onNavigateBack() {

@@ -27,7 +27,7 @@ class SetupActivity: AppCompatActivity() {
         // Initialize SetupWizardLayout
         main_setup.setHeaderText(R.string.app_name)
         main_setup.setIllustration(getDrawable(R.drawable.suw_layout_background))
-        main_setup.setIllustrationAspectRatio(4f)
+        main_setup.setIllustrationAspectRatio(2.5f)
         main_setup.navigationBar.setNavigationBarListener(
             object : NavigationBarListener {
                 override fun onNavigateBack() {

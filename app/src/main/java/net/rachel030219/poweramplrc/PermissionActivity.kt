@@ -26,7 +26,7 @@ class PermissionActivity: AppCompatActivity() {
 
         // Initialize SetupWizardLayout
         permission_setup.setIllustration(getDrawable(R.drawable.suw_layout_background))
-        permission_setup.setIllustrationAspectRatio(4f)
+        permission_setup.setIllustrationAspectRatio(2.5f)
         permission_setup.navigationBar.setNavigationBarListener(
             object : NavigationBar.NavigationBarListener {
                 override fun onNavigateBack() {
