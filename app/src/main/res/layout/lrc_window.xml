@@ -14,33 +14,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="top">
 
         <Button
             android:id="@+id/close"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="end|center_vertical"
-            android:padding="8dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:background="@drawable/ic_close"
             tools:layout_editor_absoluteX="315dp" />
 
-    </LinearLayout>
+        <me.wcy.lrcview.LrcView
+            android:id="@+id/lrcview"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginVertical="8dp"
+            app:lrcAnimationDuration="250"
+            app:lrcCurrentTextColor="@color/lrc_current"
+            app:lrcDividerHeight="20dp"
+            app:lrcLabel="@string/no_lrc_hint"
+            app:lrcNormalTextColor="@color/lrc_normal"
+            app:lrcNormalTextSize="18sp"
+            app:lrcPadding="18dp"
+            app:lrcTextGravity="center"
+            app:lrcTextSize="18sp"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="52dp" />
 
-    <me.wcy.lrcview.LrcView
-        android:id="@+id/lrcview"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        app:lrcAnimationDuration="250"
-        app:lrcCurrentTextColor="@color/lrc_current"
-        app:lrcDividerHeight="20dp"
-        app:lrcLabel="@string/no_lrc_hint"
-        app:lrcNormalTextColor="@color/lrc_normal"
-        app:lrcNormalTextSize="16sp"
-        app:lrcPadding="16dp"
-        app:lrcTextGravity="center"
-        app:lrcTextSize="16sp"
-        tools:layout_editor_absoluteX="24dp"
-        tools:layout_editor_absoluteY="52dp" />
+    </LinearLayout>
 
 </LinearLayout>
