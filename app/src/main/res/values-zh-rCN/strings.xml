@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Poweramp 歌词插件</string>
     <string name="main_message">这是一个用以弥补 Poweramp 本地歌词功能缺乏的简单应用。开始之前，我们需要一些权限，来使它正常工作。</string>
-    <string name="main_old">您的 Android 版本无需获取任何权限，所以接下来什么都不用做。</string>
+    <string name="main_old">您的 Android 版本无需应用手动获取任何权限，所以接下来什么都不用做。</string>
     <string name="permission_storage_hint">要获取 .lrc 文件，需要存储权限（只读）。</string>
     <string name="permission_storage_granted">已获取存储权限</string>
     <string name="permission_storage_denied">存储权限被拒绝</string>
