@@ -10,7 +10,7 @@
     <string name="permission_floating_granted">Drawing permission granted.</string>
     <string name="permission_floating_denied">Drawing permission denied.</string>
     <string name="permission_floating_check">Check display permission</string>
-    <string name="done_hint">All ready! Open Poweramp, start playing and enjoy!</string>
+    <string name="done_hint">All ready! Open Poweramp, start playing, click the notification and enjoy!</string>
     <string name="done_extra">Note:\nWhen lyrics delay,  try pausing and resuming playing. By the way, delay caused by Poweramp may also be the cause, and Poweramp only reports position metered in second, thus when the lyrics go too fast or are at near the middle of a second (e.g. a lyric starting from 00:01.50) there will unavoidably exist delay. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
 
     <string name="notification_channel_name">Entrance</string>
