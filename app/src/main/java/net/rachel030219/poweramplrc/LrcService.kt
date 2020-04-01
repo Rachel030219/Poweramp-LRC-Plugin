@@ -1,21 +1,33 @@
 package net.rachel030219.poweramplrc
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 
 import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
+import java.net.URLEncoder
 
 class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var mWindow: View? = null
     private var timerOn = false
     private var mCurrentPosition = -1
     private var remoteTrackTime: RemoteTrackTime? = null
+    private var mKeyMap = mutableMapOf<String, String>()
+
+    companion object {
+        val REQUEST_PATH = 10
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -27,10 +39,50 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             mWindow = LayoutInflater.from(this).inflate(R.layout.lrc_window, null)
         }
         if (intent!!.hasExtra("request")) {
+            val extras = intent.extras
+            var path = extras!!.getString(PowerampAPI.Track.PATH)
+            if (!path!!.startsWith("/") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val key = path.substringBefore('/')
+                path = path.replaceFirst("/", ":")
+                if (!mKeyMap.containsKey(key)) {
+                    val keyPref = getSharedPreferences(key, Context.MODE_PRIVATE)
+                    if (keyPref.contains("path")) {
+                        //TODO:check usability of saved path
+                        val pathValue = keyPref.getString("path", key)!!
+                        extras.putString(PowerampAPI.Track.PATH, pathValue + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
+                        android.util.Log.d("DEBUG-PATH in pref", pathValue + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
+                        android.util.Log.d("DEBUG-PATH orig in pref", pathValue)
+                        extras.putBoolean("saf", true)
+                        mKeyMap[key] = pathValue
+                    } else {
+                        val pathIntent = Intent(this, PathActivity::class.java).putExtra("path_request", REQUEST_PATH).putExtra("key", key)
+                        pathIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        val pendingIntent = PendingIntent.getActivity(
+                            this,
+                            REQUEST_PATH,
+                            pathIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                        val builder = NotificationCompat.Builder(this, "PATH").apply {
+                            setContentTitle(resources.getString(R.string.notification_path_title))
+                            setContentText(resources.getString(R.string.notification_path_message) + key)
+                            setSmallIcon(R.drawable.ic_notification)
+                            setAutoCancel(true)
+                            priority = NotificationCompat.PRIORITY_DEFAULT
+                            setContentIntent(pendingIntent)
+                            setOnlyAlertOnce(true)
+                        }
+                        NotificationManagerCompat.from(this).notify(213, builder.build())
+                    }
+                } else {
+                    extras.putString(PowerampAPI.Track.PATH, mKeyMap.getValue(key) + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
+                    android.util.Log.d("DEBUG-PATH in map", mKeyMap.getValue(key) + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
+                    extras.putBoolean("saf", true)
+                }
+            }
             when (intent.getIntExtra("request", 0)) {
                 LrcWindow.REQUEST_WINDOW -> {
-                    val extras = intent.extras
-                    timerOn = if (extras!!.getBoolean(PowerampAPI.PAUSED)) {
+                    timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
                         remoteTrackTime!!.stopSongProgress()
                         false
                     } else {
@@ -55,15 +107,14 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 LrcWindow.sendNotification(this, extras, false)
                             }
                         }
-                        LrcWindow.refresh(mWindow!!, extras, true)
+                        LrcWindow.refresh(mWindow!!, extras, true, this)
                         val notification = LrcWindow.sendNotification(this, extras, true)
                         startForeground(212, notification)
                     }
                 }
                 LrcWindow.REQUEST_UPDATE -> {
-                    val extras = intent.extras
                     if (mWindow != null) {
-                        LrcWindow.refresh(mWindow!!, extras!!, false)
+                        LrcWindow.refresh(mWindow!!, extras, false, this)
                         remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                         remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
                         timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {

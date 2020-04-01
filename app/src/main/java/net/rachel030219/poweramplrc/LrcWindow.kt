@@ -6,9 +6,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -16,9 +18,14 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContentResolverCompat
+import androidx.documentfile.provider.DocumentFile
 import com.maxmpz.poweramp.player.PowerampAPI
 import me.wcy.lrcview.LrcView
+import java.io.BufferedInputStream
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -89,14 +96,22 @@ object LrcWindow {
         initialized = true
     }
 
-    fun refresh(layout: View, extras: Bundle, popup: Boolean) {
+    fun refresh(layout: View, extras: Bundle, popup: Boolean, context: Context) {
         this.extras = extras
-        val path = extras.getString(PowerampAPI.Track.PATH)
-        val lrcFile: File
+        val path = extractAndReplaceExt(extras.getString(PowerampAPI.Track.PATH)!!)
+        val lrc: StringBuilder = StringBuilder()
         if (nowPlayingFile != path) {
-            nowPlayingFile = path!!
-            lrcFile = File(extractAndReplaceExt(path))
-            layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrcFile)
+            nowPlayingFile = path
+            if (extras.getBoolean("saf")) {
+                val ins = context.contentResolver.openInputStream(Uri.parse(path))
+                ins?.bufferedReader()?.use { lrc.append(it.readText()) }
+                Log.d("DEBUG-URI", path)
+            } else {
+                val file = File(path)
+                if (file.exists())
+                    FileInputStream(file).bufferedReader().use { lrc.append(it.readText()) }
+            }
+            layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrc.toString())
         }
         refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
         if (popup && !displaying) {
@@ -157,9 +172,6 @@ object LrcWindow {
     }
 
     private fun extractAndReplaceExt (oldString: String): String {
-        return if (oldString.substringBefore('/', oldString) == "primary")
-            Environment.getExternalStorageDirectory().toString() + "/" + StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')).substringAfter('/') + ".lrc"
-        else
-            StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
+        return StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
     }
 }

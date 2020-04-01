@@ -24,6 +24,11 @@
         <activity android:name=".PermissionActivity" />
         <activity android:name=".DoneActivity"
             android:excludeFromRecents="true" />
+        <activity android:name=".PathActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar.TranslucentDecor"/>
 
         <receiver android:label="APIReceiver" android:name=".APIReceiver">
             <intent-filter>

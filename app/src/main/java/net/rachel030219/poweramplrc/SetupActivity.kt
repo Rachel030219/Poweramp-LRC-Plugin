@@ -6,13 +6,17 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.documentfile.provider.DocumentFile
 import com.android.setupwizardlib.view.NavigationBar.NavigationBarListener
 import kotlinx.android.synthetic.main.activity_setup.*
+import java.io.File
 
 
 class SetupActivity: AppCompatActivity() {
@@ -36,14 +40,13 @@ class SetupActivity: AppCompatActivity() {
                 override fun onNavigateNext() {
                     // Create notification channel on Oreo and above
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val name = resources.getString(R.string.notification_channel_name)
-                        val descriptionText = resources.getString(R.string.notification_channel_desc)
-                        val importance = NotificationManager.IMPORTANCE_LOW
-                        val mChannel = NotificationChannel("ENTRANCE", name, importance)
-                        mChannel.description = descriptionText
+                        val mEntranceChannel = NotificationChannel("ENTRANCE", resources.getString(R.string.notification_entrance_channel_name), NotificationManager.IMPORTANCE_LOW)
+                        val mPathChannel = NotificationChannel("PATH", resources.getString(R.string.notification_path_channel_name), NotificationManager.IMPORTANCE_DEFAULT)
                         val notificationManager =
                             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                        notificationManager.createNotificationChannel(mChannel)
+                        notificationManager.createNotificationChannel(mEntranceChannel)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                            notificationManager.createNotificationChannel(mPathChannel)
                     }
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                         startActivity(Intent(this@SetupActivity, DoneActivity::class.java))
@@ -54,8 +57,10 @@ class SetupActivity: AppCompatActivity() {
                             startActivity(Intent(this@SetupActivity, DoneActivity::class.java))
                             finish()
                         }
-                        else
+                        else {
                             startActivity(Intent(this@SetupActivity, PermissionActivity::class.java))
+                            finish()
+                        }
                     }
                 }
             })
