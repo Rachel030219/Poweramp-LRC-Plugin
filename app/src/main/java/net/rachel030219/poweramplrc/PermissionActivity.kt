@@ -41,9 +41,14 @@ class PermissionActivity: AppCompatActivity() {
                 }
             })
         // Request permissions
-        permission_storage_check.setOnClickListener {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSION)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permission_storage.visibility = View.GONE
+            storage = true
+        } else {
+            permission_storage_check.setOnClickListener {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSION)
+                }
             }
         }
         permission_floating_check.setOnClickListener {
@@ -51,6 +56,10 @@ class PermissionActivity: AppCompatActivity() {
                 floating_asked = true
                 val permissionIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(permissionIntent)
+            } else {
+                permission_floating_text.setText(R.string.permission_floating_granted)
+                permission_floating_check.visibility = View.GONE
+                floating = true
             }
         }
     }

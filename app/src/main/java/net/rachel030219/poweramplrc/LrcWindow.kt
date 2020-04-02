@@ -9,8 +9,6 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -18,14 +16,10 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContentResolverCompat
-import androidx.documentfile.provider.DocumentFile
 import com.maxmpz.poweramp.player.PowerampAPI
 import me.wcy.lrcview.LrcView
-import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -105,7 +99,6 @@ object LrcWindow {
             if (extras.getBoolean("saf")) {
                 val ins = context.contentResolver.openInputStream(Uri.parse(path))
                 ins?.bufferedReader()?.use { lrc.append(it.readText()) }
-                Log.d("DEBUG-URI", path)
             } else {
                 val file = File(path)
                 if (file.exists())

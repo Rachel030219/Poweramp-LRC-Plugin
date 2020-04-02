@@ -6,17 +6,13 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.documentfile.provider.DocumentFile
 import com.android.setupwizardlib.view.NavigationBar.NavigationBarListener
 import kotlinx.android.synthetic.main.activity_setup.*
-import java.io.File
 
 
 class SetupActivity: AppCompatActivity() {
@@ -53,7 +49,7 @@ class SetupActivity: AppCompatActivity() {
                         finish()
                     }
                     else {
-                        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && Settings.canDrawOverlays(applicationContext)) {
+                        if ((checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) && Settings.canDrawOverlays(applicationContext)) {
                             startActivity(Intent(this@SetupActivity, DoneActivity::class.java))
                             finish()
                         }
