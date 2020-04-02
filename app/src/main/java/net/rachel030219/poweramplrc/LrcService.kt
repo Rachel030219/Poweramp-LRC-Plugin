@@ -46,7 +46,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                 if (!mKeyMap.containsKey(key)) {
                     val keyPref = getSharedPreferences(key, Context.MODE_PRIVATE)
                     if (keyPref.contains("path")) {
-                        //TODO:check usability of saved path
                         val pathValue = keyPref.getString("path", key)!!
                         if (checkSAFUsability(pathValue)) {
                             extras.putString(PowerampAPI.Track.PATH, pathValue + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
