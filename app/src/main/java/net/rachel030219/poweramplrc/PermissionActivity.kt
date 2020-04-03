@@ -58,6 +58,7 @@ class PermissionActivity: AppCompatActivity() {
                 startActivity(permissionIntent)
             } else {
                 permission_floating_text.setText(R.string.permission_floating_granted)
+                permission_floating_text.setTextColor(getColor(R.color.text_normal))
                 permission_floating_check.visibility = View.GONE
                 floating = true
             }
@@ -70,6 +71,7 @@ class PermissionActivity: AppCompatActivity() {
             floating_asked = false
             if (Settings.canDrawOverlays(this)) {
                 permission_floating_text.setText(R.string.permission_floating_granted)
+                permission_floating_text.setTextColor(getColor(R.color.text_normal))
                 permission_floating_check.visibility = View.GONE
                 floating = true
             } else {
@@ -84,6 +86,7 @@ class PermissionActivity: AppCompatActivity() {
         if (requestCode == REQUEST_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 permission_storage_text.setText(R.string.permission_storage_granted)
+                permission_storage_text.setTextColor(getColor(R.color.text_normal))
                 permission_storage_check.visibility = View.GONE
                 storage = true
             } else {
