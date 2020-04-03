@@ -65,9 +65,9 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                 val key = path.substringBefore('/')
                 path = path.replaceFirst("/", ":")
                 if (!mKeyMap.containsKey(key)) {
-                    val keyPref = getSharedPreferences(key, Context.MODE_PRIVATE)
+                    val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
                     if (keyPref.contains("path")) {
-                        val pathValue = keyPref.getString("path", key)!!
+                        val pathValue = keyPref.getString(key, key)!!
                         if (checkSAFUsability(pathValue)) {
                             extras.putString(PowerampAPI.Track.PATH, pathValue + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
                             extras.putBoolean("saf", true)
