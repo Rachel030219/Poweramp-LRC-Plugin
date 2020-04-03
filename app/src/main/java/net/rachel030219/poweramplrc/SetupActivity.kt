@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.setupwizardlib.view.NavigationBar.NavigationBarListener
 import kotlinx.android.synthetic.main.activity_setup.*
 
-
 class SetupActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,11 +37,13 @@ class SetupActivity: AppCompatActivity() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val mEntranceChannel = NotificationChannel("ENTRANCE", resources.getString(R.string.notification_entrance_channel_name), NotificationManager.IMPORTANCE_LOW)
                         val mPathChannel = NotificationChannel("PATH", resources.getString(R.string.notification_path_channel_name), NotificationManager.IMPORTANCE_DEFAULT)
-                        val notificationManager =
-                            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                        notificationManager.createNotificationChannel(mEntranceChannel)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                            notificationManager.createNotificationChannel(mPathChannel)
+                        val mPlaceholderChannel = NotificationChannel("PLACEHOLDER", resources.getString(R.string.notification_placeholder_channel_name), NotificationManager.IMPORTANCE_LOW)
+                        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
+                            createNotificationChannel(mEntranceChannel)
+                            createNotificationChannel(mPlaceholderChannel)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                                createNotificationChannel(mPathChannel)
+                        }
                     }
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                         startActivity(Intent(this@SetupActivity, DoneActivity::class.java))

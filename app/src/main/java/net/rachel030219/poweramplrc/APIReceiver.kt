@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import com.maxmpz.poweramp.player.PowerampAPI
 
@@ -43,6 +44,9 @@ class APIReceiver: BroadcastReceiver() {
 
     private fun refreshWindow (context: Context?, bundle: Bundle?) {
         val intents = Intent(context, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UPDATE).putExtras(bundle!!)
-        context!!.startService(intents)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            context!!.startForegroundService(intents.apply { putExtra("foreground", true) })
+        else
+            context!!.startService(intents)
     }
 }

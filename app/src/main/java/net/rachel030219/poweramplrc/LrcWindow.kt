@@ -129,39 +129,37 @@ object LrcWindow {
         displaying = false
     }
 
-    fun sendNotification(context: Context?, extras: Bundle?, ongoing: Boolean): Notification{
+    fun sendNotification(context: Context?, extras: Bundle?, ongoing: Boolean){
         val realExtras: Bundle = extras!!
         val pendingIntent: PendingIntent?
-        val builder = NotificationCompat.Builder(context!!, "ENTRANCE")
-        builder.setContentTitle(extras.getString(PowerampAPI.Track.TITLE) + " - " + extras.getString(PowerampAPI.Track.ARTIST))
-        builder.setSmallIcon(R.drawable.ic_notification)
-        builder.setAutoCancel(false)
-        builder.priority = NotificationCompat.PRIORITY_MIN
-        if (ongoing) {
-            builder.setOngoing(true)
-            pendingIntent = PendingIntent.getService(
-                context,
-                REQUEST_WINDOW,
-                Intent(context, LrcService::class.java).putExtra("request", REQUEST_WINDOW).putExtras(realExtras),
-                PendingIntent.FLAG_CANCEL_CURRENT
-            )
-            builder.setContentText(context.resources.getString(R.string.notification_message_hide))
-        } else {
-            builder.setOngoing(false)
-            pendingIntent = PendingIntent.getService(
-                context,
-                REQUEST_WINDOW,
-                Intent(context, LrcService::class.java).putExtra("request", REQUEST_WINDOW).putExtras(realExtras),
-                PendingIntent.FLAG_CANCEL_CURRENT
-            )
-            builder.setContentText(context.resources.getString(R.string.notification_message_show))
+        val builder = NotificationCompat.Builder(context!!, "ENTRANCE").apply {
+            setContentTitle(extras.getString(PowerampAPI.Track.TITLE) + " - " + extras.getString(PowerampAPI.Track.ARTIST))
+            setSmallIcon(R.drawable.ic_notification)
+            setAutoCancel(false)
+            priority = NotificationCompat.PRIORITY_MIN
+            setOnlyAlertOnce(true)
+            if (ongoing) {
+                setOngoing(true)
+                pendingIntent = PendingIntent.getService(
+                    context,
+                    REQUEST_WINDOW,
+                    Intent(context, LrcService::class.java).putExtra("request", REQUEST_WINDOW).putExtras(realExtras),
+                    PendingIntent.FLAG_CANCEL_CURRENT
+                )
+                setContentText(context.resources.getString(R.string.notification_message_hide))
+            } else {
+                setOngoing(false)
+                pendingIntent = PendingIntent.getService(
+                    context,
+                    REQUEST_WINDOW,
+                    Intent(context, LrcService::class.java).putExtra("request", REQUEST_WINDOW).putExtras(realExtras),
+                    PendingIntent.FLAG_CANCEL_CURRENT
+                )
+                setContentText(context.resources.getString(R.string.notification_message_show))
+            }
+            setContentIntent(pendingIntent)
         }
-        builder.setContentIntent(pendingIntent)
-        builder.setOnlyAlertOnce(true)
-        val notification = builder.build()
-        val manager = NotificationManagerCompat.from(context)
-        manager.notify(212, notification)
-        return notification
+        NotificationManagerCompat.from(context).notify(212, builder.build())
     }
 
     private fun extractAndReplaceExt (oldString: String): String {

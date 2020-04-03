@@ -37,7 +37,28 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         if (mWindow == null) {
             mWindow = LayoutInflater.from(this).inflate(R.layout.lrc_window, null)
         }
-        if (intent!!.hasExtra("request")) {
+        if (intent!!.getBooleanExtra("foreground", false)) {
+            val notificationIntent = Intent().apply {
+                action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                putExtra("android.provider.extra.APP_PACKAGE", packageName);
+            }
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                REQUEST_PATH,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            val notificationBuilder = NotificationCompat.Builder(this, "PLACEHOLDER").apply {
+                setContentTitle(resources.getString(R.string.app_name))
+                setContentText(resources.getString(R.string.notification_placeholder_message))
+                setSmallIcon(R.drawable.ic_notification)
+                priority = NotificationCompat.PRIORITY_LOW
+                setContentIntent(pendingIntent)
+                setOnlyAlertOnce(true)
+            }
+            startForeground(211, notificationBuilder.build())
+        }
+        if (intent.hasExtra("request")) {
             val extras = intent.extras
             var path = extras!!.getString(PowerampAPI.Track.PATH)
             if (!path!!.startsWith("/") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -77,7 +98,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                     }
                     if (LrcWindow.displaying) {
                         LrcWindow.destroy(mWindow!!)
-                        stopForeground(false)
                         LrcWindow.sendNotification(this, extras, false)
                     } else {
                         if (timerOn) {
@@ -89,13 +109,11 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                             LrcWindow.initialize(this, mWindow!!)
                             mWindow!!.findViewById<Button>(R.id.close).setOnClickListener {
                                 LrcWindow.destroy(mWindow!!)
-                                stopForeground(false)
                                 LrcWindow.sendNotification(this, extras, false)
                             }
                         }
                         LrcWindow.refresh(mWindow!!, extras, true, this)
-                        val notification = LrcWindow.sendNotification(this, extras, true)
-                        startForeground(212, notification)
+                        LrcWindow.sendNotification(this, extras, true)
                     }
                 }
                 LrcWindow.REQUEST_UPDATE -> {
@@ -126,6 +144,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     override fun onDestroy() {
         remoteTrackTime!!.setTrackTimeListener(null)
         remoteTrackTime!!.unregister()
+        stopForeground(true)
     }
 
     override fun onTrackPositionChanged(position: Int) {
