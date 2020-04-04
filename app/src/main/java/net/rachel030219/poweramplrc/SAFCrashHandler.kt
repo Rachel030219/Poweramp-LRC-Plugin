@@ -3,12 +3,11 @@ package net.rachel030219.poweramplrc
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.os.Looper
 import android.os.Process
-import android.util.Log
 import android.widget.Toast
 import java.io.BufferedOutputStream
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.system.exitProcess
@@ -61,11 +60,12 @@ class SAFCrashHandler: Thread.UncaughtExceptionHandler {
         errorReport.append(Build.VERSION.RELEASE)
         errorReport.append("\n")
 
+        saveLogFile(errorReport)
         try {
-            saveLogFile(errorReport)
+            Thread.sleep(3000)
             Process.killProcess(Process.myPid())
             exitProcess(10)
-        } catch (e: Exception) {
+        } catch (e: InterruptedException) {
             defaultHandler!!.uncaughtException(t, e)
         }
     }
@@ -75,7 +75,11 @@ class SAFCrashHandler: Thread.UncaughtExceptionHandler {
         val fileName = SimpleDateFormat("yyyyMMdd-HHmmss").format(Date()) + ".log"
         val dirFile = context!!.getExternalFilesDir(null)!!
         //TODO: fix toast not appearing
-        Toast.makeText(context, "Error occurred, log stored at " + dirFile.absolutePath + "/$fileName", Toast.LENGTH_LONG).show()
+        Thread {
+            Looper.prepare()
+            Toast.makeText(context, "Error occurred, log stored at " + dirFile.absolutePath + "/$fileName", Toast.LENGTH_LONG).show()
+            Looper.loop()
+        }.start()
         BufferedOutputStream(File(dirFile, fileName).outputStream()).run {
             write(log.toString().toByteArray())
             close()
