@@ -10,11 +10,11 @@ import com.maxmpz.poweramp.player.PowerampAPI
 
 class APIReceiver: BroadcastReceiver() {
 
-    override fun onReceive(context: Context?, intent: Intent) {
+    override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != null) {
             when (intent.action) {
                 PowerampAPI.ACTION_STATUS_CHANGED_EXPLICIT -> {
-                    val trackIntent = context!!.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED))
+                    val trackIntent = context.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED))
                     val bundle = trackIntent!!.getBundleExtra(PowerampAPI.TRACK)
                     bundle!!.putInt(PowerampAPI.Track.POSITION, intent.getIntExtra(PowerampAPI.Track.POSITION, -1))
                     bundle.putBoolean(PowerampAPI.PAUSED, intent.getBooleanExtra(PowerampAPI.PAUSED, true))
@@ -27,7 +27,7 @@ class APIReceiver: BroadcastReceiver() {
                 }
 
                 PowerampAPI.ACTION_TRACK_CHANGED_EXPLICIT -> {
-                    val statusIntent = context!!.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
+                    val statusIntent = context.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
                     val bundle = intent.getBundleExtra(PowerampAPI.TRACK)
                     bundle!!.putInt(PowerampAPI.Track.POSITION, 0)
                     bundle.putBoolean(PowerampAPI.PAUSED, statusIntent!!.getBooleanExtra(PowerampAPI.PAUSED, true))

@@ -66,25 +66,25 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                 path = path.replaceFirst("/", ":")
                 if (!mKeyMap.containsKey(key)) {
                     val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
-                    if (keyPref.contains("path")) {
+                    if (keyPref.contains(key)) {
                         val pathValue = keyPref.getString(key, key)!!
-                        if (checkSAFUsability(pathValue)) {
+                        //if (checkSAFUsability(pathValue)) {
                             extras.putString(PowerampAPI.Track.PATH, pathValue + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
                             extras.putBoolean("saf", true)
                             mKeyMap[key] = pathValue
-                        } else {
-                            startPermissionRequest(key)
-                        }
+                        //} else {
+                        //    startPermissionRequest(key)
+                        //}
                     } else {
                         startPermissionRequest(key)
                     }
                 } else {
-                    if (checkSAFUsability(mKeyMap.getValue(key))) {
+                    //if (checkSAFUsability(mKeyMap.getValue(key))) {
                         extras.putString(PowerampAPI.Track.PATH, mKeyMap.getValue(key) + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
                         extras.putBoolean("saf", true)
-                    } else {
-                        startPermissionRequest(key)
-                    }
+                    //} else {
+                   //     startPermissionRequest(key)
+                    //}
                 }
             }
             when (intent.getIntExtra("request", 0)) {
