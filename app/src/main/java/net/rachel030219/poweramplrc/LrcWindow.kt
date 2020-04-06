@@ -96,8 +96,10 @@ object LrcWindow {
         if (nowPlayingFile != path) {
             nowPlayingFile = path
             if (extras.getBoolean("saf")) {
-                val ins = context.contentResolver.openInputStream(Uri.parse(path))
-                ins?.bufferedReader()?.use { lrc.append(it.readText()) }
+                if (extras.getBoolean("safFound")) {
+                    val ins = context.contentResolver.openInputStream(Uri.parse(path))
+                    ins?.bufferedReader()?.use { lrc.append(it.readText()) }
+                }
             } else {
                 val file = File(path)
                 if (file.exists())

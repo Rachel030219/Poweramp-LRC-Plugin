@@ -21,7 +21,7 @@ class PathActivity: Activity() {
                 android.util.Log.d("DEBUG-URI", treeUri.toString())
                 val takeFlags = data.flags and Intent.FLAG_GRANT_READ_URI_PERMISSION
                 contentResolver.takePersistableUriPermission(treeUri, takeFlags)
-                getSharedPreferences("paths", Context.MODE_PRIVATE).edit().putString(intent.getStringExtra("key"), "$treeUri/document/").apply()
+                getSharedPreferences("paths", Context.MODE_PRIVATE).edit().putString(intent.getStringExtra("key"), treeUri.toString()).apply()
                 finish()
             }
         }

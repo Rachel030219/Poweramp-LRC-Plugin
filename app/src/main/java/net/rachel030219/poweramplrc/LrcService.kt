@@ -8,11 +8,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.documentfile.provider.DocumentFile
 import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
 import java.net.URLEncoder
@@ -23,6 +25,8 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var mCurrentPosition = -1
     private var remoteTrackTime: RemoteTrackTime? = null
     private var mKeyMap = mutableMapOf<String, String>()
+    private var mPathMap = mutableMapOf<String, String>()
+    private var nowPlayingPath = ""
 
     companion object {
         val REQUEST_PATH = 10
@@ -60,31 +64,46 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         }
         if (intent.hasExtra("request")) {
             val extras = intent.extras
-            var path = extras!!.getString(PowerampAPI.Track.PATH)
+            val path = extras!!.getString(PowerampAPI.Track.PATH)
             if (!path!!.startsWith("/") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                extras.putBoolean("saf", true)
                 val key = path.substringBefore('/')
-                path = path.replaceFirst("/", ":")
-                if (!mKeyMap.containsKey(key)) {
-                    val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
-                    if (keyPref.contains(key)) {
-                        val pathValue = keyPref.getString(key, key)!!
-                        if (checkSAFUsability(pathValue)) {
-                            extras.putString(PowerampAPI.Track.PATH, pathValue + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
-                            extras.putBoolean("saf", true)
-                            mKeyMap[key] = pathValue
+                if (!mPathMap.containsKey(path)) {
+                    if (!mKeyMap.containsKey(key)) {
+                        val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
+                        if (keyPref.contains(key)) {
+                            val pathValue = keyPref.getString(key, key)!!
+                            if (checkSAFUsability(pathValue)) {
+                                val finalPath = findFile(path, pathValue)
+                                if (finalPath != null) {
+                                    extras.putString(PowerampAPI.Track.PATH, finalPath)
+                                    extras.putBoolean("safFound", true)
+                                    mPathMap[path] = finalPath
+                                } else
+                                    extras.putBoolean("safFound", false)
+                                mKeyMap[key] = pathValue
+                            } else {
+                                startPermissionRequest(key)
+                            }
                         } else {
                             startPermissionRequest(key)
                         }
                     } else {
-                        startPermissionRequest(key)
+                        if (checkSAFUsability(mKeyMap.getValue(key))) {
+                            val finalPath = findFile(path, mKeyMap.getValue(key))
+                            if (finalPath != null) {
+                                extras.putString(PowerampAPI.Track.PATH, finalPath)
+                                extras.putBoolean("safFound", true)
+                                mPathMap[path] = finalPath
+                            } else
+                                extras.putBoolean("safFound", false)
+                        } else {
+                            startPermissionRequest(key)
+                        }
                     }
                 } else {
-                    if (checkSAFUsability(mKeyMap.getValue(key))) {
-                        extras.putString(PowerampAPI.Track.PATH, mKeyMap.getValue(key) + URLEncoder.encode(path, "UTF-8").replace("+", "%20"))
-                        extras.putBoolean("saf", true)
-                    } else {
-                        startPermissionRequest(key)
-                    }
+                    extras.putString(PowerampAPI.Track.PATH, mPathMap.getValue(path))
+                    extras.putBoolean("safFound", true)
                 }
             }
             when (intent.getIntExtra("request", 0)) {
@@ -180,10 +199,30 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private fun checkSAFUsability (path: String): Boolean {
         val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         return try {
-            contentResolver.takePersistableUriPermission(Uri.parse(path.substringBeforeLast("/document/")), takeFlags)
+            contentResolver.takePersistableUriPermission(Uri.parse(path), takeFlags)
             true
         } catch (e: SecurityException) {
             false
         }
+    }
+
+    private fun findFile (path: String, pathValue: String): String?{
+        val treeFile = DocumentFile.fromTreeUri(this, Uri.parse(pathValue))
+        var subTreeFile: DocumentFile? = null
+        val folders = path.split("/")
+        folders.forEach {
+            if (treeFile?.findFile(it) != null) {
+                subTreeFile = treeFile.findFile(it)
+            } else {
+                subTreeFile = subTreeFile?.findFile(it)
+                if (subTreeFile != null) {
+                    if (subTreeFile!!.isFile) {
+                        Log.d("DEBUG-FILE", subTreeFile!!.uri.toString())
+                        return@findFile subTreeFile!!.uri.toString()
+                    }
+                }
+            }
+        }
+        return null
     }
 }
