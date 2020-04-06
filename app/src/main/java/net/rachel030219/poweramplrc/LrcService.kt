@@ -8,7 +8,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -17,7 +16,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
-import java.net.URLEncoder
 
 class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var mWindow: View? = null
@@ -44,7 +42,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         if (intent!!.getBooleanExtra("foreground", false)) {
             val notificationIntent = Intent().apply {
                 action = "android.settings.APP_NOTIFICATION_SETTINGS"
-                putExtra("android.provider.extra.APP_PACKAGE", packageName);
+                putExtra("android.provider.extra.APP_PACKAGE", packageName)
             }
             val pendingIntent = PendingIntent.getActivity(
                 this,
@@ -217,7 +215,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                 subTreeFile = subTreeFile?.findFile(it)
                 if (subTreeFile != null) {
                     if (subTreeFile!!.isFile) {
-                        Log.d("DEBUG-FILE", subTreeFile!!.uri.toString())
                         return@findFile subTreeFile!!.uri.toString()
                     }
                 }
