@@ -15,6 +15,7 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.documentfile.provider.DocumentFile
 import com.maxmpz.poweramp.player.PowerampAPI
 import me.wcy.lrcview.LrcView
 import java.io.File
@@ -96,9 +97,11 @@ object LrcWindow {
         if (nowPlayingFile != path) {
             nowPlayingFile = path
             if (extras.getBoolean("saf")) {
-                if (extras.getBoolean("safFound")) {
+                if (extras.getBoolean("safFound") && DocumentFile.fromSingleUri(context, Uri.parse(path)).run { this?.exists() == true }) {
                     val ins = context.contentResolver.openInputStream(Uri.parse(path))
                     ins?.bufferedReader()?.use { lrc.append(it.readText()) }
+                } else {
+                    lrc.append(context.resources.getString(R.string.no_lrc_hint))
                 }
             } else {
                 val file = File(path)
