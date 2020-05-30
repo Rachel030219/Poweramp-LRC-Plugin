@@ -63,7 +63,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         if (intent.hasExtra("request")) {
             val extras = intent.extras
             val path = extras!!.getString(PowerampAPI.Track.PATH)
-            if (!path!!.startsWith("/") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (!path!!.startsWith("/")) {
                 extras.putBoolean("saf", true)
                 val key = path.substringBefore('/')
                 if (!mPathMap.containsKey(path)) {

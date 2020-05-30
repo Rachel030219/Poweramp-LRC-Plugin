@@ -23,4 +23,8 @@
     <string name="notification_placeholder_message">Running in the background (this notification can be disabled).</string>
 
     <string name="no_lrc_hint">WANTED: Lyrics</string>
+
+    <string name="preference_anim">Lyric animation</string>
+    <string name="preference_anim_duration">Duration</string>
+    <string name="preference_anim_duration_description">Duration of scroll, in milliseconds</string>
 </resources>
