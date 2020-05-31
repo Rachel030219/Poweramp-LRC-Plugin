@@ -2,11 +2,43 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        app:title="@string/preference_anim"/>
+        app:title="@string/preference_ui">
 
-    <EditTextPreference
-        app:key="duration"
-        app:title="@string/preference_anim_duration"
-        app:summary="@string/preference_anim_duration_description"/>
+        <EditTextPreference
+            app:key="duration"
+            app:title="@string/preference_ui_duration" />
+
+        <EditTextPreference
+            app:key="height"
+            app:title="@string/preference_ui_height"/>
+
+        <Preference
+            app:key="textColor"
+            app:title="@string/preference_ui_text"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="@string/preference_experimental">
+
+        <SwitchPreferenceCompat
+            app:key="legacy"
+            app:title="@string/preference_experimental_legacy"
+            app:summary="@string/preference_experimental_legacy_description"
+            app:defaultValue="false"
+            app:enabled="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="encoding"
+            app:title="@string/preference_experimental_encoding"
+            app:summary="@string/preference_experimental_encoding_description"
+            app:defaultValue="false"/>
+
+        <Preference
+            app:key="report"
+            app:title="@string/preference_experimental_report"
+            app:summary="@string/preference_experimental_report_description"/>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

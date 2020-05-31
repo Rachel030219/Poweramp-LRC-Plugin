@@ -24,4 +24,22 @@
     <string name="notification_placeholder_message">正在后台运行（可禁用该通知）。</string>
 
     <string name="no_lrc_hint">歌词不见了</string>
+
+    <string name="preference_ui">UI</string>
+    <string name="preference_ui_duration">动画时长</string>
+    <string name="preference_ui_duration_description">默认 250 毫秒，目前\u0020</string>
+    <string name="preference_ui_height">窗口高度</string>
+    <string name="preference_ui_height_description">默认 36 dp，目前\u0020</string>
+    <string name="preference_ui_text">歌词颜色</string>
+    <string name="preference_experimental">实验性功能</string>
+    <string name="preference_experimental_legacy">使用古董文件访问方案</string>
+    <string name="preference_experimental_legacy_description">（仅 Android 10）可能在正常模式不工作时有用，但若如此也请报告问题</string>
+    <string name="preference_experimental_encoding">使用 GB18030 编码</string>
+    <string name="preference_experimental_encoding_description">大概能解决 QQ 音乐自动下载的歌词全是乱码的问题</string>
+    <string name="preference_experimental_report">报告问题</string>
+    <string name="preference_experimental_report_description">生成一个包含了所有可能出问题的东西的日志（不会包含个人信息）</string>
+    <string name="preference_after_restart">将在应用重启后生效。</string>
+    <string name="preference_after_reload">将在歌词重载后生效。</string>
+    <string name="preference_default">默认</string>
+    <string name="error">发生了一点问题</string>
 </resources>

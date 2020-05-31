@@ -21,45 +21,8 @@ class SAFCrashHandler: Thread.UncaughtExceptionHandler {
         defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
     }
 
-    private fun genTitle (content: String): String {
-        return "\n\n************ $content ************\n\n"
-    }
-
     override fun uncaughtException(t: Thread, e: Throwable) {
-        val errorReport = StringBuilder()
-        errorReport.append(genTitle("CAUSE OF ERROR"))
-        errorReport.append(e.toString() + "\n")
-        e.stackTrace.forEach { errorReport.append("$it\n") }
-        errorReport.append(genTitle("PATHS"))
-        context?.run {
-            for ((key, value) in getSharedPreferences("paths", Context.MODE_PRIVATE).all) {
-                errorReport.append("key: $key, value: $value\n")
-            }
-        }
-        errorReport.append(genTitle("DEVICE INFORMATION"))
-        errorReport.append("Brand: ")
-        errorReport.append(Build.BRAND)
-        errorReport.append("\n")
-        errorReport.append("Device: ")
-        errorReport.append(Build.DEVICE)
-        errorReport.append("\n")
-        errorReport.append("Model: ")
-        errorReport.append(Build.MODEL)
-        errorReport.append("\n")
-        errorReport.append("Id: ")
-        errorReport.append(Build.ID)
-        errorReport.append("\n")
-        errorReport.append("Product: ")
-        errorReport.append(Build.PRODUCT)
-        errorReport.append("\n")
-        errorReport.append(genTitle("FIRMWARE"))
-        errorReport.append("SDK Version: ")
-        errorReport.append(Build.VERSION.SDK_INT)
-        errorReport.append("\n")
-        errorReport.append("Release: ")
-        errorReport.append(Build.VERSION.RELEASE)
-        errorReport.append("\n")
-
+        val errorReport = LogGenerator(context!!).generateFromException(e)
         saveLogFile(errorReport)
         try {
             Thread.sleep(3000)
@@ -71,10 +34,9 @@ class SAFCrashHandler: Thread.UncaughtExceptionHandler {
     }
 
     @SuppressLint("SimpleDateFormat")
-    fun saveLogFile (log: StringBuilder) {
+    private fun saveLogFile (log: StringBuilder) {
         val fileName = SimpleDateFormat("yyyyMMdd-HHmmss").format(Date()) + ".log"
         val dirFile = context!!.getExternalFilesDir(null)!!
-        //TODO: fix toast not appearing
         Thread {
             Looper.prepare()
             Toast.makeText(context, "Error occurred, log stored at " + dirFile.absolutePath + "/$fileName", Toast.LENGTH_LONG).show()

@@ -11,7 +11,7 @@
     <string name="permission_floating_denied">Drawing permission denied.</string>
     <string name="permission_floating_check">Check display permission</string>
     <string name="done_hint">All ready! Open Poweramp, start playing, click the notification and enjoy!</string>
-    <string name="done_extra">Note:\nWhen lyrics delay,  try pausing and resuming playing. By the way, delay caused by Poweramp may also be the cause, and Poweramp only reports position metered in second, thus when the lyrics go too fast or are at near the middle of a second (e.g. a lyric starting from 00:01.50) there will unavoidably exist delay. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
+    <string name="done_extra">Note:\nWhen lyrics delay, try pausing and resuming playing. By the way, delay caused by Poweramp may also be the cause, and Poweramp only reports position metered in second, thus when the lyrics go too fast or are at near the middle of a second (e.g. a lyric starting from 00:01.50) there will unavoidably exist delay. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
 
     <string name="notification_entrance_channel_name">Entrance</string>
     <string name="notification_message_hide">Click to hide</string>
@@ -24,7 +24,21 @@
 
     <string name="no_lrc_hint">WANTED: Lyrics</string>
 
-    <string name="preference_anim">Lyric animation</string>
-    <string name="preference_anim_duration">Duration</string>
-    <string name="preference_anim_duration_description">Duration of scroll, in milliseconds</string>
+    <string name="preference_ui">UI</string>
+    <string name="preference_ui_duration">Animation duration</string>
+    <string name="preference_ui_duration_description">Default is 250 ms, current:\u0020</string>
+    <string name="preference_ui_height">Window height</string>
+    <string name="preference_ui_height_description">Default is 36 dp, current:\u0020</string>
+    <string name="preference_ui_text">Lyric color</string>
+    <string name="preference_experimental">Experimental features</string>
+    <string name="preference_experimental_legacy">File access in legacy mode</string>
+    <string name="preference_experimental_legacy_description">(Android 10 only) May be useful if normal version is not working, but please also report when that happens</string>
+    <string name="preference_experimental_encoding">Use GB18030 encoding</string>
+    <string name="preference_experimental_encoding_description">Possibly fix problem of garbled lyrics downloaded from QQ music</string>
+    <string name="preference_experimental_report">Report problem</string>
+    <string name="preference_experimental_report_description">Generate a detailed log of what might cause problems (not including personal information)</string>
+    <string name="preference_after_restart">Things won\'t get changed until app restarts.</string>
+    <string name="preference_after_reload">Things won\'t get changed until lyrics reload.</string>
+    <string name="preference_default">default</string>
+    <string name="error">Something wrong occurred</string>
 </resources>
