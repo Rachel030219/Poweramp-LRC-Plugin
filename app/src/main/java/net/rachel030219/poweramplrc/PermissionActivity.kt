@@ -41,14 +41,9 @@ class PermissionActivity: AppCompatActivity() {
                 }
             })
         // Request permissions
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            permission_storage.visibility = View.GONE
-            storage = true
-        } else {
-            permission_storage_check.setOnClickListener {
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSION)
-                }
+        permission_storage_check.setOnClickListener {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSION)
             }
         }
         permission_floating_check.setOnClickListener {

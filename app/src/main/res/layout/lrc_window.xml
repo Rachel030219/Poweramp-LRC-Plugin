@@ -30,7 +30,7 @@
             android:layout_marginEnd="28dp"
             android:layout_marginVertical="8dp"
             app:lrcAnimationDuration="250"
-            app:lrcCurrentTextColor="@color/lrc_current"
+            app:lrcCurrentTextColor="@color/lrc_current_red"
             app:lrcDividerHeight="20dp"
             app:lrcLabel="@string/no_lrc_hint"
             app:lrcNormalTextColor="@color/lrc_normal"

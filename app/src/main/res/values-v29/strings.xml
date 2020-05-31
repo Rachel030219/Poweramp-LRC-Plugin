@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_storage_hint">Storage permission(read only, legacy mode only) is required to fetch your .lrc files.</string>
+</resources>

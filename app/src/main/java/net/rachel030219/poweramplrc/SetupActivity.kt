@@ -21,6 +21,9 @@ class SetupActivity: AppCompatActivity() {
         setContentView(R.layout.activity_setup)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             main_old.visibility = View.VISIBLE
+            showGoToConfig()
+        } else if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && Settings.canDrawOverlays(applicationContext)) {
+            showGoToConfig()
         }
 
         // Initialize SetupWizardLayout
@@ -50,8 +53,8 @@ class SetupActivity: AppCompatActivity() {
                         finish()
                     }
                     else {
-                        if ((checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) && Settings.canDrawOverlays(applicationContext)) {
-                            startActivity(Intent(this@SetupActivity, DoneActivity::class.java))
+                        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && Settings.canDrawOverlays(applicationContext)) {
+                            startActivity(Intent(this@SetupActivity, ConfigurationActivity::class.java))
                             finish()
                         }
                         else {
@@ -61,5 +64,8 @@ class SetupActivity: AppCompatActivity() {
                     }
                 }
             })
+    }
+    private fun showGoToConfig() {
+        main_configuration.visibility = View.VISIBLE
     }
 }

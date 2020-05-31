@@ -1,6 +1,7 @@
 package net.rachel030219.poweramplrc
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,8 @@ import kotlin.collections.ArrayList
 
 import androidx.preference.*
 import dev.sasikanth.colorsheet.ColorSheet
+import java.io.BufferedWriter
+import java.io.OutputStreamWriter
 
 class ConfigurationFragment: PreferenceFragmentCompat() {
     private val CREATE_LOG = 1000
@@ -87,8 +90,20 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "text/plain"
-            putExtra(Intent.EXTRA_TITLE,  SimpleDateFormat("yyyyMMdd-HHmmss").format(Date()) + ".log")
+            putExtra(Intent.EXTRA_TITLE,  SimpleDateFormat("yyyyMMdd-HHmmss").format(Date()) + ".txt")
         }
         startActivityForResult(intent, CREATE_LOG)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == CREATE_LOG && resultCode == Activity.RESULT_OK) {
+            context?.contentResolver?.openOutputStream(data?.data!!).use {
+                BufferedWriter(OutputStreamWriter(it!!)).append(LogGenerator(context!!).generate()).run {
+                    flush()
+                    close()
+                }
+            }
+            Toast.makeText(context, "Done, stored at ${data?.data}", Toast.LENGTH_SHORT).show()
+        }
     }
 }
