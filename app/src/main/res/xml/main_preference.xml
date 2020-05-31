@@ -6,20 +6,23 @@
 
         <EditTextPreference
             app:key="duration"
-            app:title="@string/preference_ui_duration" />
+            app:title="@string/preference_ui_duration"
+            app:enabled="false" />
 
         <EditTextPreference
             app:key="height"
-            app:title="@string/preference_ui_height"/>
+            app:title="@string/preference_ui_height"
+            app:enabled="false"/>
 
         <Preference
             app:key="textColor"
-            app:title="@string/preference_ui_text"/>
+            app:title="@string/preference_ui_text"
+            app:enabled="false"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:key="@string/preference_experimental">
+        app:title="@string/preference_experimental">
 
         <SwitchPreferenceCompat
             app:key="legacy"

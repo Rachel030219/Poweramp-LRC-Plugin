@@ -16,10 +16,12 @@ import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
+import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
 import me.wcy.lrcview.LrcView
 import java.io.File
 import java.io.FileInputStream
+import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -94,19 +96,20 @@ object LrcWindow {
         this.extras = extras
         val path = extractAndReplaceExt(extras.getString(PowerampAPI.Track.PATH)!!)
         val lrc: StringBuilder = StringBuilder()
+        val encoding = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("encoding", false)) Charset.availableCharsets()["GB18030"]!! else Charsets.UTF_8
         if (nowPlayingFile != path) {
             nowPlayingFile = path
             if (extras.getBoolean("saf")) {
                 if (extras.getBoolean("safFound") && DocumentFile.fromSingleUri(context, Uri.parse(path)).run { this?.exists() == true }) {
                     val ins = context.contentResolver.openInputStream(Uri.parse(path))
-                    ins?.bufferedReader()?.use { lrc.append(it.readText()) }
+                    ins?.bufferedReader( charset = encoding)?.use { lrc.append(it.readText()) }
                 } else {
                     lrc.append(context.resources.getString(R.string.no_lrc_hint))
                 }
             } else {
                 val file = File(path)
                 if (file.exists())
-                    FileInputStream(file).bufferedReader().use { lrc.append(it.readText()) }
+                    FileInputStream(file).bufferedReader( charset = encoding ).use { lrc.append(it.readText()) }
             }
             layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrc.toString())
         }
