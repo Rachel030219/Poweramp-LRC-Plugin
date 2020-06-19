@@ -31,14 +31,14 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                 colors.add(resources.getColor(color))
         }
         findPreference<Preference>("color")?.setOnPreferenceClickListener {
-            ColorSheet().colorPicker( colors = colors.toIntArray(), listener = { color ->
+            ColorSheet().colorPicker(colors = colors.toIntArray(), listener = { color ->
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("color", color).apply()
-            } ).show(fragmentManager!!)
+            }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("color", colors[0])).show(fragmentManager!!)
             true
         }
         findPreference<SwitchPreferenceCompat>("legacy")?.apply{
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                // isEnabled = true
+                isEnabled = true
             }
             setOnPreferenceChangeListener { _, _ ->
                 Toast.makeText(context, R.string.preference_after_restart, Toast.LENGTH_SHORT).show()

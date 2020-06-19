@@ -66,8 +66,11 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             if (!path!!.startsWith("/")) {
                 extras.putBoolean("saf", true)
                 val key = path.substringBefore('/')
+                // Attempt to read path from cache
                 if (!mPathMap.containsKey(path)) {
+                    // Attempt to read key from cache
                     if (!mKeyMap.containsKey(key)) {
+                        // TODO: apply legacy mode
                         val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
                         if (keyPref.contains(key)) {
                             val pathValue = keyPref.getString(key, key)!!

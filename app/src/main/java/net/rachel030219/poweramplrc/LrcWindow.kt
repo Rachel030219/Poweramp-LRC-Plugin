@@ -102,14 +102,14 @@ object LrcWindow {
             if (extras.getBoolean("saf")) {
                 if (extras.getBoolean("safFound") && DocumentFile.fromSingleUri(context, Uri.parse(path)).run { this?.exists() == true }) {
                     val ins = context.contentResolver.openInputStream(Uri.parse(path))
-                    ins?.bufferedReader( charset = encoding)?.use { lrc.append(it.readText()) }
+                    ins?.bufferedReader(charset = encoding)?.use { lrc.append(it.readText()) }
                 } else {
                     lrc.append(context.resources.getString(R.string.no_lrc_hint))
                 }
             } else {
                 val file = File(path)
                 if (file.exists())
-                    FileInputStream(file).bufferedReader( charset = encoding ).use { lrc.append(it.readText()) }
+                    FileInputStream(file).bufferedReader(charset = encoding).use { lrc.append(it.readText()) }
             }
             layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrc.toString())
         }

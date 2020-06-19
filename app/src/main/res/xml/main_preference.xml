@@ -28,8 +28,7 @@
             app:key="legacy"
             app:title="@string/preference_experimental_legacy"
             app:summary="@string/preference_experimental_legacy_description"
-            app:defaultValue="false"
-            app:enabled="false"/>
+            app:defaultValue="false"/>
 
         <SwitchPreferenceCompat
             app:key="encoding"
