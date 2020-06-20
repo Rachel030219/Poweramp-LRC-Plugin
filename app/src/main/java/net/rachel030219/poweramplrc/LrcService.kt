@@ -7,13 +7,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
+import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
 
@@ -62,32 +65,39 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         }
         if (intent.hasExtra("request")) {
             val extras = intent.extras
-            val path = extras!!.getString(PowerampAPI.Track.PATH)
-            if (!path!!.startsWith("/")) {
-                extras.putBoolean("saf", true)
-                val key = path.substringBefore('/')
+            val path = extras?.getString(PowerampAPI.Track.PATH)
+            val key = path!!.substringBefore('/')
+            // Path process
+            if (!path.startsWith("/")) {
+                extras.putBoolean("legacy", true)
                 // Attempt to read path from cache
                 if (!mPathMap.containsKey(path)) {
                     // Attempt to read key from cache
                     if (!mKeyMap.containsKey(key)) {
                         // TODO: apply legacy mode
-                        val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
-                        if (keyPref.contains(key)) {
-                            val pathValue = keyPref.getString(key, key)!!
-                            if (checkSAFUsability(pathValue)) {
-                                val finalPath = findFile(path, pathValue)
-                                if (finalPath != null) {
-                                    extras.putString(PowerampAPI.Track.PATH, finalPath)
-                                    extras.putBoolean("safFound", true)
-                                    mPathMap[path] = finalPath
-                                } else
-                                    extras.putBoolean("safFound", false)
-                                mKeyMap[key] = pathValue
+                        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)){
+                            val finalPath = path.replace(key, Environment.getExternalStorageDirectory().toString())
+                            extras.putString(PowerampAPI.Track.PATH, finalPath)
+                            mPathMap[path] = finalPath
+                        } else {
+                            val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
+                            if (keyPref.contains(key)) {
+                                val pathValue = keyPref.getString(key, key)!!
+                                if (checkSAFUsability(pathValue)) {
+                                    val finalPath = findFile(path, pathValue)
+                                    if (finalPath != null) {
+                                        extras.putString(PowerampAPI.Track.PATH, finalPath)
+                                        extras.putBoolean("safFound", true)
+                                        mPathMap[path] = finalPath
+                                    } else
+                                        extras.putBoolean("safFound", false)
+                                    mKeyMap[key] = pathValue
+                                } else {
+                                    startPermissionRequest(key)
+                                }
                             } else {
                                 startPermissionRequest(key)
                             }
-                        } else {
-                            startPermissionRequest(key)
                         }
                     } else {
                         if (checkSAFUsability(mKeyMap.getValue(key))) {
@@ -107,6 +117,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                     extras.putBoolean("safFound", true)
                 }
             }
+            // End of path process
             when (intent.getIntExtra("request", 0)) {
                 LrcWindow.REQUEST_WINDOW -> {
                     timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
