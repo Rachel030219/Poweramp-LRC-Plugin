@@ -74,7 +74,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                 if (!mPathMap.containsKey(path)) {
                     // Attempt to read key from cache
                     if (!mKeyMap.containsKey(key)) {
-                        // TODO: apply legacy mode
                         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)){
                             val finalPath = path.replace(key, Environment.getExternalStorageDirectory().toString())
                             extras.putString(PowerampAPI.Track.PATH, finalPath)
