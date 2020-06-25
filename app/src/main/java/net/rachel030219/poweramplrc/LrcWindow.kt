@@ -31,7 +31,7 @@ object LrcWindow {
     var displaying = false
     var initialized = false
     var lastY: Float = 0f
-    var lastYForClick: Float = 0F
+    var lastYForClick: Float = 0F // used to determine being clicked
     var extras: Bundle? = null
     var nowPlayingFile = ""
     const val REQUEST_WINDOW = 1
@@ -40,16 +40,17 @@ object LrcWindow {
     @SuppressLint("ClickableViewAccessibility")
     fun initialize(context: Context, layout: View){
         window = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        params = WindowManager.LayoutParams()
-        params!!.width = WindowManager.LayoutParams.MATCH_PARENT
-        params!!.height = WindowManager.LayoutParams.WRAP_CONTENT
-        params!!.gravity = Gravity.TOP
-        params!!.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            params!!.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        else
-            params!!.type = WindowManager.LayoutParams.TYPE_TOAST
-        params!!.format = PixelFormat.TRANSLUCENT
+        params = WindowManager.LayoutParams().apply {
+            width = WindowManager.LayoutParams.MATCH_PARENT
+            height = WindowManager.LayoutParams.WRAP_CONTENT
+            gravity = Gravity.TOP
+            flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                type = WindowManager.LayoutParams.TYPE_TOAST
+            format = PixelFormat.TRANSLUCENT
+        }
         val closeButton = layout.findViewById<Button>(R.id.close)
         var showingBg = true
         layout.setOnClickListener {
@@ -99,8 +100,8 @@ object LrcWindow {
         val encoding = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("encoding", false)) Charset.availableCharsets()["GB18030"]!! else Charsets.UTF_8
         if (nowPlayingFile != path) {
             nowPlayingFile = path
-            if (extras.getBoolean("saf")) {
-                if (extras.getBoolean("safFound") && DocumentFile.fromSingleUri(context, Uri.parse(path)).run { this?.exists() == true }) {
+            if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
+                if (extras.getBoolean("safFound") && DocumentFile.fromSingleUri(context, Uri.parse(path))?.run { isFile && canRead() }!!) {
                     val ins = context.contentResolver.openInputStream(Uri.parse(path))
                     ins?.bufferedReader(charset = encoding)?.use { lrc.append(it.readText()) }
                 } else {
@@ -170,6 +171,7 @@ object LrcWindow {
     }
 
     private fun extractAndReplaceExt (oldString: String): String {
+        // TODO: fix not working with folder as root directory
         return StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
     }
 }

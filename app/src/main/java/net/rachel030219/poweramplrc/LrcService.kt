@@ -9,10 +9,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.IBinder
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
@@ -27,7 +29,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var remoteTrackTime: RemoteTrackTime? = null
     private var mKeyMap = mutableMapOf<String, String>()
     private var mPathMap = mutableMapOf<String, String>()
-    private var nowPlayingPath = ""
 
     companion object {
         val REQUEST_PATH = 10
@@ -37,6 +38,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         return null
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("InflateParams")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (mWindow == null) {
@@ -44,8 +46,9 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         }
         if (intent!!.getBooleanExtra("foreground", false)) {
             val notificationIntent = Intent().apply {
-                action = "android.settings.APP_NOTIFICATION_SETTINGS"
-                putExtra("android.provider.extra.APP_PACKAGE", packageName)
+                action = Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS
+                putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                putExtra(Settings.EXTRA_CHANNEL_ID, "PLACEHOLDER")
             }
             val pendingIntent = PendingIntent.getActivity(
                 this,
@@ -72,7 +75,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                 extras.putBoolean("legacy", true)
                 // Attempt to read path from cache
                 if (!mPathMap.containsKey(path)) {
-                    // Attempt to read key from cache
+                    // Attempt to read corresponding path for key from cache
                     if (!mKeyMap.containsKey(key)) {
                         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)){
                             val finalPath = path.replace(key, Environment.getExternalStorageDirectory().toString())
@@ -80,8 +83,11 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                             mPathMap[path] = finalPath
                         } else {
                             val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
+                            // 检测是否已经存入了 key 对应的 content URI
                             if (keyPref.contains(key)) {
+                                // 若已存入则直接读取存储值
                                 val pathValue = keyPref.getString(key, key)!!
+                                // 检测可用性
                                 if (checkSAFUsability(pathValue)) {
                                     val finalPath = findFile(path, pathValue)
                                     if (finalPath != null) {
@@ -218,20 +224,23 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     }
 
     private fun findFile (path: String, pathValue: String): String?{
-        val treeFile = DocumentFile.fromTreeUri(this, Uri.parse(pathValue))
-        var subTreeFile: DocumentFile? = null
+        var treeFile = DocumentFile.fromTreeUri(this, Uri.parse(pathValue))
+        var file : DocumentFile? = null
         val folders = path.split("/")
         folders.forEach {
-            if (treeFile?.findFile(it) != null) {
-                subTreeFile = treeFile.findFile(it)
-            } else {
-                subTreeFile = subTreeFile?.findFile(it)
-                if (subTreeFile != null) {
-                    if (subTreeFile!!.isFile) {
-                        return@findFile subTreeFile!!.uri.toString()
-                    }
-                }
+            val subTreeFile = treeFile?.findFile(it)
+            // 如果能找到名字对应的文件
+            if (subTreeFile != null) {
+                // 如果是文件夹，下次循环时步进
+                if (subTreeFile.isDirectory)
+                    treeFile = subTreeFile
+                // 如果是文件，直接对应为该文件
+                else if (subTreeFile.isFile)
+                    file = subTreeFile
             }
+        }
+        if (file != null) {
+            return file!!.uri.toString()
         }
         return null
     }
