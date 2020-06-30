@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="permission_storage_hint">要獲取 .lrc 檔案，需要儲存權限（只讀，古董模式限定）。</string>
+
+</resources>
