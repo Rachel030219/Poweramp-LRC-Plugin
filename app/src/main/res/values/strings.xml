@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Poweramp LRC Plugin</string>
-    <string name="main_message">This is a simple app to make up for Poweramp\'s lack of local lyrics parser function. Before we start, some permissions are required to guarantee it works correctly. \nAlso, if all permissions are granted properly, next time a configuration page will be loaded.</string>
-    <string name="main_old">Your Android version does not require any permission to be requested by the app, so nothing will get changed.</string>
+    <string name="main_message">This is a simple app to fix Poweramp\'s lack of local LRC lyrics support. Before we start, some permissions are required to work correctly. \nAfter permissions are granted, a configuration page will appear.</string>
+    <string name="main_old">Your Android version does not require any permission to be requested.</string>
     <string name="main_configuration">All permissions are ready, click next to make customizations!</string>
     <string name="permission_storage_hint">Storage permission(read only) is required to fetch your .lrc files.</string>
     <string name="permission_storage_granted">Storage permission granted.</string>
@@ -12,25 +12,25 @@
     <string name="permission_floating_denied">Drawing permission denied.</string>
     <string name="permission_floating_check">Check display permission</string>
     <string name="done_hint">All ready! Open Poweramp, start playing, click the notification and enjoy!</string>
-    <string name="done_extra">Note:\nWhen lyrics delay, try pausing and resuming playing. By the way, delay caused by Poweramp may also be the cause, and Poweramp only reports position metered in second, thus when the lyrics go too fast or are at near the middle of a second (e.g. a lyric starting from 00:01.50) there will unavoidably exist delay. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
+    <string name="done_extra">Note: \nWhen lyrics delay, try pausing and resuming playing. Delay caused by Poweramp may also be the cause, as Poweramp reports position in seconds, thus when the lyrics change too often or are at the middle of a second there will unavoidably exist delay. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
 
     <string name="notification_entrance_channel_name">Entrance</string>
     <string name="notification_message_hide">Click to hide</string>
     <string name="notification_message_show">Click to show</string>
     <string name="notification_path_channel_name">Path setting</string>
     <string name="notification_path_title">Permission needed</string>
-    <string name="notification_path_message">Please specify a folder for\u0020</string>
+    <string name="notification_path_message">Please specify a folder for \\u0020</string>
     <string name="notification_placeholder_channel_name">Placeholder</string>
     <string name="notification_placeholder_message">Running in the background (this notification can be disabled).</string>
 
-    <string name="no_lrc_hint">WANTED: Lyrics</string>
+    <string name="no_lrc_hint">Lyrics not found</string>
 
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">Animation duration</string>
     <string name="preference_ui_duration_description">Default is 250 ms, current:\u0020</string>
     <string name="preference_ui_height">Window height</string>
     <string name="preference_ui_height_description">Default is 36 dp, current:\u0020</string>
-    <string name="preference_ui_text">Lyric color</string>
+    <string name="preference_ui_text">Lyrics color</string>
     <string name="preference_experimental">Experimental features</string>
     <string name="preference_experimental_legacy">File access in legacy mode</string>
     <string name="preference_experimental_legacy_description">(Android 10 only) May be useful if normal version is not working, but please also report when that happens</string>
