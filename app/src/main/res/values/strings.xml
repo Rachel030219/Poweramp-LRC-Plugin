@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Poweramp LRC Plugin</string>
-    <string name="main_message">This is a simple app to fix Poweramp\'s lack of local LRC lyrics support. Before we start, some permissions are required to work correctly. After permissions are granted, a configuration page will appear.</string>
+    <string name="main_message">This is a simple app to fix Poweramp\'s lack of local LRC lyrics support. Before we start, some permissions are required to work correctly. \nAfter permissions are granted, a configuration page will appear.</string>
     <string name="main_old">Your Android version does not require any permission to be requested.</string>
     <string name="main_configuration">All permissions are ready, click next to make customizations!</string>
     <string name="permission_storage_hint">Storage permission(read only) is required to fetch your .lrc files.</string>
@@ -12,7 +12,7 @@
     <string name="permission_floating_denied">Drawing permission denied.</string>
     <string name="permission_floating_check">Check display permission</string>
     <string name="done_hint">All ready! Open Poweramp, start playing, click the notification and enjoy!</string>
-    <string name="done_extra">Note: When lyrics delay, try pausing and resuming playing. Delay caused by Poweramp may also be the cause, as Poweramp reports position in seconds, thus when the lyrics change too often or are at the middle of a second there will unavoidably exist delay. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
+    <string name="done_extra">Note: \nWhen lyrics delay, try pausing and resuming playing. Delay caused by Poweramp may also be the cause, as Poweramp reports position in seconds, thus when the lyrics change too often or are at the middle of a second there will unavoidably exist delay. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
 
     <string name="notification_entrance_channel_name">Entrance</string>
     <string name="notification_message_hide">Click to hide</string>
