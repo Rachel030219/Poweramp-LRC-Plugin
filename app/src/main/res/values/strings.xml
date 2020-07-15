@@ -19,7 +19,7 @@
     <string name="notification_message_show">Click to show</string>
     <string name="notification_path_channel_name">Path setting</string>
     <string name="notification_path_title">Permission needed</string>
-    <string name="notification_path_message">Please specify a folder for \\u0020</string>
+    <string name="notification_path_message">Please specify a folder for\u0020</string>
     <string name="notification_placeholder_channel_name">Placeholder</string>
     <string name="notification_placeholder_message">Running in the background (this notification can be disabled).</string>
 

@@ -72,12 +72,13 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             val key = path!!.substringBefore('/')
             // Path process
             if (!path.startsWith("/")) {
-                extras.putBoolean("legacy", true)
+                extras.putBoolean("saf", true)
                 // Attempt to read path from cache
                 if (!mPathMap.containsKey(path)) {
                     // Attempt to read corresponding path for key from cache
                     if (!mKeyMap.containsKey(key)) {
                         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)){
+                            extras.putBoolean("legacy", true)
                             val finalPath = path.replace(key, Environment.getExternalStorageDirectory().toString())
                             extras.putString(PowerampAPI.Track.PATH, finalPath)
                             mPathMap[path] = finalPath
@@ -226,22 +227,28 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private fun findFile (path: String, pathValue: String): String?{
         var treeFile = DocumentFile.fromTreeUri(this, Uri.parse(pathValue))
         var file : DocumentFile? = null
-        val folders = path.split("/")
+        val folders = extractAndReplaceExt(path).split("/")
         folders.forEach {
             val subTreeFile = treeFile?.findFile(it)
             // 如果能找到名字对应的文件
             if (subTreeFile != null) {
                 // 如果是文件夹，下次循环时步进
-                if (subTreeFile.isDirectory)
+                if (subTreeFile.isDirectory) {
                     treeFile = subTreeFile
+                }
                 // 如果是文件，直接对应为该文件
-                else if (subTreeFile.isFile)
+                else if (subTreeFile.isFile) {
                     file = subTreeFile
+                }
             }
         }
         if (file != null) {
             return file!!.uri.toString()
         }
         return null
+    }
+
+    private fun extractAndReplaceExt (oldString: String): String {
+        return StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
     }
 }

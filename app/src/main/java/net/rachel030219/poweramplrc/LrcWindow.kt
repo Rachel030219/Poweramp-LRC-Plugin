@@ -95,7 +95,7 @@ object LrcWindow {
 
     fun refresh(layout: View, extras: Bundle, popup: Boolean, context: Context) {
         this.extras = extras
-        val path = extractAndReplaceExt(extras.getString(PowerampAPI.Track.PATH)!!)
+        val path = extras.getString(PowerampAPI.Track.PATH)!!
         val lrc: StringBuilder = StringBuilder()
         val encoding = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("encoding", false)) Charset.availableCharsets()["GB18030"]!! else Charsets.UTF_8
         if (nowPlayingFile != path) {
@@ -168,10 +168,5 @@ object LrcWindow {
             setContentIntent(pendingIntent)
         }
         NotificationManagerCompat.from(context).notify(212, builder.build())
-    }
-
-    private fun extractAndReplaceExt (oldString: String): String {
-        // TODO: fix not working with folder as root directory
-        return StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
     }
 }
