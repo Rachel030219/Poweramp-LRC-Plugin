@@ -228,17 +228,28 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         var treeFile = DocumentFile.fromTreeUri(this, Uri.parse(pathValue))
         var file : DocumentFile? = null
         val folders = extractAndReplaceExt(path).split("/")
-        folders.forEach {
-            val subTreeFile = treeFile?.findFile(it)
-            // 如果能找到名字对应的文件
-            if (subTreeFile != null) {
-                // 如果是文件夹，下次循环时步进
-                if (subTreeFile.isDirectory) {
-                    treeFile = subTreeFile
-                }
-                // 如果是文件，直接对应为该文件
-                else if (subTreeFile.isFile) {
-                    file = subTreeFile
+        val accessFolderName = treeFile?.name
+        var startingIndex = 0
+        if (accessFolderName in folders) {
+            // 给予权限的文件夹为歌曲路径中的文件夹，那么在文件夹中开始搜索
+            startingIndex = folders.indexOf(accessFolderName)
+
+        }
+        // 给予权限的文件夹并非歌曲路径中的文件夹，有两种可能
+        // 一种是根文件夹以 UID 命名，一种是其它文件夹，除非确保非根文件夹，否则只应该从头到尾循环
+        folders.forEachIndexed {index, element ->
+            if (index > startingIndex) {
+                val subTreeFile = treeFile?.findFile(element)
+                // 如果能找到名字对应的文件
+                if (subTreeFile != null) {
+                    // 如果是文件夹，下次循环时步进
+                    if (subTreeFile.isDirectory) {
+                        treeFile = subTreeFile
+                    }
+                    // 如果是文件，直接对应为该文件
+                    else if (subTreeFile.isFile) {
+                        file = subTreeFile
+                    }
                 }
             }
         }

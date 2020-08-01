@@ -14,6 +14,11 @@
             app:title="@string/preference_ui_height"
             app:enabled="false"/>
 
+        <EditTextPreference
+            app:key="textSize"
+            app:title="@string/preference_ui_textsize"
+            app:enabled="false"/>
+
         <Preference
             app:key="textColor"
             app:title="@string/preference_ui_text"

@@ -22,7 +22,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
     private val CREATE_LOG = 1000
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
-        applyInitialization(findPreference("duration"), findPreference("height"))
+        applyInitialization(findPreference("duration"), findPreference("height"), findPreference("textSize"))
         val colors: MutableList<Int> = ArrayList()
         for (color in arrayOf(R.color.lrc_current_red, R.color.lrc_current_blue, R.color.lrc_current_green, R.color.lrc_current_yellow, R.color.lrc_current_purple)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -65,6 +65,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                 val description = when (key) {
                     "duration" -> resources.getString(R.string.preference_ui_duration_description)
                     "height" -> resources.getString(R.string.preference_ui_height_description)
+                    "textSize" -> resources.getString(R.string.preference_ui_textsize_description)
                     else -> resources.getString(R.string.error)
                 }
                 summaryProvider = Preference.SummaryProvider<EditTextPreference> { preference ->

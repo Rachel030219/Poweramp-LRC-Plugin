@@ -45,13 +45,14 @@ object LrcWindow {
             height = WindowManager.LayoutParams.WRAP_CONTENT
             gravity = Gravity.TOP
             flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             else
-                type = WindowManager.LayoutParams.TYPE_TOAST
+                WindowManager.LayoutParams.TYPE_TOAST
             format = PixelFormat.TRANSLUCENT
         }
         val closeButton = layout.findViewById<Button>(R.id.close)
+        val lyrics = layout.findViewById<LrcView>(R.id.lrcview)
         var showingBg = true
         layout.setOnClickListener {
             if (showingBg) {

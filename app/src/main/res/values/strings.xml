@@ -30,6 +30,8 @@
     <string name="preference_ui_duration_description">Default is 250 ms, current:\u0020</string>
     <string name="preference_ui_height">Window height</string>
     <string name="preference_ui_height_description">Default is 36 dp, current:\u0020</string>
+    <string name="preference_ui_textsize">Text size</string>
+    <string name="preference_ui_textsize_description">Default is 18 sp, current:\u0020</string>
     <string name="preference_ui_text">Lyrics color</string>
     <string name="preference_experimental">Experimental features</string>
     <string name="preference_experimental_legacy">File access in legacy mode</string>

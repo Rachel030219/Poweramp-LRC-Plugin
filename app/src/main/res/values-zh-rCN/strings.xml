@@ -31,6 +31,8 @@
     <string name="preference_ui_duration_description">默认 250 毫秒，目前\u0020</string>
     <string name="preference_ui_height">窗口高度</string>
     <string name="preference_ui_height_description">默认 36 dp，目前\u0020</string>
+    <string name="preference_ui_textsize">字体大小</string>
+    <string name="preference_ui_textsize_description">默认 18 sp, 目前\u0020</string>
     <string name="preference_ui_text">歌词颜色</string>
     <string name="preference_experimental">实验性功能</string>
     <string name="preference_experimental_legacy">使用古董文件访问方案</string>
