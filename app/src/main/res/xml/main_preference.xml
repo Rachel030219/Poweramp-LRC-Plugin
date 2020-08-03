@@ -5,24 +5,16 @@
         app:title="@string/preference_ui">
 
         <EditTextPreference
-            app:key="duration"
-            app:title="@string/preference_ui_duration"
-            app:enabled="false" />
-
-        <EditTextPreference
             app:key="height"
-            app:title="@string/preference_ui_height"
-            app:enabled="false"/>
+            app:title="@string/preference_ui_height"/>
 
         <EditTextPreference
             app:key="textSize"
-            app:title="@string/preference_ui_textsize"
-            app:enabled="false"/>
+            app:title="@string/preference_ui_textsize"/>
 
         <Preference
             app:key="textColor"
-            app:title="@string/preference_ui_text"
-            app:enabled="false"/>
+            app:title="@string/preference_ui_text"/>
 
     </PreferenceCategory>
 

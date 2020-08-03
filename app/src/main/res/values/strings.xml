@@ -29,7 +29,7 @@
     <string name="preference_ui_duration">Animation duration</string>
     <string name="preference_ui_duration_description">Default is 250 ms, current:\u0020</string>
     <string name="preference_ui_height">Window height</string>
-    <string name="preference_ui_height_description">Default is 36 dp, current:\u0020</string>
+    <string name="preference_ui_height_description">Default is 64 dp, current:\u0020</string>
     <string name="preference_ui_textsize">Text size</string>
     <string name="preference_ui_textsize_description">Default is 18 sp, current:\u0020</string>
     <string name="preference_ui_text">Lyrics color</string>
@@ -40,7 +40,7 @@
     <string name="preference_experimental_encoding_description">Possibly fix problem of garbled lyrics downloaded from QQ music</string>
     <string name="preference_experimental_report">Report problem</string>
     <string name="preference_experimental_report_description">Generate a detailed log of what might cause problems (not including personal information)</string>
-    <string name="preference_after_restart">Things won\'t get changed until app restarts.</string>
+    <string name="preference_after_restart">Things won\'t get changed until window reopens.</string>
     <string name="preference_after_reload">Things won\'t get changed until lyrics reload.</string>
     <string name="preference_default">default</string>
     <string name="error">Something wrong occurred</string>

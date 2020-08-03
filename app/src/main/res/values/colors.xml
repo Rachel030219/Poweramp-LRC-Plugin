@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="lrc_current_red">#FF1515</color>
-    <color name="lrc_current_blue">#3EC6F1</color>
-    <color name="lrc_current_green">#44E497</color>
-    <color name="lrc_current_yellow">#F6B532</color>
-    <color name="lrc_current_purple">#A851F0</color>
+    <color name="lrc_current_blue">#39B1D6</color>
+    <color name="lrc_current_green">#3ECD88</color>
+    <color name="lrc_current_yellow">#DCA435</color>
+    <color name="lrc_current_purple">#8E47C8</color>
     <color name="lrc_normal">#BDBDBD</color>
 
     <color name="text_success">#00C851</color>

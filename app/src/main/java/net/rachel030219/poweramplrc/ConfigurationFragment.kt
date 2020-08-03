@@ -22,7 +22,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
     private val CREATE_LOG = 1000
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
-        applyInitialization(findPreference("duration"), findPreference("height"), findPreference("textSize"))
+        applyInitialization(findPreference("height"), findPreference("textSize"))
         val colors: MutableList<Int> = ArrayList()
         for (color in arrayOf(R.color.lrc_current_red, R.color.lrc_current_blue, R.color.lrc_current_green, R.color.lrc_current_yellow, R.color.lrc_current_purple)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -30,10 +30,10 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
             else
                 colors.add(resources.getColor(color))
         }
-        findPreference<Preference>("color")?.setOnPreferenceClickListener {
+        findPreference<Preference>("textColor")?.setOnPreferenceClickListener {
             ColorSheet().colorPicker(colors = colors.toIntArray(), listener = { color ->
-                PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("color", color).apply()
-            }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("color", colors[0])).show(fragmentManager!!)
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("textColor", color).apply()
+            }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("textColor", colors[0])).show(fragmentManager!!)
             true
         }
         findPreference<SwitchPreferenceCompat>("legacy")?.apply{
@@ -63,7 +63,6 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         for (item in preferenceItems) {
             item?.apply {
                 val description = when (key) {
-                    "duration" -> resources.getString(R.string.preference_ui_duration_description)
                     "height" -> resources.getString(R.string.preference_ui_height_description)
                     "textSize" -> resources.getString(R.string.preference_ui_textsize_description)
                     else -> resources.getString(R.string.error)

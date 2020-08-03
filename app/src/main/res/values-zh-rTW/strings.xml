@@ -30,7 +30,7 @@
     <string name="preference_ui_duration">動畫時長</string>
     <string name="preference_ui_duration_description">預設 250 毫秒，目前\u0020</string>
     <string name="preference_ui_height">視窗高度</string>
-    <string name="preference_ui_height_description">預設 36 dp，目前\u0020</string>
+    <string name="preference_ui_height_description">預設 64 dp，目前\u0020</string>
     <string name="preference_ui_textsize">字體大小</string>
     <string name="preference_ui_textsize_description">預設 18 sp, 目前\u0020</string>
     <string name="preference_ui_text">歌詞顏色</string>
@@ -41,7 +41,7 @@
     <string name="preference_experimental_encoding_description">大概能解決 QQ 音樂自動下載的歌詞全是亂碼的問題</string>
     <string name="preference_experimental_report">報告問題</string>
     <string name="preference_experimental_report_description">產生一個包含了所有可能出問題的東西的日誌（不會包含個人資訊）</string>
-    <string name="preference_after_restart">將在應用程式重新啓動後生效。</string>
+    <string name="preference_after_restart">將在浮動視窗重新啓動後生效。</string>
     <string name="preference_after_reload">將在歌詞重新載入後生效。</string>
     <string name="preference_default">預設</string>
     <string name="error">發生了一點問題</string>
