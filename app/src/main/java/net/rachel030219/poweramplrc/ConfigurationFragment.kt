@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,10 +26,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         applyInitialization(findPreference("height"), findPreference("textSize"))
         val colors: MutableList<Int> = ArrayList()
         for (color in arrayOf(R.color.lrc_current_red, R.color.lrc_current_blue, R.color.lrc_current_green, R.color.lrc_current_yellow, R.color.lrc_current_purple)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                colors.add(resources.getColor(color, activity?.theme))
-            else
-                colors.add(resources.getColor(color))
+            colors.add(ResourcesCompat.getColor(resources, color, activity!!.theme))
         }
         findPreference<Preference>("textColor")?.setOnPreferenceClickListener {
             ColorSheet().colorPicker(colors = colors.toIntArray(), listener = { color ->

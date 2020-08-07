@@ -10,11 +10,15 @@ Your opinion matters a lot.
 
 ## Credit:
 
-[lrcview](https://github.com/wangchenyan/lrcview) by wangchenyan
-
+[lrcview](https://github.com/wangchenyan/lrcview) by wangchenyan 
 [PowerampAPI](https://github.com/maxmpz/powerampapi) by Maksim Petrov
-
+[ColorSheet](https://github.com/msasikanth/ColorSheet) by Sasikanth
+[SetupWizardLayout](https://github.com/iMeiji/SetupWizardLayout) by iMeiji
 [AndroidX](https://developer.android.com/jetpack/androidx) by Google
+
+#### Translations:
+
+Chinese (Traditional) from Fei Kuan
 
 ### LICENSE
 

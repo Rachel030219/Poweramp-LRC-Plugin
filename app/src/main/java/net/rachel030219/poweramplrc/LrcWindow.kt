@@ -8,7 +8,6 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -16,6 +15,7 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
@@ -91,11 +91,11 @@ object LrcWindow {
         // refresh settings
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         lrcView?.apply {
-            setNormalTextSize(spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-            setCurrentTextSize(spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-            setCurrentColor(preferences.getInt("textColor", (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) context.resources.getColor(R.color.lrc_current_red, context.theme) else context.resources.getColor(R.color.lrc_current_red))))
+            setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+            setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+            setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
             layoutParams = layoutParams.apply {
-                height = dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
+                height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
             }
         }
         var showingBg = true
@@ -116,7 +116,7 @@ object LrcWindow {
         if (nowPlayingFile != path) {
             nowPlayingFile = path
             if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
-                if (extras.getBoolean("safFound") && DocumentFile.fromSingleUri(context, Uri.parse(path))?.run { isFile && canRead() }!!) {
+                if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!) {
                     val ins = context.contentResolver.openInputStream(Uri.parse(path))
                     ins?.bufferedReader(charset = encoding)?.use { lrc.append(it.readText()) }
                 } else {
@@ -183,13 +183,5 @@ object LrcWindow {
             setContentIntent(pendingIntent)
         }
         NotificationManagerCompat.from(context).notify(212, builder.build())
-    }
-
-    // metrics converting
-    fun spToPx(sp: Float, context: Context): Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics)
-    }
-    fun dpToPx(dp: Float, context: Context): Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics)
     }
 }

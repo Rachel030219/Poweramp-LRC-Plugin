@@ -74,7 +74,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             if (!path.startsWith("/")) {
                 extras.putBoolean("saf", true)
                 // Attempt to read path from cache
-                if (!mPathMap.containsKey(path)) {
+                if (!mPathMap.containsKey(path) || !MiscUtil.checkSAFUsability(this, Uri.parse(mPathMap[path]))!!) {
                     // Attempt to read corresponding path for key from cache
                     if (!mKeyMap.containsKey(key)) {
                         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)){
@@ -115,6 +115,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                             } else
                                 extras.putBoolean("safFound", false)
                         } else {
+                            Log.d("TAG", "${mKeyMap.getValue(key)} 不可用")
                             startPermissionRequest(key)
                         }
                     }
