@@ -234,7 +234,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         if (accessFolderName in folders) {
             // 给予权限的文件夹为歌曲路径中的文件夹，那么在文件夹中开始搜索
             startingIndex = folders.indexOf(accessFolderName)
-
         }
         // 给予权限的文件夹并非歌曲路径中的文件夹，有两种可能
         // 一种是根文件夹以 UID 命名，一种是其它文件夹，除非确保非根文件夹，否则只应该从头到尾循环
