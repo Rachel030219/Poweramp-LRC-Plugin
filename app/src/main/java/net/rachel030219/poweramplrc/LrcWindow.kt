@@ -118,14 +118,14 @@ object LrcWindow {
             if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
                 if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!) {
                     val ins = context.contentResolver.openInputStream(Uri.parse(path))
-                    ins?.bufferedReader(charset = encoding)?.use { lrc.append(it.readText()) }
+                    ins?.bufferedReader(charset = encoding)?.apply { lrc.append(readText()) }?.close()
                 } else {
                     lrc.append(context.resources.getString(R.string.no_lrc_hint))
                 }
             } else {
                 val file = File(path)
                 if (file.exists())
-                    FileInputStream(file).bufferedReader(charset = encoding).use { lrc.append(it.readText()) }
+                    FileInputStream(file).bufferedReader(charset = encoding).apply { lrc.append(readText()) }.close()
             }
             layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrc.toString())
         }

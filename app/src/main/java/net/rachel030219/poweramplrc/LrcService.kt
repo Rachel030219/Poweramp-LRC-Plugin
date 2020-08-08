@@ -74,7 +74,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             if (!path.startsWith("/")) {
                 extras.putBoolean("saf", true)
                 // Attempt to read path from cache
-                if (!mPathMap.containsKey(path) || !MiscUtil.checkSAFUsability(this, Uri.parse(mPathMap[path]))!!) {
+                if (!mPathMap.containsKey(path)) {
                     // Attempt to read corresponding path for key from cache
                     if (!mKeyMap.containsKey(key)) {
                         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)){
@@ -89,7 +89,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 // 若已存入则直接读取存储值
                                 val pathValue = keyPref.getString(key, key)!!
                                 // 检测可用性
-                                if (checkSAFUsability(pathValue)) {
+                                if (checkSAFDirUsability(pathValue)) {
                                     val finalPath = findFile(path, pathValue)
                                     if (finalPath != null) {
                                         extras.putString(PowerampAPI.Track.PATH, finalPath)
@@ -106,7 +106,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                             }
                         }
                     } else {
-                        if (checkSAFUsability(mKeyMap.getValue(key))) {
+                        if (checkSAFDirUsability(mKeyMap.getValue(key))) {
                             val finalPath = findFile(path, mKeyMap.getValue(key))
                             if (finalPath != null) {
                                 extras.putString(PowerampAPI.Track.PATH, finalPath)
@@ -115,13 +115,34 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                             } else
                                 extras.putBoolean("safFound", false)
                         } else {
-                            Log.d("TAG", "${mKeyMap.getValue(key)} 不可用")
                             startPermissionRequest(key)
                         }
                     }
                 } else {
-                    extras.putString(PowerampAPI.Track.PATH, mPathMap.getValue(path))
-                    extras.putBoolean("safFound", true)
+                    var finalPath: String? = mPathMap.getValue(path)
+                    if (!MiscUtil.checkSAFUsability(this, Uri.parse(mPathMap[path]))!!) {
+                        val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
+                        // 检测是否已经存入了 key 对应的 content URI
+                        if (keyPref.contains(key)) {
+                            // 若已存入则直接读取存储值
+                            val pathValue = keyPref.getString(key, key)!!
+                            // 检测可用性
+                            if (checkSAFDirUsability(pathValue)) {
+                                finalPath = findFile(path, pathValue)
+                                mKeyMap[key] = pathValue
+                            } else {
+                                startPermissionRequest(key)
+                            }
+                        } else {
+                            startPermissionRequest(key)
+                        }
+                    }
+                    if (finalPath != null) {
+                        extras.putString(PowerampAPI.Track.PATH, finalPath)
+                        extras.putBoolean("safFound", true)
+                        mPathMap[path] = finalPath
+                    } else
+                        extras.putBoolean("safFound", false)
                 }
             }
             // End of path process
@@ -215,7 +236,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         NotificationManagerCompat.from(this).notify(213, builder.build())
     }
 
-    private fun checkSAFUsability (path: String): Boolean {
+    private fun checkSAFDirUsability (path: String): Boolean {
         val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         return try {
             contentResolver.takePersistableUriPermission(Uri.parse(path), takeFlags)
@@ -237,6 +258,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         }
         // 给予权限的文件夹并非歌曲路径中的文件夹，有两种可能
         // 一种是根文件夹以 UID 命名，一种是其它文件夹，除非确保非根文件夹，否则只应该从头到尾循环
+        // TODO: 确保不会有文件放在奇怪的同名文件夹但是不同位置导致问题，例如歌词 Music/A/C/A/B.lrc ，歌 Music/A/B.mp3，选择歌词的文件夹，会进入第一个 A 但找不到 B 然后报问题（应该
         folders.forEachIndexed {index, element ->
             if (index > startingIndex) {
                 val subTreeFile = treeFile?.findFile(element)
