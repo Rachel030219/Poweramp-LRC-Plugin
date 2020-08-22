@@ -258,17 +258,13 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
         }
         // 给予权限的文件夹并非歌曲路径中的文件夹，有两种可能
         // 一种是根文件夹以 UID 命名，一种是其它文件夹，除非确保非根文件夹，否则只应该从头到尾循环
-        // TODO: 确保不会有文件放在奇怪的同名文件夹但是不同位置导致问题，例如歌词 Music/A/C/A/B.lrc ，歌 Music/A/B.mp3，选择歌词的文件夹，会进入第一个 A 但找不到 B 然后报问题（应该
         folders.forEachIndexed {index, element ->
             if (index > startingIndex) {
                 val subTreeFile = treeFile?.findFile(element)
-                // 如果能找到名字对应的文件
                 if (subTreeFile != null) {
-                    // 如果是文件夹，下次循环时步进
                     if (subTreeFile.isDirectory) {
                         treeFile = subTreeFile
                     }
-                    // 如果是文件，直接对应为该文件
                     else if (subTreeFile.isFile) {
                         file = subTreeFile
                     }

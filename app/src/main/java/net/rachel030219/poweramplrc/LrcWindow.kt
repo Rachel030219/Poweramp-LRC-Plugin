@@ -15,6 +15,7 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
@@ -101,11 +102,11 @@ object LrcWindow {
         var showingBg = true
         layout.setOnClickListener {
             if (showingBg) {
-                layout.background = context.getDrawable(android.R.color.transparent)
+                layout.background = ContextCompat.getDrawable(context, android.R.color.transparent)
                 closeButton!!.visibility = View.INVISIBLE
                 showingBg = false
             } else {
-                layout.background = context.getDrawable(R.drawable.window_background)
+                layout.background = ContextCompat.getDrawable(context, R.drawable.window_background)
                 closeButton!!.visibility = View.VISIBLE
                 showingBg = true
             }

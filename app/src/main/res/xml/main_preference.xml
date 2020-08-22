@@ -33,6 +33,18 @@
             app:summary="@string/preference_experimental_encoding_description"
             app:defaultValue="false"/>
 
+        <SwitchPreferenceCompat
+            app:key="embedded"
+            app:title="@string/preference_experimental_embedded"
+            app:summary="@string/preference_experimental_embedded_description"
+            app:defaultValue="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="charset"
+            app:title="@string/preference_experimental_charset"
+            app:summary="@string/preference_experimental_charset_description"
+            app:defaultValue="false"/>
+
         <Preference
             app:key="report"
             app:title="@string/preference_experimental_report"

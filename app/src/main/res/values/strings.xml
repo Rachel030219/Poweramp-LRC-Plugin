@@ -38,6 +38,10 @@
     <string name="preference_experimental_legacy_description">(Android 10 only) May be useful if normal version is not working, but please also report when that happens</string>
     <string name="preference_experimental_encoding">Use GB18030 encoding</string>
     <string name="preference_experimental_encoding_description">Possibly fix problem of garbled lyrics downloaded from QQ music</string>
+    <string name="preference_experimental_embedded">Use lyrics embedded in songs</string>
+    <string name="preference_experimental_embedded_description">May lag or cause instability</string>
+    <string name="preference_experimental_charset">Auto detect charset</string>
+    <string name="preference_experimental_charset_description">Possibly fix \"Lyrics not found\" or garbled lyrics</string>
     <string name="preference_experimental_report">Report problem</string>
     <string name="preference_experimental_report_description">Generate a detailed log of what might cause problems (not including personal information)</string>
     <string name="preference_after_restart">Things won\'t get changed until window reopens.</string>

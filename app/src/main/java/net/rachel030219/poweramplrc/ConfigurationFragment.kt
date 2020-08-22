@@ -26,12 +26,12 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         applyInitialization(findPreference("height"), findPreference("textSize"))
         val colors: MutableList<Int> = ArrayList()
         for (color in arrayOf(R.color.lrc_current_red, R.color.lrc_current_blue, R.color.lrc_current_green, R.color.lrc_current_yellow, R.color.lrc_current_purple)) {
-            colors.add(ResourcesCompat.getColor(resources, color, activity!!.theme))
+            colors.add(ResourcesCompat.getColor(resources, color, requireActivity().theme))
         }
         findPreference<Preference>("textColor")?.setOnPreferenceClickListener {
             ColorSheet().colorPicker(colors = colors.toIntArray(), listener = { color ->
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("textColor", color).apply()
-            }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("textColor", colors[0])).show(fragmentManager!!)
+            }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("textColor", colors[0])).show(parentFragmentManager)
             true
         }
         findPreference<SwitchPreferenceCompat>("legacy")?.apply{
@@ -55,6 +55,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                 true
             }
         }
+        // TODO: adjust new preferences, integrate new features
     }
 
     private fun applyInitialization (vararg preferenceItems: EditTextPreference?) {
@@ -96,7 +97,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == CREATE_LOG && resultCode == Activity.RESULT_OK) {
             context?.contentResolver?.openOutputStream(data?.data!!).use {
-                BufferedWriter(OutputStreamWriter(it!!)).append(LogGenerator(context!!).generate()).run {
+                BufferedWriter(OutputStreamWriter(it!!)).append(LogGenerator(requireContext()).generate()).run {
                     flush()
                     close()
                 }
