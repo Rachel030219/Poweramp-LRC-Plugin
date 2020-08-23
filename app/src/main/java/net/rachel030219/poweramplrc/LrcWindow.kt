@@ -8,6 +8,7 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -21,6 +22,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
 import me.wcy.lrcview.LrcView
+import org.mozilla.universalchardet.UniversalDetector
 import java.io.File
 import java.io.FileInputStream
 import java.nio.charset.Charset
@@ -111,15 +113,25 @@ object LrcWindow {
                 showingBg = true
             }
         }
+        // TODO: 使用协程处理 IO
         val path = extras.getString(PowerampAPI.Track.PATH)!!
         val lrc: StringBuilder = StringBuilder()
-        val encoding = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("encoding", false)) Charset.availableCharsets()["GB18030"]!! else Charsets.UTF_8
+        var encoding = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("encoding", false)) Charset.availableCharsets()["GB18030"]!! else Charsets.UTF_8
         if (nowPlayingFile != path) {
             nowPlayingFile = path
             if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
                 if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!) {
                     val ins = context.contentResolver.openInputStream(Uri.parse(path))
-                    ins?.bufferedReader(charset = encoding)?.apply { lrc.append(readText()) }?.close()
+                    // TODO: unable to read anything when UTF-16LE
+                    ins.use {
+                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("charset", false)) {
+                            encoding = Charset.forName(UniversalDetector.detectCharset(it))
+                            Log.d("TAG", "charset: "+UniversalDetector.detectCharset(it))
+                        }
+
+                        it?.bufferedReader(charset = encoding)?.apply { lrc.append(readText()) }
+                    }
+                    ins?.close()
                 } else {
                     lrc.append(context.resources.getString(R.string.no_lrc_hint))
                 }

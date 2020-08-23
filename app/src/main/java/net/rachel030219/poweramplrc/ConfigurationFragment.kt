@@ -49,13 +49,24 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                 true
             }
         }
+        findPreference<SwitchPreferenceCompat>("embedded")?.apply {
+            setOnPreferenceChangeListener { _, _ ->
+                Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
+                true
+            }
+        }
+        findPreference<SwitchPreferenceCompat>("charset")?.apply {
+            setOnPreferenceChangeListener { _, _ ->
+                Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
+                true
+            }
+        }
         findPreference<Preference>("report")?.apply {
             setOnPreferenceClickListener {
                 generateLog()
                 true
             }
         }
-        // TODO: adjust new preferences, integrate new features
     }
 
     private fun applyInitialization (vararg preferenceItems: EditTextPreference?) {
