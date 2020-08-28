@@ -24,6 +24,7 @@
     <string name="notification_placeholder_message">Running in the background (this notification can be disabled).</string>
 
     <string name="no_lrc_hint">Lyrics not found</string>
+    <string name="no_charset_hint">Lyric charset not supported</string>
 
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">Animation duration</string>

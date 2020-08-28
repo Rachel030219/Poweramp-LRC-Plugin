@@ -25,6 +25,7 @@
     <string name="notification_placeholder_message">正在后台运行（可禁用该通知）。</string>
 
     <string name="no_lrc_hint">歌词不见了</string>
+    <string name="no_charset_hint">歌词文件编码暂不支持</string>
 
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">动画时长</string>

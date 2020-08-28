@@ -21,11 +21,17 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.wcy.lrcview.LrcView
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.File
 import java.io.FileInputStream
+import java.io.InputStream
 import java.nio.charset.Charset
+import java.nio.charset.UnsupportedCharsetException
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
@@ -89,6 +95,7 @@ object LrcWindow {
         initialized = true
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     fun refresh(layout: View, extras: Bundle, popup: Boolean, context: Context) {
         this.extras = extras
         // refresh settings
@@ -116,31 +123,23 @@ object LrcWindow {
         // TODO: 使用协程处理 IO
         val path = extras.getString(PowerampAPI.Track.PATH)!!
         val lrc: StringBuilder = StringBuilder()
-        var encoding = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("encoding", false)) Charset.availableCharsets()["GB18030"]!! else Charsets.UTF_8
-        if (nowPlayingFile != path) {
-            nowPlayingFile = path
-            if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
-                if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!) {
-                    val ins = context.contentResolver.openInputStream(Uri.parse(path))
-                    // TODO: unable to read anything when UTF-16LE
-                    ins.use {
-                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("charset", false)) {
-                            encoding = Charset.forName(UniversalDetector.detectCharset(it))
-                            Log.d("TAG", "charset: "+UniversalDetector.detectCharset(it))
-                        }
-
-                        it?.bufferedReader(charset = encoding)?.apply { lrc.append(readText()) }
+        val readScope = CoroutineScope(Dispatchers.Main)
+        // var encoding = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("encoding", false)) Charset.availableCharsets()["GB18030"]!! else Charsets.UTF_8
+        readScope.launch {
+            if (nowPlayingFile != path) {
+                nowPlayingFile = path
+                if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
+                    if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!) {
+                        // TODO: unable to read anything when UTF-16LE
+                        lrc.append(readFile(path, context, true))
+                    } else {
+                        lrc.append(context.resources.getString(R.string.no_lrc_hint))
                     }
-                    ins?.close()
                 } else {
-                    lrc.append(context.resources.getString(R.string.no_lrc_hint))
+                    lrc.append(readFile(path, context, false))
                 }
-            } else {
-                val file = File(path)
-                if (file.exists())
-                    FileInputStream(file).bufferedReader(charset = encoding).apply { lrc.append(readText()) }.close()
+                layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrc.toString())
             }
-            layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrc.toString())
         }
         refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
         if (popup && !displaying) {
@@ -196,5 +195,48 @@ object LrcWindow {
             setContentIntent(pendingIntent)
         }
         NotificationManagerCompat.from(context).notify(212, builder.build())
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun readFile(path: String, context: Context, SAF: Boolean) = withContext(Dispatchers.IO){
+        val lyrics = StringBuilder()
+        val ins: InputStream?
+        val file: File?
+        if (SAF) {
+            ins = context.contentResolver.openInputStream(Uri.parse(path))
+        } else {
+            file = File(path)
+            ins = if (file.exists())
+                file.inputStream()
+            else
+                null
+        }
+        var encoding: Charset
+        ins?.use {
+            try {
+                encoding = findCharset(ins, context)
+                if (SAF) {
+                    lyrics.append(it.bufferedReader(charset = encoding).readText())
+                } else {
+                    lyrics.append(it.bufferedReader(charset = encoding).readText())
+                }
+            } catch (e: UnsupportedCharsetException) {
+                lyrics.append(context.resources.getString(R.string.no_charset_hint))
+            } finally {
+                it.close()
+            }
+        }
+        lyrics
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    suspend fun findCharset (inputStream: InputStream?, context: Context) = withContext(Dispatchers.IO) {
+        var charset = Charsets.UTF_8
+        inputStream.use {
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("charset", false)) {
+                charset = Charset.forName(UniversalDetector.detectCharset(it))
+            }
+        }
+        charset
     }
 }
