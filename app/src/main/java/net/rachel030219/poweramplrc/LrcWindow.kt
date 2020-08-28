@@ -120,11 +120,9 @@ object LrcWindow {
                 showingBg = true
             }
         }
-        // TODO: 使用协程处理 IO
         val path = extras.getString(PowerampAPI.Track.PATH)!!
         val lrc: StringBuilder = StringBuilder()
         val readScope = CoroutineScope(Dispatchers.Main)
-        // var encoding = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("encoding", false)) Charset.availableCharsets()["GB18030"]!! else Charsets.UTF_8
         readScope.launch {
             if (nowPlayingFile != path) {
                 nowPlayingFile = path
