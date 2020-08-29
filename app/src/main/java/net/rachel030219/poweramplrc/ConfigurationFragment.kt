@@ -36,7 +36,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         }
         findPreference<SwitchPreferenceCompat>("legacy")?.apply{
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                isEnabled = true
+                isVisible = true
             }
             setOnPreferenceChangeListener { _, _ ->
                 Toast.makeText(context, R.string.preference_after_restart, Toast.LENGTH_SHORT).show()

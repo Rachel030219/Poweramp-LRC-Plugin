@@ -8,7 +8,6 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -18,7 +17,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
 import kotlinx.coroutines.CoroutineScope
@@ -27,9 +25,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.wcy.lrcview.LrcView
 import org.mozilla.universalchardet.UniversalDetector
+import java.io.BufferedInputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 import java.util.concurrent.TimeUnit
@@ -101,9 +98,27 @@ object LrcWindow {
         // refresh settings
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         lrcView?.apply {
-            setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-            setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-            setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
+            setNormalTextSize(
+                MiscUtil.spToPx(
+                    preferences.getString("textSize", "18")!!.toFloat(),
+                    context
+                )
+            )
+            setCurrentTextSize(
+                MiscUtil.spToPx(
+                    preferences.getString("textSize", "18")!!.toFloat(),
+                    context
+                )
+            )
+            setCurrentColor(
+                preferences.getInt(
+                    "textColor", ResourcesCompat.getColor(
+                        resources,
+                        R.color.lrc_current_red,
+                        context.theme
+                    )
+                )
+            )
             layoutParams = layoutParams.apply {
                 height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
             }
@@ -121,22 +136,28 @@ object LrcWindow {
             }
         }
         val path = extras.getString(PowerampAPI.Track.PATH)!!
-        val lrc: StringBuilder = StringBuilder()
+        var lyrics: Lyrics
         val readScope = CoroutineScope(Dispatchers.Main)
         readScope.launch {
             if (nowPlayingFile != path) {
+                layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
                 nowPlayingFile = path
-                if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
+                lyrics = if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
                     if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!) {
-                        // TODO: unable to read anything when UTF-16LE
-                        lrc.append(readFile(path, context, true))
+                        readFile(path, context, true)
                     } else {
-                        lrc.append(context.resources.getString(R.string.no_lrc_hint))
+                        Lyrics(StringBuilder(context.resources.getString(R.string.no_lrc_hint)), false)
                     }
                 } else {
-                    lrc.append(readFile(path, context, false))
+                    readFile(path, context, false)
                 }
-                layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lrc.toString())
+                if (lyrics.foundCharset)
+                    layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lyrics.text.toString())
+                else
+                    layout.findViewById<LrcView>(R.id.lrcview).apply {
+                        setLabel(lyrics.text.toString())
+                        loadLrc("")
+                    }
             }
         }
         refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
@@ -198,43 +219,62 @@ object LrcWindow {
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun readFile(path: String, context: Context, SAF: Boolean) = withContext(Dispatchers.IO){
         val lyrics = StringBuilder()
-        val ins: InputStream?
+        val ins: BufferedInputStream?
         val file: File?
+        var found = false
         if (SAF) {
-            ins = context.contentResolver.openInputStream(Uri.parse(path))
+            ins = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
         } else {
             file = File(path)
             ins = if (file.exists())
-                file.inputStream()
+                file.inputStream().buffered()
             else
                 null
         }
-        var encoding: Charset
         ins?.use {
             try {
-                encoding = findCharset(ins, context)
-                if (SAF) {
-                    lyrics.append(it.bufferedReader(charset = encoding).readText())
-                } else {
-                    lyrics.append(it.bufferedReader(charset = encoding).readText())
-                }
+                lyrics.append(it.bufferedReader(charset = findCharset(it, context)).readText())
+                found = true
             } catch (e: UnsupportedCharsetException) {
                 lyrics.append(context.resources.getString(R.string.no_charset_hint))
-            } finally {
-                it.close()
             }
         }
-        lyrics
+        Lyrics(lyrics, found)
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
-    suspend fun findCharset (inputStream: InputStream?, context: Context) = withContext(Dispatchers.IO) {
+    private fun findCharset(inputStream: BufferedInputStream?, context: Context): Charset {
         var charset = Charsets.UTF_8
-        inputStream.use {
-            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("charset", false)) {
-                charset = Charset.forName(UniversalDetector.detectCharset(it))
-            }
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("charset", false) && inputStream != null) {
+            val charsetName = detectCharset(inputStream)
+            if (charsetName != null)
+                charset = Charset.forName(charsetName)
+            else
+                throw UnsupportedCharsetException("null")
         }
-        charset
+        return charset
+    }
+
+    private fun detectCharset(inputStream: BufferedInputStream): String? {
+        inputStream.mark(Int.MAX_VALUE)
+        val buf = ByteArray(4096)
+        val detector = UniversalDetector(null)
+        var nread: Int
+        while (inputStream.read(buf).also { nread = it } > 0 && !detector.isDone) {
+            detector.handleData(buf, 0, nread)
+        }
+        detector.dataEnd()
+        val encoding = detector.detectedCharset
+        detector.reset()
+        inputStream.reset()
+        return encoding
+    }
+
+    class Lyrics(text: StringBuilder, foundCharset: Boolean) {
+        var text = StringBuilder()
+        var foundCharset = false
+        init {
+            this.text = text
+            this.foundCharset = foundCharset
+        }
     }
 }
