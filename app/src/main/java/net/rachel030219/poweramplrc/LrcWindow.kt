@@ -8,6 +8,7 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -92,7 +93,6 @@ object LrcWindow {
         initialized = true
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     fun refresh(layout: View, extras: Bundle, popup: Boolean, context: Context) {
         this.extras = extras
         // refresh settings
@@ -137,20 +137,22 @@ object LrcWindow {
         }
         val path = extras.getString(PowerampAPI.Track.PATH)!!
         var lyrics: Lyrics
-        val readScope = CoroutineScope(Dispatchers.Main)
+        val readScope = CoroutineScope(Dispatchers.IO)
         readScope.launch {
             if (nowPlayingFile != path) {
                 layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
                 nowPlayingFile = path
-                lyrics = if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
-                    if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!) {
+
+                lyrics = if (extras.getString("embedded") != null)
+                    Lyrics(StringBuilder(extras.getString("embedded")!!), true)
+                else if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
+                    if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!)
                         readFile(path, context, true)
-                    } else {
+                    else
                         Lyrics(StringBuilder(context.resources.getString(R.string.no_lrc_hint)), false)
-                    }
-                } else {
+                } else
                     readFile(path, context, false)
-                }
+
                 if (lyrics.foundCharset)
                     layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lyrics.text.toString())
                 else
@@ -216,11 +218,10 @@ object LrcWindow {
         NotificationManagerCompat.from(context).notify(212, builder.build())
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun readFile(path: String, context: Context, SAF: Boolean) = withContext(Dispatchers.IO){
         val lyrics = StringBuilder()
         val ins: BufferedInputStream?
-        val file: File?
+        val file: File
         var found = false
         if (SAF) {
             ins = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()

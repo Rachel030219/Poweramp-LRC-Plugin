@@ -20,7 +20,13 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
+import com.maxmpz.poweramp.player.PowerampAPIHelper
 import com.maxmpz.poweramp.player.RemoteTrackTime
+import com.mpatric.mp3agic.Mp3File
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.*
 
 class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var mWindow: View? = null
@@ -70,6 +76,35 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             val extras = intent.extras
             val path = extras?.getString(PowerampAPI.Track.PATH)
             val key = path!!.substringBefore('/')
+
+            // embedded lyrics
+            var embeddedLyrics: StringBuilder? = null
+            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("embedded", false)) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val songParcelFileDescriptor = try {
+                        contentResolver.openFileDescriptor(extras.getParcelable(PowerampAPI.Track.CAT_URI)!!, "r")
+                    } catch (e: FileNotFoundException) {
+                        null
+                    }
+                    val songFileDescriptor = songParcelFileDescriptor?.fileDescriptor
+                    if (songFileDescriptor != null) {
+                        val songFile = File(cacheDir, "songCache")
+                        BufferedInputStream(FileInputStream(songFileDescriptor)).use { input ->
+                            BufferedOutputStream(FileOutputStream(songFile)).use {
+                                it.write(input.readBytes())
+                                it.flush()
+                            }
+                        }
+                        val mp3File = Mp3File(songFile)
+                        if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
+                            embeddedLyrics = StringBuilder(mp3File.id3v2Tag.lyrics)
+                        }
+                    }
+                }
+                if (embeddedLyrics != null) {
+                    extras.putString("embedded", embeddedLyrics.toString())
+                }
+            }
             // Path process
             if (!path.startsWith("/")) {
                 extras.putBoolean("saf", true)

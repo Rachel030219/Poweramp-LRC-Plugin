@@ -42,6 +42,7 @@
     <string name="preference_experimental_encoding_description">Possibly fix problem of garbled lyrics downloaded from QQ music</string>
     <string name="preference_experimental_embedded">Use lyrics embedded in songs</string>
     <string name="preference_experimental_embedded_description">May lag or cause instability</string>
+    <string name="preference_experimental_embedded_description_full">This function is still in beta stage. Your .lrc files may stop working with this enabled and your song containing embedded non-lrc-format lyrics. Things won\'t take effect until lyrics reload.</string>
     <string name="preference_experimental_charset">Auto detect charset</string>
     <string name="preference_experimental_charset_description">Possibly fix \"Lyrics not found\" or garbled lyrics</string>
     <string name="preference_experimental_report">Report problem</string>
