@@ -77,34 +77,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             val path = extras?.getString(PowerampAPI.Track.PATH)
             val key = path!!.substringBefore('/')
 
-            // embedded lyrics
-            var embeddedLyrics: StringBuilder? = null
-            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("embedded", false)) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val songParcelFileDescriptor = try {
-                        contentResolver.openFileDescriptor(extras.getParcelable(PowerampAPI.Track.CAT_URI)!!, "r")
-                    } catch (e: FileNotFoundException) {
-                        null
-                    }
-                    val songFileDescriptor = songParcelFileDescriptor?.fileDescriptor
-                    if (songFileDescriptor != null) {
-                        val songFile = File(cacheDir, "songCache")
-                        BufferedInputStream(FileInputStream(songFileDescriptor)).use { input ->
-                            BufferedOutputStream(FileOutputStream(songFile)).use {
-                                it.write(input.readBytes())
-                                it.flush()
-                            }
-                        }
-                        val mp3File = Mp3File(songFile)
-                        if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
-                            embeddedLyrics = StringBuilder(mp3File.id3v2Tag.lyrics)
-                        }
-                    }
-                }
-                if (embeddedLyrics != null) {
-                    extras.putString("embedded", embeddedLyrics.toString())
-                }
-            }
             // Path process
             if (!path.startsWith("/")) {
                 extras.putBoolean("saf", true)

@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
+import com.mpatric.mp3agic.Mp3File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -154,7 +155,10 @@ object LrcWindow {
                     readFile(path, context, false)
 
                 if (lyrics.foundCharset)
-                    layout.findViewById<LrcView>(R.id.lrcview).loadLrc(lyrics.text.toString())
+                    layout.findViewById<LrcView>(R.id.lrcview).apply {
+                        loadLrc(lyrics.text.toString())
+                        setLabel(context.resources.getString(R.string.no_lrc_hint))
+                    }
                 else
                     layout.findViewById<LrcView>(R.id.lrcview).apply {
                         setLabel(lyrics.text.toString())
@@ -226,11 +230,25 @@ object LrcWindow {
         if (SAF) {
             ins = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
         } else {
-            file = File(path)
-            ins = if (file.exists())
-                file.inputStream().buffered()
-            else
-                null
+            // embedded lyrics
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false)) {
+                ins = null
+                found = true
+                var embeddedLyrics: StringBuilder? = null
+                val songFile = File(extras!!.getString(PowerampAPI.Track.PATH)!!)
+                val mp3File = Mp3File(songFile)
+                if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
+                    embeddedLyrics = StringBuilder(mp3File.id3v2Tag.lyrics)
+                }
+                if (embeddedLyrics != null)
+                    lyrics.append(embeddedLyrics.toString())
+            } else {
+                file = File(path)
+                ins = if (file.exists())
+                    file.inputStream().buffered()
+                else
+                    null
+            }
         }
         ins?.use {
             try {

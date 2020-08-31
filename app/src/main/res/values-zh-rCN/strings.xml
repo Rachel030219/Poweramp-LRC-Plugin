@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Poweramp 歌词插件</string>
-    <string name="main_message">这是一个用以弥补 Poweramp 本地歌词功能缺乏的简单应用。开始之前，我们需要一些权限，来使它正常工作。\n此外，若所有权限都已正确获取，则将进入配置页面。</string>
+    <string name="main_message">这是一个用以弥补 Poweramp 本地歌词功能缺乏的简单应用。开始之前，我们需要一些权限，来使它正常工作。\n此外，若所有权限都已正确获取，则将进入配置页面。\n\n\n目前支持度随文件存储方式不同的功能——\nSAF 文件：\n歌词独立文件夹\n————\n传统文件：\n内嵌歌词\n————\n（正努力消除壁垒中）</string>
     <string name="main_old">您的 Android 版本无需应用手动获取任何权限，所以接下来什么都不用做。</string>
     <string name="main_configuration">权限就绪，马上进入配置页！</string>
     <string name="permission_storage_hint">要获取 .lrc 文件，需要存储权限（只读）。</string>
@@ -15,7 +15,7 @@
     <string name="done_hint">准备好了！ 打开 Poweramp，开始播放，点击通知，享受吧！</string>
     <string name="done_extra">注意：\n若歌词延迟，请尝试暂停并恢复播放。此外， Poweramp 导致的延迟也可能是原因，并且 Poweramp 仅汇报以秒为单位的位置，从而当歌词过快或从一秒的中间开始（比如 00:01.50）则会不可避免地出现延迟。如果您认为所碰到的确实是 bug ，请在 GitHub 开一个附带了重现步骤及 Poweramp 延迟的 issue 。</string>
 
-    <string name="notification_entrance_channel_name">入口</string>
+    <string name="notification_entrance_channel_name">浮窗入口</string>
     <string name="notification_message_hide">点击隐藏</string>
     <string name="notification_message_show">点击显示</string>
     <string name="notification_path_channel_name">路径设置</string>
@@ -43,7 +43,7 @@
     <string name="preference_experimental_encoding_description">大概能解决 QQ 音乐自动下载的歌词全是乱码的问题</string>
     <string name="preference_experimental_embedded">使用歌曲内置歌词</string>
     <string name="preference_experimental_embedded_description">可能造成卡顿或不稳定</string>
-    <string name="preference_experimental_embedded_description_full">这个功能尚在测试阶段。当此功能启用且您的歌曲包含内嵌非 lrc 歌词时，您的 .lrc 文件不会生效。该设置将在歌词重载后生效。</string>
+    <string name="preference_experimental_embedded_description_full">这个功能尚在测试阶段。当此功能启用且您的歌曲包含内嵌非 lrc 歌词时，您的 .lrc 文件不会被读取。目前仅适用于非 SAF 访问的文件（非手动在 Poweramp 内授权文件夹，大部分 Android 9 或更低版本的设备上内置存储的文件都是如此）和部分启用「旧文件访问模式」/「古董模式」的 Android 10 设备。\n该设置将在歌词重载后生效。</string>
     <string name="preference_experimental_charset">自动检测字符集</string>
     <string name="preference_experimental_charset_description">可能会修复“歌词不见了”或歌词乱码</string>
     <string name="preference_experimental_report">报告问题</string>
