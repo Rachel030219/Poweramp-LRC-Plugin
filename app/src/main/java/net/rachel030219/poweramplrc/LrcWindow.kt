@@ -29,6 +29,7 @@ import me.wcy.lrcview.LrcView
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.BufferedInputStream
 import java.io.File
+import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 import java.util.concurrent.TimeUnit
@@ -224,11 +225,11 @@ object LrcWindow {
 
     private suspend fun readFile(path: String, context: Context, SAF: Boolean) = withContext(Dispatchers.IO){
         val lyrics = StringBuilder()
-        val ins: BufferedInputStream?
+        val ins: InputStream?
         val file: File
         var found = false
         if (SAF) {
-            ins = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
+            ins = context.contentResolver.openInputStream(Uri.parse(path))
         } else {
             // embedded lyrics
             if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false)) {
@@ -261,7 +262,7 @@ object LrcWindow {
         Lyrics(lyrics, found)
     }
 
-    private fun findCharset(inputStream: BufferedInputStream?, context: Context): Charset {
+    private fun findCharset(inputStream: InputStream?, context: Context): Charset {
         var charset = Charsets.UTF_8
         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("charset", false) && inputStream != null) {
             val charsetName = detectCharset(inputStream)
@@ -273,7 +274,7 @@ object LrcWindow {
         return charset
     }
 
-    private fun detectCharset(inputStream: BufferedInputStream): String? {
+    private fun detectCharset(inputStream: InputStream): String? {
         inputStream.mark(Int.MAX_VALUE)
         val buf = ByteArray(4096)
         val detector = UniversalDetector(null)
