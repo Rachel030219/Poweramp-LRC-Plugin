@@ -246,7 +246,7 @@ object LrcWindow {
             } else {
                 file = File(path)
                 ins = if (file.exists())
-                    file.inputStream().buffered()
+                    file.inputStream()
                 else
                     null
             }
