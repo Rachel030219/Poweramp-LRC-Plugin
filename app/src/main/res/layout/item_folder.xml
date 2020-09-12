@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="start|center_vertical"
+    android:padding="8dp"
+    android:paddingHorizontal="16dp">
+
+
+    <ImageButton
+        android:id="@+id/folder_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/ic_close"
+        android:tint="@android:color/primary_text_light" />
+
+    <LinearLayout
+        android:id="@+id/folder_linear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical|start">
+
+        <TextView
+            android:id="@+id/folder_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/primary_text_light"
+            android:textAppearance="bold"
+            android:ellipsize="middle"
+            android:text="Folder name"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/folder_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#808080"
+            android:ellipsize="middle"
+            android:text="PathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPathPath"
+            android:singleLine="true" />
+
+    </LinearLayout>
+
+</LinearLayout>

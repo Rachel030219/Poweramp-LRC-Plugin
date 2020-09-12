@@ -36,6 +36,10 @@
     <string name="preference_ui_textsize_description">Default is 18 sp, current:\u0020</string>
     <string name="preference_ui_text">Lyrics color</string>
     <string name="preference_experimental">Experimental features</string>
+    <string name="preference_experimental_standalone">File access in standalone mode</string>
+    <string name="preference_experimental_standalone_description">Look for all your lyric files only in selected folders.</string>
+    <string name="preference_experimental_standalone_description_full">This function is still in beta stage.\n\nOnce enabled, you\'ll be asked to choose folders where your lyric files are placed, and this app only looks for the corresponding lyrics in the chosen folders. Also, this may help if you get constant \"Lyrics not found\".\n\nThings won\'t take effect until lyrics reload.</string>
+    <string name="preference_experimental_standalone_description_add">Add a folder</string>
     <string name="preference_experimental_legacy">File access in legacy mode</string>
     <string name="preference_experimental_legacy_description">(Android 10 only) May be useful if normal version is not working, but please also report when that happens</string>
     <string name="preference_experimental_encoding">Use GB18030 encoding</string>

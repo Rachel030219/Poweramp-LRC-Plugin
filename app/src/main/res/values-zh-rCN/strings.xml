@@ -37,6 +37,10 @@
     <string name="preference_ui_textsize_description">默认 18 sp, 目前\u0020</string>
     <string name="preference_ui_text">歌词颜色</string>
     <string name="preference_experimental">实验性功能</string>
+    <string name="preference_experimental_standalone">使用独立文件访问方案</string>
+    <string name="preference_experimental_standalone_description">仅在选择的文件夹内寻找歌词。</string>
+    <string name="preference_experimental_standalone_description_full">这个功能尚在测试阶段。\n\n启用后，您将被要求选择歌词所在的文件夹，本应用将仅从这些文件夹内寻找对应的歌词。同时，若您一直收到「歌词不存在」的提示，这个选项也有所帮助。\n\n该设置将在歌词重载后生效。</string>
+    <string name="preference_experimental_standalone_description_add">添加文件夹</string>
     <string name="preference_experimental_legacy">使用古董文件访问方案</string>
     <string name="preference_experimental_legacy_description">（仅 Android 10）可能在正常模式不工作时有用，但若如此也请报告问题</string>
     <string name="preference_experimental_encoding">使用 GB18030 编码</string>

@@ -35,6 +35,19 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
             }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("textColor", colors[0])).show(parentFragmentManager)
             true
         }
+        findPreference<SwitchPreferenceCompat>("standalone")?.setOnPreferenceChangeListener { _, value ->
+            if (value is Boolean) {
+                if (value) {
+                    AlertDialog.Builder(requireContext()).apply {
+                        setTitle(R.string.preference_experimental_standalone)
+                        setMessage(R.string.preference_experimental_standalone_description_full)
+                        setPositiveButton("OK", null)
+                        show()
+                    }
+                }
+            }
+            true
+        }
         findPreference<SwitchPreferenceCompat>("legacy")?.apply{
             if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                 isVisible = true
