@@ -8,7 +8,6 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -144,24 +143,22 @@ object LrcWindow {
                 layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
                 nowPlayingFile = path
 
-                lyrics = if (extras.getString("embedded") != null)
-                    Lyrics(StringBuilder(extras.getString("embedded")!!), true)
-                else if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
+                lyrics = if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
                     if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!)
                         readFile(path, context, true)
                     else
-                        Lyrics(StringBuilder(context.resources.getString(R.string.no_lrc_hint)), false)
+                        Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
                 } else
                     readFile(path, context, false)
 
-                if (lyrics.foundCharset)
+                if (lyrics.found)
                     layout.findViewById<LrcView>(R.id.lrcview).apply {
-                        loadLrc(lyrics.text.toString())
+                        loadLrc(lyrics.text)
                         setLabel(context.resources.getString(R.string.no_lrc_hint))
                     }
                 else
                     layout.findViewById<LrcView>(R.id.lrcview).apply {
-                        setLabel(lyrics.text.toString())
+                        setLabel(lyrics.text)
                         loadLrc("")
                     }
             }
@@ -223,7 +220,7 @@ object LrcWindow {
     }
 
     private suspend fun readFile(path: String, context: Context, SAF: Boolean) = withContext(Dispatchers.IO){
-        val lyrics = StringBuilder()
+        var lyrics = ""
         val ins: BufferedInputStream?
         val file: File
         var found = false
@@ -233,15 +230,17 @@ object LrcWindow {
             // embedded lyrics
             if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false)) {
                 ins = null
-                found = true
-                var embeddedLyrics: StringBuilder? = null
                 val songFile = File(extras!!.getString(PowerampAPI.Track.PATH)!!)
-                val mp3File = Mp3File(songFile)
-                if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
-                    embeddedLyrics = StringBuilder(mp3File.id3v2Tag.lyrics)
+                if (songFile.exists()) {
+                    val mp3File = Mp3File(songFile)
+                    if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
+                        lyrics = mp3File.id3v2Tag.lyrics
+                        found = true
+                    } else {
+                        lyrics = context.resources.getString(R.string.no_lrc_hint)
+                        found = false
+                    }
                 }
-                if (embeddedLyrics != null)
-                    lyrics.append(embeddedLyrics.toString())
             } else {
                 file = File(path)
                 ins = if (file.exists())
@@ -252,10 +251,10 @@ object LrcWindow {
         }
         ins?.bufferedReader(charset = findCharset(ins, context))?.use {
             try {
-                lyrics.append(it.readText())
+                lyrics = it.readText()
                 found = true
             } catch (e: UnsupportedCharsetException) {
-                lyrics.append(context.resources.getString(R.string.no_charset_hint))
+                lyrics = context.resources.getString(R.string.no_charset_hint)
             }
         }
         Lyrics(lyrics, found)
@@ -275,7 +274,7 @@ object LrcWindow {
 
     private fun detectCharset(inputStream: BufferedInputStream): String? {
         inputStream.mark(Int.MAX_VALUE)
-        val buf = ByteArray(4096)
+        val buf = ByteArray(8*1024)
         val detector = UniversalDetector(null)
         var nread: Int
         while (inputStream.read(buf).also { nread = it } > 0 && !detector.isDone) {
@@ -288,12 +287,5 @@ object LrcWindow {
         return encoding
     }
 
-    class Lyrics(text: StringBuilder, foundCharset: Boolean) {
-        var text = StringBuilder()
-        var foundCharset = false
-        init {
-            this.text = text
-            this.foundCharset = foundCharset
-        }
-    }
+    class Lyrics(val text: String, val found: Boolean)
 }

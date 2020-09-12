@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 
 class FoldersActivity: AppCompatActivity() {
-    // TODO: implement SQLiteOpenHelper to save names and paths
+    // TODO: implement SQLiteOpenHelper to save names and paths & add a entrance(preference) to this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_folders)
