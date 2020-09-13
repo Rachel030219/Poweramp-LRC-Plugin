@@ -17,6 +17,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
 import com.mpatric.mp3agic.Mp3File
@@ -137,19 +138,38 @@ object LrcWindow {
         }
         val path = extras.getString(PowerampAPI.Track.PATH)!!
         var lyrics: Lyrics
+        val databaseHelper = FoldersDatabaseHelper(context)
+        val folders = databaseHelper.fetchFolders()
         val readScope = CoroutineScope(Dispatchers.IO)
         readScope.launch {
             if (nowPlayingFile != path) {
                 layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
                 nowPlayingFile = path
 
-                lyrics = if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
-                    if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!)
-                        readFile(path, context, true)
+                lyrics = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("standalone", false)) {
+                    var lyricPath = ""
+                    val fileName = MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
+                    folders.forEach { folder ->
+                        DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
+                            val file = it.findFile(fileName)
+                            if (it.isDirectory && file != null && file.exists()) {
+                                lyricPath = file.uri.toString()
+                            }
+                        }
+                    }
+                    if(lyricPath.isNotBlank())
+                        readFile(lyricPath, context, true)
                     else
                         Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
-                } else
-                    readFile(path, context, false)
+                } else {
+                    if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
+                        if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!)
+                            readFile(path, context, true)
+                        else
+                            Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
+                    } else
+                        readFile(path, context, false)
+                }
 
                 if (lyrics.found)
                     layout.findViewById<LrcView>(R.id.lrcview).apply {

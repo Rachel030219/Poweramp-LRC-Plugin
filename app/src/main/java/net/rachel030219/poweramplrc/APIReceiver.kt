@@ -14,29 +14,33 @@ class APIReceiver: BroadcastReceiver() {
         if (intent.action != null) {
             when (intent.action) {
                 PowerampAPI.ACTION_STATUS_CHANGED_EXPLICIT -> {
-                    val trackIntent = context.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED))
-                    val bundle = trackIntent!!.getBundleExtra(PowerampAPI.TRACK)
-                    bundle!!.putInt(PowerampAPI.Track.POSITION, intent.getIntExtra(PowerampAPI.Track.POSITION, -1))
-                    bundle.putBoolean(PowerampAPI.PAUSED, intent.getBooleanExtra(PowerampAPI.PAUSED, true))
-                    if (LrcWindow.displaying) {
-                        LrcWindow.sendNotification(context, bundle, true)
-                    } else {
-                        LrcWindow.sendNotification(context, bundle, false)
+                    context.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED))?.let { trackIntent ->
+                        trackIntent.getBundleExtra(PowerampAPI.TRACK)?.let { bundle ->
+                            bundle.putInt(PowerampAPI.Track.POSITION, intent.getIntExtra(PowerampAPI.Track.POSITION, -1))
+                            bundle.putBoolean(PowerampAPI.PAUSED, intent.getBooleanExtra(PowerampAPI.PAUSED, true))
+                            if (LrcWindow.displaying) {
+                                LrcWindow.sendNotification(context, bundle, true)
+                            } else {
+                                LrcWindow.sendNotification(context, bundle, false)
+                            }
+                            refreshWindow(context, bundle)
+                        }
                     }
-                    refreshWindow(context, bundle)
                 }
 
                 PowerampAPI.ACTION_TRACK_CHANGED_EXPLICIT -> {
-                    val statusIntent = context.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
-                    val bundle = intent.getBundleExtra(PowerampAPI.TRACK)
-                    bundle!!.putInt(PowerampAPI.Track.POSITION, 0)
-                    bundle.putBoolean(PowerampAPI.PAUSED, statusIntent!!.getBooleanExtra(PowerampAPI.PAUSED, true))
-                    if (LrcWindow.displaying) {
-                        LrcWindow.sendNotification(context, bundle, true)
-                    } else {
-                        LrcWindow.sendNotification(context, bundle, false)
+                    context.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))?.let { statusIntent ->
+                        intent.getBundleExtra(PowerampAPI.TRACK)?.let { bundle ->
+                            bundle.putInt(PowerampAPI.Track.POSITION, 0)
+                            bundle.putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
+                            if (LrcWindow.displaying) {
+                                LrcWindow.sendNotification(context, bundle, true)
+                            } else {
+                                LrcWindow.sendNotification(context, bundle, false)
+                            }
+                            refreshWindow(context, bundle)
+                        }
                     }
-                    refreshWindow(context, bundle)
                 }
             }
         }

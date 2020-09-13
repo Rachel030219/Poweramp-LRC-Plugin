@@ -27,6 +27,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         for (color in arrayOf(R.color.lrc_current_red, R.color.lrc_current_blue, R.color.lrc_current_green, R.color.lrc_current_yellow, R.color.lrc_current_purple)) {
             colors.add(ResourcesCompat.getColor(resources, color, requireActivity().theme))
         }
+        setAddFolderEnabled(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("standalone", false))
         findPreference<Preference>("textColor")?.setOnPreferenceClickListener {
             ColorSheet().colorPicker(colors = colors.toIntArray(), listener = { color ->
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("textColor", color).apply()

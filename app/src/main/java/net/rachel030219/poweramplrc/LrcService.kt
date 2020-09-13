@@ -67,18 +67,57 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             val key = path!!.substringBefore('/')
 
             // Path process
-            if (!path.startsWith("/")) {
-                extras.putBoolean("saf", true)
-                // Attempt to read path from cache
-                if (!mPathMap.containsKey(path)) {
-                    // Attempt to read corresponding path for key from cache
-                    if (!mKeyMap.containsKey(key)) {
-                        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)){
-                            extras.putBoolean("legacy", true)
-                            val finalPath = path.replace(key, Environment.getExternalStorageDirectory().toString())
-                            extras.putString(PowerampAPI.Track.PATH, finalPath)
-                            mPathMap[path] = finalPath
+            if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("standalone", false)) {
+                if (!path.startsWith("/")) {
+                    extras.putBoolean("saf", true)
+                    // Attempt to read path from cache
+                    if (!mPathMap.containsKey(path)) {
+                        // Attempt to read corresponding path for key from cache
+                        if (!mKeyMap.containsKey(key)) {
+                            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)) {
+                                extras.putBoolean("legacy", true)
+                                val finalPath = path.replace(key, Environment.getExternalStorageDirectory().toString())
+                                extras.putString(PowerampAPI.Track.PATH, finalPath)
+                                mPathMap[path] = finalPath
+                            } else {
+                                val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
+                                // 检测是否已经存入了 key 对应的 content URI
+                                if (keyPref.contains(key)) {
+                                    // 若已存入则直接读取存储值
+                                    val pathValue = keyPref.getString(key, key)!!
+                                    // 检测可用性
+                                    if (checkSAFDirUsability(pathValue)) {
+                                        val finalPath = findFile(path, pathValue)
+                                        if (finalPath != null) {
+                                            extras.putString(PowerampAPI.Track.PATH, finalPath)
+                                            extras.putBoolean("safFound", true)
+                                            mPathMap[path] = finalPath
+                                        } else
+                                            extras.putBoolean("safFound", false)
+                                        mKeyMap[key] = pathValue
+                                    } else {
+                                        startPermissionRequest(key)
+                                    }
+                                } else {
+                                    startPermissionRequest(key)
+                                }
+                            }
                         } else {
+                            if (checkSAFDirUsability(mKeyMap.getValue(key))) {
+                                val finalPath = findFile(path, mKeyMap.getValue(key))
+                                if (finalPath != null) {
+                                    extras.putString(PowerampAPI.Track.PATH, finalPath)
+                                    extras.putBoolean("safFound", true)
+                                    mPathMap[path] = finalPath
+                                } else
+                                    extras.putBoolean("safFound", false)
+                            } else {
+                                startPermissionRequest(key)
+                            }
+                        }
+                    } else {
+                        var finalPath: String? = mPathMap.getValue(path)
+                        if (!MiscUtil.checkSAFUsability(this, Uri.parse(mPathMap[path]))!!) {
                             val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
                             // 检测是否已经存入了 key 对应的 content URI
                             if (keyPref.contains(key)) {
@@ -86,13 +125,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 val pathValue = keyPref.getString(key, key)!!
                                 // 检测可用性
                                 if (checkSAFDirUsability(pathValue)) {
-                                    val finalPath = findFile(path, pathValue)
-                                    if (finalPath != null) {
-                                        extras.putString(PowerampAPI.Track.PATH, finalPath)
-                                        extras.putBoolean("safFound", true)
-                                        mPathMap[path] = finalPath
-                                    } else
-                                        extras.putBoolean("safFound", false)
+                                    finalPath = findFile(path, pathValue)
                                     mKeyMap[key] = pathValue
                                 } else {
                                     startPermissionRequest(key)
@@ -101,44 +134,13 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 startPermissionRequest(key)
                             }
                         }
-                    } else {
-                        if (checkSAFDirUsability(mKeyMap.getValue(key))) {
-                            val finalPath = findFile(path, mKeyMap.getValue(key))
-                            if (finalPath != null) {
-                                extras.putString(PowerampAPI.Track.PATH, finalPath)
-                                extras.putBoolean("safFound", true)
-                                mPathMap[path] = finalPath
-                            } else
-                                extras.putBoolean("safFound", false)
-                        } else {
-                            startPermissionRequest(key)
-                        }
+                        if (finalPath != null) {
+                            extras.putString(PowerampAPI.Track.PATH, finalPath)
+                            extras.putBoolean("safFound", true)
+                            mPathMap[path] = finalPath
+                        } else
+                            extras.putBoolean("safFound", false)
                     }
-                } else {
-                    var finalPath: String? = mPathMap.getValue(path)
-                    if (!MiscUtil.checkSAFUsability(this, Uri.parse(mPathMap[path]))!!) {
-                        val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
-                        // 检测是否已经存入了 key 对应的 content URI
-                        if (keyPref.contains(key)) {
-                            // 若已存入则直接读取存储值
-                            val pathValue = keyPref.getString(key, key)!!
-                            // 检测可用性
-                            if (checkSAFDirUsability(pathValue)) {
-                                finalPath = findFile(path, pathValue)
-                                mKeyMap[key] = pathValue
-                            } else {
-                                startPermissionRequest(key)
-                            }
-                        } else {
-                            startPermissionRequest(key)
-                        }
-                    }
-                    if (finalPath != null) {
-                        extras.putString(PowerampAPI.Track.PATH, finalPath)
-                        extras.putBoolean("safFound", true)
-                        mPathMap[path] = finalPath
-                    } else
-                        extras.putBoolean("safFound", false)
                 }
             }
             // End of path process
@@ -245,7 +247,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private fun findFile (path: String, pathValue: String): String?{
         var treeFile = DocumentFile.fromTreeUri(this, Uri.parse(pathValue))
         var file : DocumentFile? = null
-        val folders = extractAndReplaceExt(path).split("/")
+        val folders = MiscUtil.extractAndReplaceExt(path).split("/")
         val accessFolderName = treeFile?.name
         var startingIndex = 0
         if (accessFolderName in folders) {
@@ -271,9 +273,5 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             return file!!.uri.toString()
         }
         return null
-    }
-
-    private fun extractAndReplaceExt (oldString: String): String {
-        return StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
     }
 }
