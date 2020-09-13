@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Environment
 import android.os.IBinder
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -20,13 +19,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
-import com.maxmpz.poweramp.player.PowerampAPIHelper
 import com.maxmpz.poweramp.player.RemoteTrackTime
-import com.mpatric.mp3agic.Mp3File
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.io.*
 
 class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var mWindow: View? = null
@@ -35,10 +28,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var remoteTrackTime: RemoteTrackTime? = null
     private var mKeyMap = mutableMapOf<String, String>()
     private var mPathMap = mutableMapOf<String, String>()
-
-    companion object {
-        val REQUEST_PATH = 10
-    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -58,7 +47,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             }
             val pendingIntent = PendingIntent.getActivity(
                 this,
-                REQUEST_PATH,
+                PathActivity.REQUEST_PATH,
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
@@ -223,11 +212,11 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     }
 
     private fun startPermissionRequest (key: String) {
-        val pathIntent = Intent(this, PathActivity::class.java).putExtra("path_request", REQUEST_PATH).putExtra("key", key)
+        val pathIntent = Intent(this, PathActivity::class.java).putExtra("request", PathActivity.REQUEST_PATH).putExtra("key", key)
         pathIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         val pendingIntent = PendingIntent.getActivity(
             this,
-            REQUEST_PATH,
+            PathActivity.REQUEST_PATH,
             pathIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )

@@ -27,6 +27,11 @@
             app:summary="@string/preference_experimental_standalone_description"
             app:defaultValue="false"/>
 
+        <Preference
+            app:key="standalone_add"
+            app:title="@string/preference_experimental_standalone_description_add"
+            app:enabled="false"/>
+
         <SwitchPreferenceCompat
             app:key="legacy"
             app:title="@string/preference_experimental_legacy"

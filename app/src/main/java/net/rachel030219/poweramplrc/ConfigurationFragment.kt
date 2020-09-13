@@ -10,15 +10,13 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
-
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
-
 import androidx.preference.*
 import dev.sasikanth.colorsheet.ColorSheet
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ConfigurationFragment: PreferenceFragmentCompat() {
     private val CREATE_LOG = 1000
@@ -44,7 +42,9 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                         setPositiveButton("OK", null)
                         show()
                     }
-                }
+                } else
+                    Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
+                setAddFolderEnabled(value)
             }
             true
         }
@@ -79,6 +79,10 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                 true
             }
         }
+        findPreference<Preference>("standalone_add")?.setOnPreferenceClickListener {
+            startActivity(Intent(requireActivity(), FoldersActivity::class.java))
+            true
+        }
         findPreference<SwitchPreferenceCompat>("charset")?.apply {
             setOnPreferenceChangeListener { _, _ ->
                 Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
@@ -91,6 +95,10 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                 true
             }
         }
+    }
+
+    private fun setAddFolderEnabled (enabled: Boolean) {
+        findPreference<Preference>("standalone_add")?.isEnabled = enabled
     }
 
     private fun applyInitialization (vararg preferenceItems: EditTextPreference?) {

@@ -1,31 +1,67 @@
 package net.rachel030219.poweramplrc
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_folders.*
 
 class FoldersActivity: AppCompatActivity() {
-    // TODO: implement SQLiteOpenHelper to save names and paths & add a entrance(preference) to this
+    // determine whether going to add a folder
+    var additionOngoing = false
+    var recyclerAdapter: Adapter? = null
+
+    var databaseHelper: FoldersDatabaseHelper? = null
+    var folders: MutableList<FoldersDatabaseHelper.Companion.Folder> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_folders)
+
+        databaseHelper = FoldersDatabaseHelper(this)
+
+        recyclerAdapter = Adapter()
+        folder_add.setOnClickListener {
+            additionOngoing = true
+            startActivity(Intent(this, PathActivity::class.java).putExtra("request", PathActivity.REQUEST_FOLDER))
+        }
+        folder_recycler.apply {
+            layoutManager = LinearLayoutManager(this@FoldersActivity)
+            adapter = recyclerAdapter
+        }
     }
 
-    class Adapter: RecyclerView.Adapter<Holder> () {
+    override fun onResume() {
+        super.onResume()
+        folders = databaseHelper!!.fetchFolders()
+        if (additionOngoing) {
+            additionOngoing = false
+            recyclerAdapter?.notifyDataSetChanged()
+        }
+    }
+
+    inner class Adapter: RecyclerView.Adapter<Holder> () {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-            TODO("Not yet implemented")
+            return Holder(LayoutInflater.from(this@FoldersActivity).inflate(R.layout.item_folder, parent, false))
         }
 
         override fun onBindViewHolder(holder: Holder, position: Int) {
-            TODO("Not yet implemented")
+            holder.name.text = folders[position].name
+            holder.path.text = folders[position].path
+            holder.deleteButton.setOnClickListener {
+                databaseHelper!!.removeFolder(folders[position])
+                folders.removeAt(position)
+                notifyItemRemoved(position)
+            }
         }
 
         override fun getItemCount(): Int {
-            TODO("Not yet implemented")
+            return folders.size
         }
     }
 

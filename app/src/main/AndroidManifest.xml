@@ -28,6 +28,8 @@
             android:excludeFromRecents="true" />
         <activity android:name=".DoneActivity"
             android:excludeFromRecents="true" />
+        <activity android:name=".FoldersActivity"
+            android:excludeFromRecents="true" />
         <activity android:name=".PathActivity"
             android:excludeFromRecents="true"
             android:taskAffinity=""
