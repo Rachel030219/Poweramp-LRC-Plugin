@@ -29,7 +29,7 @@
 
         <Preference
             app:key="standalone_add"
-            app:title="@string/preference_experimental_standalone_description_add"
+            app:title="@string/preference_experimental_standalone_add"
             app:enabled="false"/>
 
         <SwitchPreferenceCompat

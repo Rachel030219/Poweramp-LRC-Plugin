@@ -7,7 +7,7 @@
         android:id="@+id/folder_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/preference_experimental_standalone_description_add"
+        android:text="@string/preference_experimental_standalone_add"
         android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="8dp"/>
 
