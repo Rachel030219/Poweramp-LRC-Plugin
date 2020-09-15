@@ -269,13 +269,14 @@ object LrcWindow {
                     null
             }
         }
-        ins?.bufferedReader(charset = findCharset(ins, context))?.use {
-            try {
-                lyrics = it.readText()
-                found = true
-            } catch (e: UnsupportedCharsetException) {
-                lyrics = context.resources.getString(R.string.no_charset_hint)
+        try {
+            ins?.bufferedReader(charset = findCharset(ins, context))?.use {
+                    lyrics = it.readText()
+                    found = true
             }
+        } catch (e: UnsupportedCharsetException) {
+            lyrics = context.resources.getString(R.string.no_charset_hint)
+            found = false
         }
         Lyrics(lyrics, found)
     }
