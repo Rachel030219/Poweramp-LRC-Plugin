@@ -49,7 +49,7 @@ class FoldersDatabaseHelper(context: Context?) :
 
     companion object {
         // Database Info
-        private const val DATABASE_NAME = "folderDatabase"
+        private const val DATABASE_NAME = "folderDatabase.db"
         private const val DATABASE_VERSION = 1
 
         // Table Names

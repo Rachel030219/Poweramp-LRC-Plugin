@@ -10,28 +10,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-<!--        <LinearLayout-->
-<!--            android:id="@+id/permission_storage"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical"-->
-<!--            android:layout_marginHorizontal="32dp"-->
-<!--            android:layout_marginTop="32dp">-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/permission_storage_text"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/permission_storage_hint" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/permission_storage_check"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/permission_storage_check" />-->
-
-<!--        </LinearLayout>-->
-
         <LinearLayout
             android:id="@+id/permission_floating"
             android:layout_width="match_parent"

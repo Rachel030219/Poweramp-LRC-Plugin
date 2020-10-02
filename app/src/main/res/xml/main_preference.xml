@@ -1,67 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <Preference
+        app:key="standalone_add"
+        app:title="@string/permission_folder_check"
+        app:iconSpaceReserved="false"/>
+
     <PreferenceCategory
-        app:title="@string/preference_ui">
+        app:title="@string/preference_ui"
+        app:iconSpaceReserved="false">
 
         <EditTextPreference
             app:key="height"
-            app:title="@string/preference_ui_height"/>
+            app:title="@string/preference_ui_height"
+            app:iconSpaceReserved="false"/>
 
         <EditTextPreference
             app:key="textSize"
-            app:title="@string/preference_ui_textsize"/>
+            app:title="@string/preference_ui_textsize"
+            app:iconSpaceReserved="false"/>
 
         <Preference
             app:key="textColor"
-            app:title="@string/preference_ui_text"/>
+            app:title="@string/preference_ui_text"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:title="@string/preference_experimental">
-
-        <SwitchPreferenceCompat
-            app:key="standalone"
-            app:title="@string/preference_experimental_standalone"
-            app:summary="@string/preference_experimental_standalone_description"
-            app:defaultValue="false"
-            app:isPreferenceVisible="false"/>
-
-        <Preference
-            app:key="standalone_add"
-            app:title="@string/permission_folder_check"/>
-
-        <SwitchPreferenceCompat
-            app:key="legacy"
-            app:title="@string/preference_experimental_legacy"
-            app:summary="@string/preference_experimental_legacy_description"
-            app:defaultValue="false"
-            app:isPreferenceVisible="false"/>
+        app:title="@string/preference_experimental"
+        app:iconSpaceReserved="false">
 
         <SwitchPreferenceCompat
             app:key="encoding"
             app:title="@string/preference_experimental_encoding"
             app:summary="@string/preference_experimental_encoding_description"
             app:enabled="false"
-            app:defaultValue="false"/>
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
 
         <SwitchPreferenceCompat
             app:key="embedded"
             app:title="@string/preference_experimental_embedded"
             app:summary="@string/preference_experimental_embedded_description"
-            app:defaultValue="false"/>
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
 
         <SwitchPreferenceCompat
             app:key="charset"
             app:title="@string/preference_experimental_charset"
             app:summary="@string/preference_experimental_charset_description"
-            app:defaultValue="false"/>
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
 
         <Preference
             app:key="report"
             app:title="@string/preference_experimental_report"
-            app:summary="@string/preference_experimental_report_description"/>
+            app:summary="@string/preference_experimental_report_description"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 

@@ -147,45 +147,24 @@ object LrcWindow {
                 layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
                 nowPlayingFile = path
 
-//                lyrics = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("standalone", false)) {
-//                    var lyricPath = ""
-//                    val fileName = MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
-//                    folders.forEach { folder ->
-//                        DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
-//                            val file = it.findFile(fileName)
-//                            if (it.isDirectory && file != null && file.exists()) {
-//                                lyricPath = file.uri.toString()
-//                            }
-//                        }
-//                    }
-//                    if(lyricPath.isNotBlank())
-//                        readFile(lyricPath, context, true)
-//                    else
-//                        Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
-//                } else {
-//                    if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
-//                        if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!)
-//                            readFile(path, context, true)
-//                        else
-//                            Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
-//                    } else
-//                        readFile(path, context, false)
-//                }
-
                 // path 来自 Poweramp 传入的 Intent
                 var lyricPath = ""
                 val embedded = (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false))
                 val fileName = if (embedded) path.substringAfterLast("/") else MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
                 folders.forEach { folder ->
-                    DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
-                        val file = it.findFile(fileName)
-                        if (it.isDirectory && file != null && file.exists()) {
-                            lyricPath = file.uri.toString()
+                    if (checkSAFDirUsability(folder.path, context)) {
+                        DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
+                            val file = it.findFile(fileName)
+                            if (it.isDirectory && file != null && file.exists()) {
+                                lyricPath = file.uri.toString()
+                            }
                         }
+                    } else {
+                        databaseHelper.removeFolder(folder)
                     }
                 }
                 lyrics = if(lyricPath.isNotBlank())
-                    readFile(lyricPath, context, embedded)
+                    readFile(lyricPath, context, embedded, fileName)
                 else
                     Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
 
@@ -257,54 +236,28 @@ object LrcWindow {
         NotificationManagerCompat.from(context).notify(212, builder.build())
     }
 
-    private suspend fun readFile(path: String, context: Context, embedded: Boolean) = withContext(Dispatchers.IO){
-        var lyrics = ""
-//        val file: File
+    private suspend fun readFile(path: String, context: Context, embedded: Boolean, name: String) = withContext(Dispatchers.IO){
+        var lyrics = context.resources.getString(R.string.no_lrc_hint)
         var found = false
         val ins: BufferedInputStream? = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
-//        if (SAF) {
-//            ins = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
-//        } else {
-//            // embedded lyrics
-//            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false)) {
-//                ins = null
-//                val songFile = File(extras!!.getString(PowerampAPI.Track.PATH)!!)
-//                if (songFile.exists()) {
-//                    val mp3File = Mp3File(songFile)
-//                    if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
-//                        lyrics = mp3File.id3v2Tag.lyrics
-//                        found = true
-//                    } else {
-//                        lyrics = context.resources.getString(R.string.no_lrc_hint)
-//                        found = false
-//                    }
-//                }
-//            } else {
-//                file = File(path)
-//                ins = if (file.exists())
-//                    file.inputStream().buffered()
-//                else
-//                    null
-//            }
-//        }
         if (embedded) {
             // TODO: 测试协程
-            val mp3CacheFile = File(context.cacheDir, "songCache")
+            val mp3CacheFile = File(context.cacheDir, name)
             launch(Dispatchers.IO) {
                 FileOutputStream(mp3CacheFile).buffered().use {
                     ins?.copyTo(it)
                     it.flush()
                 }
-                if (mp3CacheFile.exists()) {
-                    val mp3File = Mp3File(mp3CacheFile)
-                    if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
-                        lyrics = mp3File.id3v2Tag.lyrics
-                        found = true
-                    } else {
-                        lyrics = context.resources.getString(R.string.no_lrc_hint)
-                        found = false
-                    }
+            }.join()
+            if (mp3CacheFile.exists()) {
+                val mp3File = Mp3File(mp3CacheFile)
+                if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
+                    lyrics = mp3File.id3v2Tag.lyrics
+                    found = true
+                } else {
+                    found = false
                 }
+                mp3CacheFile.delete()
             }
         } else {
             try {
@@ -345,6 +298,16 @@ object LrcWindow {
         detector.reset()
         inputStream.reset()
         return encoding
+    }
+
+    private fun checkSAFDirUsability (path: String, context: Context): Boolean {
+        val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        return try {
+            context.contentResolver.takePersistableUriPermission(Uri.parse(path), takeFlags)
+            true
+        } catch (e: SecurityException) {
+            false
+        }
     }
 
     class Lyrics(val text: String, val found: Boolean)

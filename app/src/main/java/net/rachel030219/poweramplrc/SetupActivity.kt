@@ -1,15 +1,12 @@
 package net.rachel030219.poweramplrc
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -26,7 +23,7 @@ class SetupActivity: AppCompatActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             main_old.visibility = View.VISIBLE
             showGoToConfig()
-        } else if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("permissionGranted", false)) { // checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && Settings.canDrawOverlays(applicationContext)
+        } else if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("permissionGranted", false)) {
             showGoToConfig()
 
             // send notification
@@ -79,7 +76,7 @@ class SetupActivity: AppCompatActivity() {
                         finish()
                     }
                     else {
-                        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && Settings.canDrawOverlays(applicationContext)) {
+                        if (PreferenceManager.getDefaultSharedPreferences(this@SetupActivity).getBoolean("permissionGranted", false)) {
                             startActivity(Intent(this@SetupActivity, ConfigurationActivity::class.java))
                             finish()
                         }

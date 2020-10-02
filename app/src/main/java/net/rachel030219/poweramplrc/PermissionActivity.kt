@@ -17,10 +17,8 @@ import kotlinx.android.synthetic.main.activity_permissions.*
 
 @RequiresApi(Build.VERSION_CODES.M)
 class PermissionActivity: AppCompatActivity() {
-    private var storage = true
     private var floating = false
     private var floating_asked = false
-    private val REQUEST_PERMISSION = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +34,7 @@ class PermissionActivity: AppCompatActivity() {
                 }
 
                 override fun onNavigateNext() {
-                    if (storage && floating) {
+                    if (floating) {
                         PreferenceManager.getDefaultSharedPreferences(this@PermissionActivity).edit().putBoolean("permissionGranted", true).apply()
                         startActivity(Intent(this@PermissionActivity, DoneActivity::class.java))
                         // send notification
@@ -67,11 +65,6 @@ class PermissionActivity: AppCompatActivity() {
                 }
             })
         // Request permissions
-//        permission_storage_check.setOnClickListener {
-//            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSION)
-//            }
-//        }
         permission_floating_check.setOnClickListener {
             if (!Settings.canDrawOverlays(this)) {
                 floating_asked = true
@@ -105,19 +98,4 @@ class PermissionActivity: AppCompatActivity() {
             }
         }
     }
-
-//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-//        if (requestCode == REQUEST_PERMISSION) {
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                permission_storage_text.setText(R.string.permission_storage_granted)
-//                permission_storage_text.setTextColor(getColor(R.color.text_normal))
-//                permission_storage_check.visibility = View.GONE
-//                storage = true
-//            } else {
-//                permission_storage_text.setText(R.string.permission_storage_denied)
-//                permission_storage_text.setTextColor(getColor(R.color.text_failure))
-//                storage = false
-//            }
-//        }
-//    }
 }
