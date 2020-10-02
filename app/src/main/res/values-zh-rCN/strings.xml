@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Poweramp 歌词插件</string>
-    <string name="main_message">这是一个用以弥补 Poweramp 本地歌词功能缺乏的简单应用。开始之前，我们需要一些权限，来使它正常工作。\n此外，若所有权限都已正确获取，则将进入配置页面。\n\n新增的「独立文件访问方案」更稳定可靠，应当能解决「找不到歌词」的问题，并将在几个版本内取代原有方案，欢迎体验。\n\n目前支持度随文件存储方式不同的功能——\n传统文件：\n内嵌歌词\n————\n（正努力消除壁垒中）</string>
+    <string name="main_message">这是一个用以弥补 Poweramp 本地歌词功能缺乏的简单应用。开始之前，我们需要一些权限，来使它正常工作。\n此外，若所有权限都已正确获取，则将进入配置页面。</string>
     <string name="main_old">您的 Android 版本无需应用手动获取任何权限，所以接下来什么都不用做。</string>
     <string name="main_configuration">权限就绪，马上进入配置页！</string>
+    <string name="permission_folder_hint">从 1.6 版本开始，独立文件访问方案已替代掉古旧而不稳定的老方案。本应用只会在选定的文件夹里寻找歌词/歌曲文件。</string>
+    <string name="permission_folder_check">管理文件夹</string>
     <string name="permission_storage_hint">要获取 .lrc 文件，需要存储权限（只读）。</string>
     <string name="permission_storage_granted">已获取存储权限</string>
     <string name="permission_storage_denied">存储权限被拒绝</string>
@@ -48,7 +50,7 @@
     <string name="preference_experimental_encoding_description">大概能解决 QQ 音乐自动下载的歌词全是乱码的问题</string>
     <string name="preference_experimental_embedded">使用歌曲内置歌词</string>
     <string name="preference_experimental_embedded_description">可能造成卡顿或不稳定</string>
-    <string name="preference_experimental_embedded_description_full">这个功能尚在测试阶段。\n\n当此功能启用且您的歌曲包含内嵌非 lrc 歌词时，您的 .lrc 文件不会被读取。目前仅适用于非 SAF 访问的文件（非手动在 Poweramp 内授权文件夹，大部分 Android 9 或更低版本的设备上内置存储的文件都是如此）和部分启用「旧文件访问模式」/「古董模式」的 Android 10 设备。\n\n该设置将在歌词重载后生效。</string>
+    <string name="preference_experimental_embedded_description_full">这个功能尚在测试阶段。\n\n当此功能启用且您的歌曲包含内嵌非 lrc 歌词时，您的 .lrc 文件不会被读取。\n\n该设置将在歌词重载后生效。</string>
     <string name="preference_experimental_charset">自动检测字符集</string>
     <string name="preference_experimental_charset_description">可能会修复“歌词不见了”或歌词乱码</string>
     <string name="preference_experimental_report">报告问题</string>

@@ -3,7 +3,6 @@ package net.rachel030219.poweramplrc
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
@@ -48,9 +47,9 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
             true
         }
         findPreference<SwitchPreferenceCompat>("legacy")?.apply{
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                isVisible = true
-            }
+//            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+//                isVisible = true
+//            }
             setOnPreferenceChangeListener { _, _ ->
                 Toast.makeText(context, R.string.preference_after_restart, Toast.LENGTH_SHORT).show()
                 true
@@ -135,10 +134,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == CREATE_LOG && resultCode == Activity.RESULT_OK) {
             context?.contentResolver?.openOutputStream(data?.data!!).use {
-                BufferedWriter(OutputStreamWriter(it!!)).append(LogGenerator(requireContext()).generate()).run {
-                    flush()
-                    close()
-                }
+                BufferedWriter(OutputStreamWriter(it!!)).append(LogGenerator(requireContext()).generate()).use { writer -> writer.flush() }
             }
             Toast.makeText(context, "Done, stored at ${data?.data}", Toast.LENGTH_SHORT).show()
         }

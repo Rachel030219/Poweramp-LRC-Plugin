@@ -25,11 +25,12 @@
             app:key="standalone"
             app:title="@string/preference_experimental_standalone"
             app:summary="@string/preference_experimental_standalone_description"
-            app:defaultValue="false"/>
+            app:defaultValue="false"
+            app:isPreferenceVisible="false"/>
 
         <Preference
             app:key="standalone_add"
-            app:title="@string/preference_experimental_standalone_add"/>
+            app:title="@string/permission_folder_check"/>
 
         <SwitchPreferenceCompat
             app:key="legacy"

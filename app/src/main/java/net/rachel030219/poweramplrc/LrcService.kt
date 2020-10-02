@@ -3,11 +3,9 @@ package net.rachel030219.poweramplrc
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.os.IBinder
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -17,7 +15,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
-import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
 
@@ -62,128 +59,129 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             startForeground(211, notificationBuilder.build())
         }
         if (intent.hasExtra("request")) {
-            val extras = intent.extras
-            val path = extras?.getString(PowerampAPI.Track.PATH)
-            val key = path!!.substringBefore('/')
+            intent.extras?.let { extras ->
+    //            val path = extras?.getString(PowerampAPI.Track.PATH)
+    //            val key = path!!.substringBefore('/')
 
-            // Path process
-            if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("standalone", false)) {
-                if (!path.startsWith("/")) {
-                    extras.putBoolean("saf", true)
-                    // Attempt to read path from cache
-                    if (!mPathMap.containsKey(path)) {
-                        // Attempt to read corresponding path for key from cache
-                        if (!mKeyMap.containsKey(key)) {
-                            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)) {
-                                extras.putBoolean("legacy", true)
-                                val finalPath = path.replace(key, Environment.getExternalStorageDirectory().toString())
-                                extras.putString(PowerampAPI.Track.PATH, finalPath)
-                                mPathMap[path] = finalPath
-                            } else {
-                                val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
-                                // 检测是否已经存入了 key 对应的 content URI
-                                if (keyPref.contains(key)) {
-                                    // 若已存入则直接读取存储值
-                                    val pathValue = keyPref.getString(key, key)!!
-                                    // 检测可用性
-                                    if (checkSAFDirUsability(pathValue)) {
-                                        val finalPath = findFile(path, pathValue)
-                                        if (finalPath != null) {
-                                            extras.putString(PowerampAPI.Track.PATH, finalPath)
-                                            extras.putBoolean("safFound", true)
-                                            mPathMap[path] = finalPath
-                                        } else
-                                            extras.putBoolean("safFound", false)
-                                        mKeyMap[key] = pathValue
-                                    } else {
-                                        startPermissionRequest(key)
-                                    }
-                                } else {
-                                    startPermissionRequest(key)
-                                }
-                            }
-                        } else {
-                            if (checkSAFDirUsability(mKeyMap.getValue(key))) {
-                                val finalPath = findFile(path, mKeyMap.getValue(key))
-                                if (finalPath != null) {
-                                    extras.putString(PowerampAPI.Track.PATH, finalPath)
-                                    extras.putBoolean("safFound", true)
-                                    mPathMap[path] = finalPath
-                                } else
-                                    extras.putBoolean("safFound", false)
-                            } else {
-                                startPermissionRequest(key)
-                            }
-                        }
-                    } else {
-                        var finalPath: String? = mPathMap.getValue(path)
-                        if (!MiscUtil.checkSAFUsability(this, Uri.parse(mPathMap[path]))!!) {
-                            val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
-                            // 检测是否已经存入了 key 对应的 content URI
-                            if (keyPref.contains(key)) {
-                                // 若已存入则直接读取存储值
-                                val pathValue = keyPref.getString(key, key)!!
-                                // 检测可用性
-                                if (checkSAFDirUsability(pathValue)) {
-                                    finalPath = findFile(path, pathValue)
-                                    mKeyMap[key] = pathValue
-                                } else {
-                                    startPermissionRequest(key)
-                                }
-                            } else {
-                                startPermissionRequest(key)
-                            }
-                        }
-                        if (finalPath != null) {
-                            extras.putString(PowerampAPI.Track.PATH, finalPath)
-                            extras.putBoolean("safFound", true)
-                            mPathMap[path] = finalPath
-                        } else
-                            extras.putBoolean("safFound", false)
-                    }
-                }
-            }
-            // End of path process
-            when (intent.getIntExtra("request", 0)) {
-                LrcWindow.REQUEST_WINDOW -> {
-                    timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
-                        remoteTrackTime!!.stopSongProgress()
-                        false
-                    } else {
-                        remoteTrackTime!!.startSongProgress()
-                        true
-                    }
-                    if (LrcWindow.displaying) {
-                        LrcWindow.destroy(mWindow!!)
-                        LrcWindow.sendNotification(this, extras, false)
-                    } else {
-                        if (timerOn) {
-                            extras.putInt(PowerampAPI.Track.POSITION, mCurrentPosition)
-                        } else {
-                            remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
-                        }
-                        if (!LrcWindow.initialized) {
-                            LrcWindow.initialize(this, mWindow!!)
-                            mWindow!!.findViewById<Button>(R.id.close).setOnClickListener {
-                                LrcWindow.destroy(mWindow!!)
-                                LrcWindow.sendNotification(this, extras, false)
-                            }
-                        }
-                        LrcWindow.refresh(mWindow!!, extras, true, this)
-                        LrcWindow.sendNotification(this, extras, true)
-                    }
-                }
-                LrcWindow.REQUEST_UPDATE -> {
-                    if (mWindow != null) {
-                        LrcWindow.refresh(mWindow!!, extras, false, this)
-                        remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
-                        remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
+                // Path process
+    //            if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("standalone", false)) {
+    //                if (!path.startsWith("/")) {
+    //                    extras.putBoolean("saf", true)
+    //                    // Attempt to read path from cache
+    //                    if (!mPathMap.containsKey(path)) {
+    //                        // Attempt to read corresponding path for key from cache
+    //                        if (!mKeyMap.containsKey(key)) {
+    //                            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("legacy", false)) {
+    //                                extras.putBoolean("legacy", true)
+    //                                val finalPath = path.replace(key, Environment.getExternalStorageDirectory().toString())
+    //                                extras.putString(PowerampAPI.Track.PATH, finalPath)
+    //                                mPathMap[path] = finalPath
+    //                            } else {
+    //                                val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
+    //                                // 检测是否已经存入了 key 对应的 content URI
+    //                                if (keyPref.contains(key)) {
+    //                                    // 若已存入则直接读取存储值
+    //                                    val pathValue = keyPref.getString(key, key)!!
+    //                                    // 检测可用性
+    //                                    if (checkSAFDirUsability(pathValue)) {
+    //                                        val finalPath = findFile(path, pathValue)
+    //                                        if (finalPath != null) {
+    //                                            extras.putString(PowerampAPI.Track.PATH, finalPath)
+    //                                            extras.putBoolean("safFound", true)
+    //                                            mPathMap[path] = finalPath
+    //                                        } else
+    //                                            extras.putBoolean("safFound", false)
+    //                                        mKeyMap[key] = pathValue
+    //                                    } else {
+    //                                        startPermissionRequest(key)
+    //                                    }
+    //                                } else {
+    //                                    startPermissionRequest(key)
+    //                                }
+    //                            }
+    //                        } else {
+    //                            if (checkSAFDirUsability(mKeyMap.getValue(key))) {
+    //                                val finalPath = findFile(path, mKeyMap.getValue(key))
+    //                                if (finalPath != null) {
+    //                                    extras.putString(PowerampAPI.Track.PATH, finalPath)
+    //                                    extras.putBoolean("safFound", true)
+    //                                    mPathMap[path] = finalPath
+    //                                } else
+    //                                    extras.putBoolean("safFound", false)
+    //                            } else {
+    //                                startPermissionRequest(key)
+    //                            }
+    //                        }
+    //                    } else {
+    //                        var finalPath: String? = mPathMap.getValue(path)
+    //                        if (!MiscUtil.checkSAFUsability(this, Uri.parse(mPathMap[path]))!!) {
+    //                            val keyPref = getSharedPreferences("paths", Context.MODE_PRIVATE)
+    //                            // 检测是否已经存入了 key 对应的 content URI
+    //                            if (keyPref.contains(key)) {
+    //                                // 若已存入则直接读取存储值
+    //                                val pathValue = keyPref.getString(key, key)!!
+    //                                // 检测可用性
+    //                                if (checkSAFDirUsability(pathValue)) {
+    //                                    finalPath = findFile(path, pathValue)
+    //                                    mKeyMap[key] = pathValue
+    //                                } else {
+    //                                    startPermissionRequest(key)
+    //                                }
+    //                            } else {
+    //                                startPermissionRequest(key)
+    //                            }
+    //                        }
+    //                        if (finalPath != null) {
+    //                            extras.putString(PowerampAPI.Track.PATH, finalPath)
+    //                            extras.putBoolean("safFound", true)
+    //                            mPathMap[path] = finalPath
+    //                        } else
+    //                            extras.putBoolean("safFound", false)
+    //                    }
+    //                }
+    //            }
+                // End of path process
+                when (intent.getIntExtra("request", 0)) {
+                    LrcWindow.REQUEST_WINDOW -> {
                         timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
                             remoteTrackTime!!.stopSongProgress()
                             false
                         } else {
                             remoteTrackTime!!.startSongProgress()
                             true
+                        }
+                        if (LrcWindow.displaying) {
+                            LrcWindow.destroy(mWindow!!)
+                            LrcWindow.sendNotification(this, extras, false)
+                        } else {
+                            if (timerOn) {
+                                extras.putInt(PowerampAPI.Track.POSITION, mCurrentPosition)
+                            } else {
+                                remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
+                            }
+                            if (!LrcWindow.initialized) {
+                                LrcWindow.initialize(this, mWindow!!)
+                                mWindow!!.findViewById<Button>(R.id.close).setOnClickListener {
+                                    LrcWindow.destroy(mWindow!!)
+                                    LrcWindow.sendNotification(this, extras, false)
+                                }
+                            }
+                            LrcWindow.refresh(mWindow!!, extras, true, this)
+                            LrcWindow.sendNotification(this, extras, true)
+                        }
+                    }
+                    LrcWindow.REQUEST_UPDATE -> {
+                        if (mWindow != null) {
+                            LrcWindow.refresh(mWindow!!, extras, false, this)
+                            remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
+                            remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
+                            timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
+                                remoteTrackTime!!.stopSongProgress()
+                                false
+                            } else {
+                                remoteTrackTime!!.startSongProgress()
+                                true
+                            }
                         }
                     }
                 }

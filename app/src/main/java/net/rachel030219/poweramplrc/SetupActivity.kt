@@ -13,6 +13,7 @@ import android.provider.Settings
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.preference.PreferenceManager
 import com.android.setupwizardlib.view.NavigationBar.NavigationBarListener
 import com.maxmpz.poweramp.player.PowerampAPI
 import kotlinx.android.synthetic.main.activity_setup.*
@@ -25,7 +26,7 @@ class SetupActivity: AppCompatActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             main_old.visibility = View.VISIBLE
             showGoToConfig()
-        } else if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && Settings.canDrawOverlays(applicationContext)) {
+        } else if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("permissionGranted", false)) { // checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && Settings.canDrawOverlays(applicationContext)
             showGoToConfig()
 
             // send notification
@@ -36,16 +37,18 @@ class SetupActivity: AppCompatActivity() {
                     putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
                     putInt(PowerampAPI.Track.POSITION, statusIntent.getIntExtra(PowerampAPI.Track.POSITION, -1))
                 }
-                if (LrcWindow.displaying)
-                    LrcWindow.sendNotification(this, bundle, true)
-                else
-                    LrcWindow.sendNotification(this, bundle, false)
+                bundle?.also {
+                    if (LrcWindow.displaying)
+                        LrcWindow.sendNotification(this, it, true)
+                    else
+                        LrcWindow.sendNotification(this, it, false)
 
-                val intents = Intent(this, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UPDATE).putExtras(bundle!!)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    startForegroundService(intents.apply { putExtra("foreground", true) })
-                else
-                    startService(intents)
+                    val intents = Intent(this, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UPDATE).putExtras(it)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        startForegroundService(intents.apply { putExtra("foreground", true) })
+                    else
+                        startService(intents)
+                }
             }
         }
 

@@ -29,6 +29,7 @@ import me.wcy.lrcview.LrcView
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.BufferedInputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 import java.util.concurrent.TimeUnit
@@ -146,30 +147,47 @@ object LrcWindow {
                 layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
                 nowPlayingFile = path
 
-                lyrics = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("standalone", false)) {
-                    var lyricPath = ""
-                    val fileName = MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
-                    folders.forEach { folder ->
-                        DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
-                            val file = it.findFile(fileName)
-                            if (it.isDirectory && file != null && file.exists()) {
-                                lyricPath = file.uri.toString()
-                            }
+//                lyrics = if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("standalone", false)) {
+//                    var lyricPath = ""
+//                    val fileName = MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
+//                    folders.forEach { folder ->
+//                        DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
+//                            val file = it.findFile(fileName)
+//                            if (it.isDirectory && file != null && file.exists()) {
+//                                lyricPath = file.uri.toString()
+//                            }
+//                        }
+//                    }
+//                    if(lyricPath.isNotBlank())
+//                        readFile(lyricPath, context, true)
+//                    else
+//                        Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
+//                } else {
+//                    if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
+//                        if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!)
+//                            readFile(path, context, true)
+//                        else
+//                            Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
+//                    } else
+//                        readFile(path, context, false)
+//                }
+
+                // path 来自 Poweramp 传入的 Intent
+                var lyricPath = ""
+                val embedded = (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false))
+                val fileName = if (embedded) path.substringAfterLast("/") else MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
+                folders.forEach { folder ->
+                    DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
+                        val file = it.findFile(fileName)
+                        if (it.isDirectory && file != null && file.exists()) {
+                            lyricPath = file.uri.toString()
                         }
                     }
-                    if(lyricPath.isNotBlank())
-                        readFile(lyricPath, context, true)
-                    else
-                        Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
-                } else {
-                    if (extras.getBoolean("saf") && !extras.getBoolean("legacy")) {
-                        if (extras.getBoolean("safFound") && MiscUtil.checkSAFUsability(context, Uri.parse(path))!!)
-                            readFile(path, context, true)
-                        else
-                            Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
-                    } else
-                        readFile(path, context, false)
                 }
+                lyrics = if(lyricPath.isNotBlank())
+                    readFile(lyricPath, context, embedded)
+                else
+                    Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
 
                 if (lyrics.found)
                     layout.findViewById<LrcView>(R.id.lrcview).apply {
@@ -206,8 +224,8 @@ object LrcWindow {
         displaying = false
     }
 
-    fun sendNotification(context: Context?, extras: Bundle?, ongoing: Boolean){
-        val realExtras: Bundle = extras!!
+    fun sendNotification(context: Context?, extras: Bundle, ongoing: Boolean){
+        val realExtras: Bundle = extras
         val pendingIntent: PendingIntent?
         val builder = NotificationCompat.Builder(context!!, "ENTRANCE").apply {
             setContentTitle(extras.getString(PowerampAPI.Track.TITLE) + " - " + extras.getString(PowerampAPI.Track.ARTIST))
@@ -239,20 +257,46 @@ object LrcWindow {
         NotificationManagerCompat.from(context).notify(212, builder.build())
     }
 
-    private suspend fun readFile(path: String, context: Context, SAF: Boolean) = withContext(Dispatchers.IO){
+    private suspend fun readFile(path: String, context: Context, embedded: Boolean) = withContext(Dispatchers.IO){
         var lyrics = ""
-        val ins: BufferedInputStream?
-        val file: File
+//        val file: File
         var found = false
-        if (SAF) {
-            ins = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
-        } else {
-            // embedded lyrics
-            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false)) {
-                ins = null
-                val songFile = File(extras!!.getString(PowerampAPI.Track.PATH)!!)
-                if (songFile.exists()) {
-                    val mp3File = Mp3File(songFile)
+        val ins: BufferedInputStream? = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
+//        if (SAF) {
+//            ins = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
+//        } else {
+//            // embedded lyrics
+//            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false)) {
+//                ins = null
+//                val songFile = File(extras!!.getString(PowerampAPI.Track.PATH)!!)
+//                if (songFile.exists()) {
+//                    val mp3File = Mp3File(songFile)
+//                    if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
+//                        lyrics = mp3File.id3v2Tag.lyrics
+//                        found = true
+//                    } else {
+//                        lyrics = context.resources.getString(R.string.no_lrc_hint)
+//                        found = false
+//                    }
+//                }
+//            } else {
+//                file = File(path)
+//                ins = if (file.exists())
+//                    file.inputStream().buffered()
+//                else
+//                    null
+//            }
+//        }
+        if (embedded) {
+            // TODO: 测试协程
+            val mp3CacheFile = File(context.cacheDir, "songCache")
+            launch(Dispatchers.IO) {
+                FileOutputStream(mp3CacheFile).buffered().use {
+                    ins?.copyTo(it)
+                    it.flush()
+                }
+                if (mp3CacheFile.exists()) {
+                    val mp3File = Mp3File(mp3CacheFile)
                     if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
                         lyrics = mp3File.id3v2Tag.lyrics
                         found = true
@@ -261,22 +305,17 @@ object LrcWindow {
                         found = false
                     }
                 }
-            } else {
-                file = File(path)
-                ins = if (file.exists())
-                    file.inputStream().buffered()
-                else
-                    null
             }
-        }
-        try {
-            ins?.bufferedReader(charset = findCharset(ins, context))?.use {
+        } else {
+            try {
+                ins?.bufferedReader(charset = findCharset(ins, context))?.use {
                     lyrics = it.readText()
                     found = true
+                }
+            } catch (e: UnsupportedCharsetException) {
+                lyrics = context.resources.getString(R.string.no_charset_hint)
+                found = false
             }
-        } catch (e: UnsupportedCharsetException) {
-            lyrics = context.resources.getString(R.string.no_charset_hint)
-            found = false
         }
         Lyrics(lyrics, found)
     }

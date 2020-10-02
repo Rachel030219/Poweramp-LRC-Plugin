@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import com.maxmpz.poweramp.player.PowerampAPI
 
 class LogGenerator(private val context: Context) {
@@ -40,6 +39,12 @@ class LogGenerator(private val context: Context) {
         context.run {
             for ((key, value) in getSharedPreferences("paths", Context.MODE_PRIVATE).all) {
                 message.append("key: $key, value: $value\n")
+            }
+        }
+        message.append(genTitle("FOLDERS"))
+        context.run {
+            for (folder in FoldersDatabaseHelper(this).fetchFolders()) {
+                message.append("name: ${folder.name}, path: ${folder.path}\n")
             }
         }
     }
