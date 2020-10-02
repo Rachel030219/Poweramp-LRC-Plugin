@@ -20,8 +20,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var timerOn = false
     private var mCurrentPosition = -1
     private var remoteTrackTime: RemoteTrackTime? = null
-    private var mKeyMap = mutableMapOf<String, String>()
-    private var mPathMap = mutableMapOf<String, String>()
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
