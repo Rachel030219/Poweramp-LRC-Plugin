@@ -20,10 +20,7 @@ class SetupActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setup)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            main_old.visibility = View.VISIBLE
-            showGoToConfig()
-        } else if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("permissionGranted", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("permissionGranted", false)) {
             showGoToConfig()
 
             // send notification
@@ -62,28 +59,19 @@ class SetupActivity: AppCompatActivity() {
                     // Create notification channel on Oreo and above
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val mEntranceChannel = NotificationChannel("ENTRANCE", resources.getString(R.string.notification_entrance_channel_name), NotificationManager.IMPORTANCE_LOW)
-                        val mPathChannel = NotificationChannel("PATH", resources.getString(R.string.notification_path_channel_name), NotificationManager.IMPORTANCE_DEFAULT)
                         val mPlaceholderChannel = NotificationChannel("PLACEHOLDER", resources.getString(R.string.notification_placeholder_channel_name), NotificationManager.IMPORTANCE_LOW)
                         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
                             createNotificationChannel(mEntranceChannel)
                             createNotificationChannel(mPlaceholderChannel)
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                                createNotificationChannel(mPathChannel)
                         }
                     }
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                        startActivity(Intent(this@SetupActivity, DoneActivity::class.java))
+                    if (PreferenceManager.getDefaultSharedPreferences(this@SetupActivity).getBoolean("permissionGranted", false)) {
+                        startActivity(Intent(this@SetupActivity, ConfigurationActivity::class.java))
                         finish()
                     }
                     else {
-                        if (PreferenceManager.getDefaultSharedPreferences(this@SetupActivity).getBoolean("permissionGranted", false)) {
-                            startActivity(Intent(this@SetupActivity, ConfigurationActivity::class.java))
-                            finish()
-                        }
-                        else {
-                            startActivity(Intent(this@SetupActivity, PermissionActivity::class.java))
-                            finish()
-                        }
+                        startActivity(Intent(this@SetupActivity, PermissionActivity::class.java))
+                        finish()
                     }
                 }
             })

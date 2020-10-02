@@ -65,6 +65,10 @@ class PermissionActivity: AppCompatActivity() {
                 }
             })
         // Request permissions
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            permission_floating.visibility = View.GONE
+            floating = true
+        }
         permission_floating_check.setOnClickListener {
             if (!Settings.canDrawOverlays(this)) {
                 floating_asked = true

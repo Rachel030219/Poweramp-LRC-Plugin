@@ -18,15 +18,6 @@
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/main_old"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/main_old"
-            android:textColor="@color/text_success"
-            android:textStyle="bold"
-            android:visibility="gone"/>
-
-        <TextView
             android:id="@+id/main_configuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

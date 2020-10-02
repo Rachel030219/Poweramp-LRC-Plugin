@@ -1,14 +1,9 @@
 <resources>
     <string name="app_name">Poweramp LRC Plugin</string>
     <string name="main_message">This is a simple app to fix Poweramp\'s lack of local LRC lyrics support. Before we start, some permissions are required to work correctly. \nAfter permissions are granted, a configuration page will appear.</string>
-    <string name="main_old">Your Android version does not require any permission to be requested.</string>
     <string name="main_configuration">All permissions are ready, click next to make customizations!</string>
     <string name="permission_folder_hint">Starting from version 1.6, standalone mode has replaced the old and unstable way to access files. This app only looks for the corresponding lyrics or songs in the chosen folders.</string>
     <string name="permission_folder_check">Manage folders</string>
-    <string name="permission_storage_hint">Storage permission(read only) is required to fetch your .lrc files.</string>
-    <string name="permission_storage_granted">Storage permission granted.</string>
-    <string name="permission_storage_denied">Storage permission denied.</string>
-    <string name="permission_storage_check">Check storage permission</string>
     <string name="permission_floating_hint">Drawing over other apps is required to create a floating lyric window.</string>
     <string name="permission_floating_granted">Drawing permission granted.</string>
     <string name="permission_floating_denied">Drawing permission denied.</string>
