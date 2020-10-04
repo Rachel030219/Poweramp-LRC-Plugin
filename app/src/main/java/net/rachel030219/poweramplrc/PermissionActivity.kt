@@ -1,18 +1,18 @@
 package net.rachel030219.poweramplrc
 
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.view.View
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import com.android.setupwizardlib.view.NavigationBar
-import com.maxmpz.poweramp.player.PowerampAPI
 import kotlinx.android.synthetic.main.activity_permissions.*
 
 @RequiresApi(Build.VERSION_CODES.M)
@@ -35,31 +35,8 @@ class PermissionActivity: AppCompatActivity() {
 
                 override fun onNavigateNext() {
                     if (floating) {
-                        PreferenceManager.getDefaultSharedPreferences(this@PermissionActivity).edit().putBoolean("permissionGranted", true).apply()
+                        PreferenceManager.getDefaultSharedPreferences(this@PermissionActivity).edit().putBoolean("permission", true).apply()
                         startActivity(Intent(this@PermissionActivity, DoneActivity::class.java))
-                        // send notification
-                        val statusIntent = registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
-                        val trackIntent = registerReceiver(null, IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED))
-                        if (statusIntent != null && trackIntent != null) {
-                            val bundle = trackIntent.getBundleExtra(PowerampAPI.TRACK)?.apply {
-                                putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
-                                putInt(PowerampAPI.Track.POSITION, statusIntent.getIntExtra(PowerampAPI.Track.POSITION, -1))
-                            }
-                            bundle?.also {
-                                if (LrcWindow.displaying)
-                                    LrcWindow.sendNotification(this@PermissionActivity, it, true)
-                                else
-                                    LrcWindow.sendNotification(this@PermissionActivity, it, false)
-
-                                val intents = Intent(this@PermissionActivity, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UPDATE).putExtras(it)
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                                    startForegroundService(intents.apply {
-                                        putExtra("foreground", true)
-                                    })
-                                else
-                                    startService(intents)
-                            }
-                        }
                         finish()
                     }
                 }
@@ -82,7 +59,27 @@ class PermissionActivity: AppCompatActivity() {
             }
         }
         permission_folder_check.setOnClickListener {
-            startActivity(Intent(this, FoldersActivity::class.java))
+            AlertDialog.Builder(this).apply {
+                setMessage(getString(R.string.permission_folder_dialog, 5))
+                setCancelable(false)
+                show().also { dialog ->
+                    var currentDelay = 5
+                    val handler = Handler()
+                    var runnable = Runnable {  }
+                    runnable = Runnable {
+                        runOnUiThread {
+                            currentDelay--
+                            dialog.setMessage(getString(R.string.permission_folder_dialog, currentDelay))
+                            if (currentDelay == 0) {
+                                startActivity(Intent(this@PermissionActivity, FoldersActivity::class.java))
+                                dialog.dismiss()
+                            } else
+                                handler.postDelayed(runnable, 1000)
+                        }
+                    }
+                    handler.postDelayed(runnable, 1000)
+                }
+            }
         }
     }
 

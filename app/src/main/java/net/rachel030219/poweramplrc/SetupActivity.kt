@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import com.android.setupwizardlib.view.NavigationBar.NavigationBarListener
-import com.maxmpz.poweramp.player.PowerampAPI
 import kotlinx.android.synthetic.main.activity_setup.*
 
 class SetupActivity: AppCompatActivity() {
@@ -20,30 +18,8 @@ class SetupActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setup)
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("permissionGranted", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("permission", false)) {
             showGoToConfig()
-
-            // send notification
-            val statusIntent = registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
-            val trackIntent = registerReceiver(null, IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED))
-            if (statusIntent != null && trackIntent != null) {
-                val bundle = trackIntent.getBundleExtra(PowerampAPI.TRACK)?.apply {
-                    putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
-                    putInt(PowerampAPI.Track.POSITION, statusIntent.getIntExtra(PowerampAPI.Track.POSITION, -1))
-                }
-                bundle?.also {
-                    if (LrcWindow.displaying)
-                        LrcWindow.sendNotification(this, it, true)
-                    else
-                        LrcWindow.sendNotification(this, it, false)
-
-                    val intents = Intent(this, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UPDATE).putExtras(it)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                        startForegroundService(intents.apply { putExtra("foreground", true) })
-                    else
-                        startService(intents)
-                }
-            }
         }
 
         // Initialize SetupWizardLayout
@@ -65,7 +41,7 @@ class SetupActivity: AppCompatActivity() {
                             createNotificationChannel(mPlaceholderChannel)
                         }
                     }
-                    if (PreferenceManager.getDefaultSharedPreferences(this@SetupActivity).getBoolean("permissionGranted", false)) {
+                    if (PreferenceManager.getDefaultSharedPreferences(this@SetupActivity).getBoolean("permission", false)) {
                         startActivity(Intent(this@SetupActivity, ConfigurationActivity::class.java))
                         finish()
                     }

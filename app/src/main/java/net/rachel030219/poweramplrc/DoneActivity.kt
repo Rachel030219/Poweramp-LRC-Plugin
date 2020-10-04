@@ -1,5 +1,6 @@
 package net.rachel030219.poweramplrc
 
+import android.content.Intent
 import android.os.Bundle
 
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,7 @@ class DoneActivity: AppCompatActivity() {
                 }
 
                 override fun onNavigateNext() {
+                    startActivity(Intent(this@DoneActivity, ConfigurationActivity::class.java))
                     finish()
                 }
             })
