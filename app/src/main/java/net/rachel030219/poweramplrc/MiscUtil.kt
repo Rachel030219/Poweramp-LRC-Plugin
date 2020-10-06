@@ -13,10 +13,6 @@ object MiscUtil {
     fun dpToPx (dp: Float, context: Context): Float {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics)
     }
-    // usability check
-    fun checkSAFUsability (context: Context, uri: Uri): Boolean? {
-        return DocumentFile.fromSingleUri(context, uri)?.run { (isFile && canRead()) }
-    }
 
     fun extractAndReplaceExt (oldString: String): String {
         return StringBuilder(oldString).substring(0, oldString.lastIndexOf('.')) + ".lrc"
