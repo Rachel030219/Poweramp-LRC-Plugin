@@ -18,7 +18,7 @@
     <string name="notification_path_channel_name">路径设置</string>
     <string name="notification_path_title">需要权限</string>
     <string name="notification_path_message">请指定文件夹给\u0020</string>
-    <string name="notification_placeholder_channel_name">占位符</string>
+    <string name="notification_placeholder_channel_name">常驻通知</string>
     <string name="notification_placeholder_message">正在后台运行（可禁用该通知）。</string>
 
     <string name="no_lrc_hint">歌词不见了</string>
@@ -45,7 +45,7 @@
     <string name="preference_experimental_encoding_description">大概能解决 QQ 音乐自动下载的歌词全是乱码的问题</string>
     <string name="preference_experimental_embedded">使用歌曲内置歌词</string>
     <string name="preference_experimental_embedded_description">可能造成卡顿或不稳定</string>
-    <string name="preference_experimental_embedded_description_full">这个功能尚在测试阶段。\n\n当此功能启用且您的歌曲包含内嵌非 lrc 歌词时，您的 .lrc 文件不会被读取。\n\n该设置将在歌词重载后生效。</string>
+    <string name="preference_experimental_embedded_description_full">这个功能尚在测试阶段。 当此功能启用且您的歌曲包含内嵌非 lrc 歌词时，您的 .lrc 文件不会被读取。  该设置将在歌词重载后生效。</string>
     <string name="preference_experimental_charset">自动检测字符集</string>
     <string name="preference_experimental_charset_description">可能会修复“歌词不见了”或歌词乱码</string>
     <string name="preference_experimental_report">报告问题</string>
