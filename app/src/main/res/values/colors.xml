@@ -5,6 +5,7 @@
     <color name="lrc_current_green">#3ECD88</color>
     <color name="lrc_current_yellow">#DCA435</color>
     <color name="lrc_current_purple">#8E47C8</color>
+    <color name="lrc_current_white">#EEEEEE</color>
     <color name="lrc_normal">#BDBDBD</color>
 
     <color name="text_success">#00C851</color>
