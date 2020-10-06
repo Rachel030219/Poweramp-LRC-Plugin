@@ -3,6 +3,8 @@
     <string name="app_name">Poweramp 歌詞外掛</string>
     <string name="main_message">這個簡單的應用程式為 Poweramp 提供本地歌詞功能。開始之前，我們需要一些權限，來使它正常運作。\n若所有權限都已正確獲取，則將進入設定頁面。</string>
     <string name="main_configuration">權限已獲取，馬上進入設定頁！</string>
+    <string name="permission_folder_check">管理資料夾</string>
+    <string name="permission_folder_hint">從 1.6 版本開始，舊有的檔案存取方式已被獨立檔案存取方式取代。本應用程式只會在選擇的資料夾裏尋找歌詞/歌曲檔案。</string>
     <string name="permission_floating_hint">要顯示歌詞浮動視窗，需要繪製權限。</string>
     <string name="permission_floating_granted">已獲取繪製權限</string>
     <string name="permission_floating_denied">繪製權限被拒絕</string>
@@ -17,9 +19,11 @@
     <string name="notification_path_title">需要權限</string>
     <string name="notification_path_message">請指定資料夾給\u0020</string>
     <string name="notification_placeholder_channel_name">常駐通知</string>
-    <string name="notification_placeholder_message">正在後臺執行（可禁用該通知）。</string>
+    <string name="notification_placeholder_message">正在背景運行（可禁用該通知）。</string>
 
     <string name="no_lrc_hint">找不到歌詞</string>
+    <string name="no_charset_hint">暫不支援此歌詞檔案編碼方式</string>
+    <string name="lrc_loading">歌詞載入中…</string>
 
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">動畫時長</string>
@@ -34,19 +38,15 @@
     <string name="preference_experimental_legacy_description">（僅 Android 10）可能在正常模式不工作時有用，但若如此也請報告問題</string>
     <string name="preference_experimental_encoding">使用 GB18030 編碼</string>
     <string name="preference_experimental_encoding_description">大概能解決 QQ 音樂自動下載的歌詞全是亂碼的問題</string>
+    <string name="preference_experimental_embedded">使用歌曲內嵌歌詞</string>
+    <string name="preference_experimental_embedded_description">可能出現不穩定的情況</string>
+    <string name="preference_experimental_embedded_description_full">這個功能尚在測試階段。如您的歌曲內嵌了非 lrc 格式的歌詞時，您的 .lrc 檔案不會被讀取。  該設定將在歌詞重新載入後生效。</string>
+    <string name="preference_experimental_charset">自動偵測字集</string>
+    <string name="preference_experimental_charset_description">可能可以解決「找不到歌詞」或歌詞亂碼的問題</string>
     <string name="preference_experimental_report">報告問題</string>
     <string name="preference_experimental_report_description">產生一個包含了所有可能出問題的東西的日誌（不會包含個人資訊）</string>
     <string name="preference_after_restart">將在浮動視窗重新啓動後生效。</string>
     <string name="preference_after_reload">將在歌詞重新載入後生效。</string>
     <string name="preference_default">預設</string>
     <string name="error">發生了一點問題</string>
-    <string name="permission_folder_check">管理資料夾</string>
-    <string name="permission_folder_hint">從 1.6 版本開始，舊有的檔案存取方式已被獨立檔案存取方式取代。本應用程式只會在選擇的資料夾裏尋找歌詞/歌曲檔案。</string>
-    <string name="no_charset_hint">暫不支援此歌詞檔案編碼方式</string>
-    <string name="lrc_loading">歌詞載入中…</string>
-    <string name="preference_experimental_embedded">使用歌曲內嵌歌詞</string>
-    <string name="preference_experimental_embedded_description">可能出現不穩定的情況</string>
-    <string name="preference_experimental_embedded_description_full">這個功能尚在測試階段。如您的歌曲內嵌了非 lrc 格式的歌詞時，您的 .lrc 檔案不會被讀取。  該設定將在歌詞重新載入後生效。</string>
-    <string name="preference_experimental_charset">自動偵測字集</string>
-    <string name="preference_experimental_charset_description">可能可以解決「找不到歌詞」或歌詞亂碼的問題</string>
 </resources>
