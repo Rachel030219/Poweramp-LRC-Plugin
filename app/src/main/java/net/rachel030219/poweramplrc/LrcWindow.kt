@@ -49,6 +49,7 @@ object LrcWindow {
     var lockButton: Button? = null
     const val REQUEST_WINDOW = 1
     const val REQUEST_UPDATE = 2
+    const val REQUEST_UNLOCK = 3
 
     @SuppressLint("ClickableViewAccessibility")
     fun initialize(context: Context, layout: View){
@@ -190,6 +191,14 @@ object LrcWindow {
         layout.visibility = View.GONE
         window!!.updateViewLayout(layout, params)
         displaying = false
+    }
+
+    fun unlock(layout: View) {
+        if (initialized) {
+            params!!.flags =
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+            window!!.updateViewLayout(layout, params)
+        }
     }
 
     fun sendNotification(context: Context?, extras: Bundle, ongoing: Boolean){

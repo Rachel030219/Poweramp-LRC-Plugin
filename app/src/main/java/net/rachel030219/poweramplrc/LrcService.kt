@@ -106,8 +106,8 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                         it.priority = NotificationCompat.PRIORITY_MIN
                                         it.setOnlyAlertOnce(true)
                                         it.setAutoCancel(true)
+                                        it.setContentIntent(PendingIntent.getService(this, LrcWindow.REQUEST_UNLOCK, Intent(this, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UNLOCK), PendingIntent.FLAG_CANCEL_CURRENT))
                                         it.build()
-                                        // TODO: 添加通知跳转唤起 Service 并调用 LrcWindow 将 flag 设置回去
                                     }
                                     NotificationManagerCompat.from(this).notify(213, lockNotification)
                                 }
@@ -129,6 +129,11 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 remoteTrackTime!!.startSongProgress()
                                 true
                             }
+                        }
+                    }
+                    LrcWindow.REQUEST_UNLOCK -> {
+                        if (mWindow != null) {
+                            LrcWindow.unlock(mWindow!!)
                         }
                     }
                 }
