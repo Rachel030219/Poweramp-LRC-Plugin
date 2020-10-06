@@ -15,11 +15,11 @@
     <string name="notification_entrance_channel_name">Window toggle</string>
     <string name="notification_message_hide">Click to hide</string>
     <string name="notification_message_show">Click to show</string>
-    <string name="notification_path_channel_name">Path setting</string>
-    <string name="notification_path_title">Permission needed</string>
-    <string name="notification_path_message">Please specify a folder for\u0020</string>
     <string name="notification_placeholder_channel_name">Placeholder</string>
     <string name="notification_placeholder_message">Running in the background (this notification can be disabled).</string>
+    <string name="notification_lock_channel_name">Lock state</string>
+    <string name="notification_lock_title">Lyric window locked</string>
+    <string name="notification_lock_message">Click to unlock</string>
 
     <string name="no_lrc_hint">Lyrics not found</string>
     <string name="no_charset_hint">Lyric charset not supported</string>

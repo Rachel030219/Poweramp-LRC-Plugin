@@ -18,16 +18,17 @@
 
         <Button
             android:id="@+id/close"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="2dp"
             android:background="@drawable/ic_close"
             tools:layout_editor_absoluteX="315dp" />
 
         <me.wcy.lrcview.LrcView
             android:id="@+id/lrcview"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="64dp"
-            android:layout_marginEnd="28dp"
             android:layout_marginVertical="8dp"
             app:lrcAnimationDuration="250"
             app:lrcCurrentTextColor="@color/lrc_current_red"
@@ -40,6 +41,14 @@
             app:lrcTextSize="18sp"
             tools:layout_editor_absoluteX="24dp"
             tools:layout_editor_absoluteY="52dp" />
+
+        <Button
+            android:id="@+id/lock"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="2dp"
+            android:background="@drawable/ic_lock"
+            tools:layout_editor_absoluteX="315dp" />
 
     </LinearLayout>
 

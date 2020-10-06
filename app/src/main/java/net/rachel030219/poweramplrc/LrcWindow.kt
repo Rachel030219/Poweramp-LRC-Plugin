@@ -15,7 +15,6 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
@@ -47,6 +46,7 @@ object LrcWindow {
     // components, initialized and refreshed separately
     var lrcView: LrcView? = null
     var closeButton: Button? = null
+    var lockButton: Button? = null
     const val REQUEST_WINDOW = 1
     const val REQUEST_UPDATE = 2
 
@@ -65,6 +65,7 @@ object LrcWindow {
             format = PixelFormat.TRANSLUCENT
         }
         closeButton = layout.findViewById(R.id.close)
+        lockButton = layout.findViewById(R.id.lock)
         lrcView = layout.findViewById(R.id.lrcview)
         layout.setOnTouchListener { _, event ->
             if (displaying) {
@@ -123,18 +124,6 @@ object LrcWindow {
             )
             layoutParams = layoutParams.apply {
                 height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
-            }
-        }
-        var showingBg = true
-        layout.setOnClickListener {
-            if (showingBg) {
-                layout.background = ContextCompat.getDrawable(context, android.R.color.transparent)
-                closeButton!!.visibility = View.INVISIBLE
-                showingBg = false
-            } else {
-                layout.background = ContextCompat.getDrawable(context, R.drawable.window_background)
-                closeButton!!.visibility = View.VISIBLE
-                showingBg = true
             }
         }
         val path = extras.getString(PowerampAPI.Track.PATH)!!
@@ -241,7 +230,6 @@ object LrcWindow {
         var found = false
         val ins: BufferedInputStream? = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
         if (embedded) {
-            // TODO: 测试协程
             val mp3CacheFile = File(context.cacheDir, name)
             launch(Dispatchers.IO) {
                 FileOutputStream(mp3CacheFile).buffered().use {

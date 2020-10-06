@@ -32,7 +32,7 @@
             android:excludeFromRecents="true"
             android:taskAffinity=""
             android:launchMode="singleTask"
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar.TranslucentDecor"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
 
         <receiver android:label="APIReceiver" android:name=".APIReceiver">
             <intent-filter>

@@ -36,9 +36,11 @@ class SetupActivity: AppCompatActivity() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val mEntranceChannel = NotificationChannel("ENTRANCE", resources.getString(R.string.notification_entrance_channel_name), NotificationManager.IMPORTANCE_LOW)
                         val mPlaceholderChannel = NotificationChannel("PLACEHOLDER", resources.getString(R.string.notification_placeholder_channel_name), NotificationManager.IMPORTANCE_LOW)
+                        val mLockChannel = NotificationChannel("LOCK", resources.getString(R.string.notification_lock_channel_name), NotificationManager.IMPORTANCE_LOW)
                         (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
                             createNotificationChannel(mEntranceChannel)
                             createNotificationChannel(mPlaceholderChannel)
+                            createNotificationChannel(mLockChannel)
                         }
                     }
                     if (PreferenceManager.getDefaultSharedPreferences(this@SetupActivity).getBoolean("permission", false)) {

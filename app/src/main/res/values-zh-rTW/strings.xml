@@ -15,11 +15,11 @@
     <string name="notification_entrance_channel_name">顯示歌詞提示</string>
     <string name="notification_message_hide">點選隱藏</string>
     <string name="notification_message_show">點選顯示</string>
-    <string name="notification_path_channel_name">路徑設定</string>
-    <string name="notification_path_title">需要權限</string>
-    <string name="notification_path_message">請指定資料夾給\u0020</string>
     <string name="notification_placeholder_channel_name">常駐通知</string>
     <string name="notification_placeholder_message">正在背景運行（可禁用該通知）。</string>
+    <string name="notification_lock_channel_name">鎖定狀態</string>
+    <string name="notification_lock_title">歌詞視窗已鎖定</string>
+    <string name="notification_lock_message">點選來解鎖</string>
 
     <string name="no_lrc_hint">找不到歌詞</string>
     <string name="no_charset_hint">暫不支援此歌詞檔案編碼方式</string>
