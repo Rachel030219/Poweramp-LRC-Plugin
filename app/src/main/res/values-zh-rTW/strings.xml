@@ -33,6 +33,8 @@
     <string name="preference_ui_textsize">字體大小</string>
     <string name="preference_ui_textsize_description">預設 18 sp, 目前\u0020</string>
     <string name="preference_ui_text">歌詞顏色</string>
+    <string name="preference_ui_opacity">視窗背景不透明度</string>
+    <string name="preference_ui_opacity_description">預設 64 （最大 255）, 目前\u0020</string>
     <string name="preference_experimental">實驗性功能</string>
     <string name="preference_experimental_legacy">使用舊檔案訪問方式</string>
     <string name="preference_experimental_legacy_description">（僅 Android 10）可能在正常模式不工作時有用，但若如此也請報告問題</string>

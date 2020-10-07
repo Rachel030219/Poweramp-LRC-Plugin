@@ -16,6 +16,11 @@
             app:iconSpaceReserved="false"/>
 
         <EditTextPreference
+            app:key="opacity"
+            app:title="@string/preference_ui_opacity"
+            app:iconSpaceReserved="false"/>
+
+        <EditTextPreference
             app:key="textSize"
             app:title="@string/preference_ui_textsize"
             app:iconSpaceReserved="false"/>

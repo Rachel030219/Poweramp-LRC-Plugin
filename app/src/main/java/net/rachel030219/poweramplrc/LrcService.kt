@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
@@ -15,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
 import com.maxmpz.poweramp.player.RemoteTrackTime
 
@@ -85,7 +88,17 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                         LrcWindow.lockButton?.visibility = View.INVISIBLE
                                         showingBg = false
                                     } else {
-                                        mWindow!!.background = ContextCompat.getDrawable(this, R.drawable.window_background)
+                                        val opacity = PreferenceManager.getDefaultSharedPreferences(this).getString("opacity", "64")?.toIntOrNull()
+                                        if (opacity != null) {
+                                            if (opacity > 255)
+                                                mWindow!!.background = ColorDrawable(Color.argb(255, 0, 0, 0))
+                                            else if (opacity < 0)
+                                                mWindow!!.background = ColorDrawable(Color.argb(0, 0, 0, 0))
+                                            else
+                                                mWindow!!.background = ColorDrawable(Color.argb(opacity, 0, 0, 0))
+                                        }
+                                        else
+                                            mWindow!!.background = ColorDrawable(Color.argb(64, 0, 0, 0))
                                         LrcWindow.closeButton?.visibility = View.VISIBLE
                                         LrcWindow.lockButton?.visibility = View.VISIBLE
                                         showingBg = true
@@ -103,10 +116,10 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                         it.setSmallIcon(R.drawable.ic_lock)
                                         it.setContentTitle(this.resources.getString(R.string.notification_lock_title))
                                         it.setContentText(this.resources.getString(R.string.notification_lock_message))
+                                        it.setContentIntent(PendingIntent.getService(this, LrcWindow.REQUEST_UNLOCK, Intent(this, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UNLOCK), PendingIntent.FLAG_CANCEL_CURRENT))
                                         it.priority = NotificationCompat.PRIORITY_MIN
                                         it.setOnlyAlertOnce(true)
                                         it.setAutoCancel(true)
-                                        it.setContentIntent(PendingIntent.getService(this, LrcWindow.REQUEST_UNLOCK, Intent(this, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UNLOCK), PendingIntent.FLAG_CANCEL_CURRENT))
                                         it.build()
                                     }
                                     NotificationManagerCompat.from(this).notify(213, lockNotification)
