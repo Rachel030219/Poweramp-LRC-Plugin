@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_folders.*
@@ -34,11 +35,15 @@ class FoldersActivity: AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@FoldersActivity)
             adapter = recyclerAdapter
         }
+        permission_folder_include.setOnCheckedChangeListener { _, isChecked ->
+            PreferenceManager.getDefaultSharedPreferences(this@FoldersActivity).edit().putBoolean("subDir", isChecked).apply()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         folders = databaseHelper!!.fetchFolders()
+        permission_folder_include.isChecked = PreferenceManager.getDefaultSharedPreferences(this@FoldersActivity).getBoolean("subDir", false)
         if (additionOngoing) {
             additionOngoing = false
             recyclerAdapter?.notifyDataSetChanged()

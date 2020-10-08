@@ -4,11 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import android.view.View
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
@@ -59,27 +57,7 @@ class PermissionActivity: AppCompatActivity() {
             }
         }
         permission_folder_check.setOnClickListener {
-            AlertDialog.Builder(this).apply {
-                setMessage(getString(R.string.permission_folder_dialog, 5))
-                setCancelable(false)
-                show().also { dialog ->
-                    var currentDelay = 5
-                    val handler = Handler()
-                    var runnable = Runnable {  }
-                    runnable = Runnable {
-                        runOnUiThread {
-                            currentDelay--
-                            dialog.setMessage(getString(R.string.permission_folder_dialog, currentDelay))
-                            if (currentDelay == 0) {
-                                startActivity(Intent(this@PermissionActivity, FoldersActivity::class.java))
-                                dialog.dismiss()
-                            } else
-                                handler.postDelayed(runnable, 1000)
-                        }
-                    }
-                    handler.postDelayed(runnable, 1000)
-                }
-            }
+            startActivity(Intent(this@PermissionActivity, FoldersActivity::class.java))
         }
     }
 

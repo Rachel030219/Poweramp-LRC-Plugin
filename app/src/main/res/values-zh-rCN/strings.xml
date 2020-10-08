@@ -4,7 +4,6 @@
     <string name="main_message">这是一个用以弥补 Poweramp 本地歌词功能缺乏的简单应用。开始之前，我们需要一些权限，来使它正常工作。\n此外，若所有权限都已正确获取，则将进入配置页面。</string>
     <string name="main_configuration">权限就绪，马上进入配置页！</string>
     <string name="permission_folder_hint">从 1.6 版本开始，独立文件访问方案已替代掉古旧而不稳定的老方案。本应用只会在选定的文件夹里寻找歌词/歌曲文件。</string>
-    <string name="permission_folder_dialog">请选择歌曲或歌词文件的存储文件夹，而非根文件夹。\n\n%1$d 秒后您方可进入文件夹管理页面。</string>
     <string name="permission_folder_check">管理文件夹</string>
     <string name="permission_floating_hint">要显示歌词浮窗，需要在其他应用的上层绘制。</string>
     <string name="permission_floating_granted">已获取绘制权限</string>
