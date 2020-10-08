@@ -121,16 +121,12 @@ object LrcWindow {
 
                 // path 来自 Poweramp 传入的 Intent
                 var lyricPath = ""
+                val subDir = (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("subDir", false))
                 val embedded = (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false))
                 val fileName = if (embedded) path.substringAfterLast("/") else MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
                 folders.forEach { folder ->
                     if (checkSAFDirUsability(folder.path, context)) {
-                        DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
-                            val file = it.findFile(fileName)
-                            if (it.isDirectory && file != null && file.exists()) {
-                                lyricPath = file.uri.toString()
-                            }
-                        }
+                        findFile(path, folder, context, subDir, embedded)?.also { lyricPath = it }
                     } else {
                         databaseHelper.removeFolder(folder)
                     }
@@ -287,6 +283,43 @@ object LrcWindow {
         } catch (e: SecurityException) {
             false
         }
+    }
+
+    private fun findFile (filePath: String, folder: FoldersDatabaseHelper.Companion.Folder, context: Context, subDir: Boolean, embedded: Boolean): String?{
+        var treeFile = DocumentFile.fromTreeUri(context, Uri.parse(folder.path))
+        var file: DocumentFile? = null
+        val elements = if (embedded) filePath.split("/") else MiscUtil.extractAndReplaceExt(filePath).split("/")
+        if (subDir) {
+            val accessFolderName = treeFile?.name
+            var startingIndex = 0
+            if (accessFolderName in elements) {
+                // 给予权限的文件夹为歌曲路径中的文件夹，那么在文件夹中开始搜索
+                startingIndex = elements.indexOf(accessFolderName)
+            }
+            // 给予权限的文件夹并非歌曲路径中的文件夹，有两种可能
+            // 一种是根文件夹以 UID 命名，一种是其它文件夹，除非确保非根文件夹，否则只应该从头到尾循环
+            elements.forEachIndexed {index, element ->
+                if (index > startingIndex) {
+                    val subTreeFile = treeFile?.findFile(element)
+                    if (subTreeFile != null) {
+                        if (subTreeFile.isDirectory) {
+                            treeFile = subTreeFile
+                        }
+                        else if (subTreeFile.isFile) {
+                            file = subTreeFile
+                        }
+                    }
+                }
+            }
+        } else {
+            DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
+                file = it.findFile(elements[elements.count() - 1])
+            }
+        }
+        if (file != null && file!!.exists()) {
+            return file!!.uri.toString()
+        }
+        return null
     }
 
     class Lyrics(val text: String, val found: Boolean)

@@ -25,6 +25,7 @@
     <string name="no_charset_hint">Lyric charset not supported</string>
     <string name="lrc_loading">Loading lyrics</string>
 
+    <string name="preference_include">Include sub-directories</string>
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">Animation duration</string>
     <string name="preference_ui_duration_description">Default is 250 ms, current:\u0020</string>

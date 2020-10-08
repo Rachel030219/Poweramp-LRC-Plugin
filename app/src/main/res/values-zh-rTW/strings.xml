@@ -25,6 +25,7 @@
     <string name="no_charset_hint">暫不支援此歌詞檔案編碼方式</string>
     <string name="lrc_loading">歌詞載入中…</string>
 
+    <string name="preference_include">Include sub-folders</string>
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">動畫時長</string>
     <string name="preference_ui_duration_description">預設 250 毫秒，目前\u0020</string>

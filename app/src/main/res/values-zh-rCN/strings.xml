@@ -26,6 +26,7 @@
     <string name="no_charset_hint">歌词文件编码暂不支持</string>
     <string name="lrc_loading">歌词加载中…</string>
 
+    <string name="preference_include">包括子資料夾</string>
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">动画时长</string>
     <string name="preference_ui_duration_description">默认 250 毫秒，目前\u0020</string>

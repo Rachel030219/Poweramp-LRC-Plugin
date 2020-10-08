@@ -6,6 +6,12 @@
         app:title="@string/permission_folder_check"
         app:iconSpaceReserved="false"/>
 
+    <SwitchPreferenceCompat
+        app:key="subDir"
+        app:title="@string/preference_include"
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"/>
+
     <PreferenceCategory
         app:title="@string/preference_ui"
         app:iconSpaceReserved="false">
