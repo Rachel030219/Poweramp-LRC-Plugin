@@ -102,27 +102,9 @@ object LrcWindow {
         // refresh settings
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         lrcView?.apply {
-            setNormalTextSize(
-                MiscUtil.spToPx(
-                    preferences.getString("textSize", "18")!!.toFloat(),
-                    context
-                )
-            )
-            setCurrentTextSize(
-                MiscUtil.spToPx(
-                    preferences.getString("textSize", "18")!!.toFloat(),
-                    context
-                )
-            )
-            setCurrentColor(
-                preferences.getInt(
-                    "textColor", ResourcesCompat.getColor(
-                        resources,
-                        R.color.lrc_current_red,
-                        context.theme
-                    )
-                )
-            )
+            setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+            setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+            setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
             layoutParams = layoutParams.apply {
                 height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
             }

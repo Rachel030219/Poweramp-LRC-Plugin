@@ -92,7 +92,8 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                     it.inputType = InputType.TYPE_CLASS_NUMBER
                 }
                 setOnPreferenceChangeListener { _, _ ->
-                    Toast.makeText(context, R.string.preference_after_restart, Toast.LENGTH_SHORT).show()
+                    if (key != "opacity")
+                        Toast.makeText(context, R.string.preference_after_restart, Toast.LENGTH_SHORT).show()
                     true
                 }
             }

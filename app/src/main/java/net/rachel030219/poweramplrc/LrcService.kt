@@ -26,6 +26,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var timerOn = false
     private var mCurrentPosition = -1
     private var remoteTrackTime: RemoteTrackTime? = null
+    private var opacity: Int? = 64
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -34,8 +35,13 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("InflateParams")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        opacity = PreferenceManager.getDefaultSharedPreferences(this).getString("opacity", "64")?.toIntOrNull()
         if (mWindow == null) {
             mWindow = LayoutInflater.from(this).inflate(R.layout.lrc_window, null)
+        }
+        mWindow?.apply {
+            if (opacity != null)
+                background = ColorDrawable(Color.argb(opacity!!, 0, 0, 0))
         }
         if (intent!!.getBooleanExtra("foreground", false)) {
             val notificationIntent = Intent().apply {
@@ -88,14 +94,14 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                         LrcWindow.lockButton?.visibility = View.INVISIBLE
                                         showingBg = false
                                     } else {
-                                        val opacity = PreferenceManager.getDefaultSharedPreferences(this).getString("opacity", "64")?.toIntOrNull()
+                                        opacity = PreferenceManager.getDefaultSharedPreferences(this).getString("opacity", "64")?.toIntOrNull()
                                         if (opacity != null) {
-                                            if (opacity > 255)
+                                            if (opacity!! > 255)
                                                 mWindow!!.background = ColorDrawable(Color.argb(255, 0, 0, 0))
-                                            else if (opacity < 0)
+                                            else if (opacity!! < 0)
                                                 mWindow!!.background = ColorDrawable(Color.argb(0, 0, 0, 0))
                                             else
-                                                mWindow!!.background = ColorDrawable(Color.argb(opacity, 0, 0, 0))
+                                                mWindow!!.background = ColorDrawable(Color.argb(opacity!!, 0, 0, 0))
                                         }
                                         else
                                             mWindow!!.background = ColorDrawable(Color.argb(64, 0, 0, 0))
