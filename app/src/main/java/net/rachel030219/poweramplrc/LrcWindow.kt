@@ -176,6 +176,7 @@ object LrcWindow {
             params!!.flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
             window!!.updateViewLayout(layout, params)
+            layout.callOnClick()
         }
     }
 
