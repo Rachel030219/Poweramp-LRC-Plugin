@@ -8,6 +8,7 @@ import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -47,6 +48,8 @@ object LrcWindow {
     var lrcView: LrcView? = null
     var closeButton: Button? = null
     var lockButton: Button? = null
+    // used to determine whether a file was found in sub dir mode
+    var finalUri: Uri = Uri.EMPTY
     const val REQUEST_WINDOW = 1
     const val REQUEST_UPDATE = 2
     const val REQUEST_UNLOCK = 3
@@ -111,8 +114,9 @@ object LrcWindow {
         }
         val path = extras.getString(PowerampAPI.Track.PATH)!!
         var lyrics: Lyrics
-        val databaseHelper = FoldersDatabaseHelper(context)
-        val folders = databaseHelper.fetchFolders()
+        val foldersDatabaseHelper = FoldersDatabaseHelper(context)
+        val pathsDatabaseHelper = PathsDatabaseHelper(context)
+        val folders = foldersDatabaseHelper.fetchFolders()
         val readScope = CoroutineScope(Dispatchers.IO)
         readScope.launch {
             if (nowPlayingFile != path) {
@@ -120,18 +124,21 @@ object LrcWindow {
                 nowPlayingFile = path
 
                 // path 来自 Poweramp 传入的 Intent
-                var lyricPath = ""
+                var lyricPath = Uri.EMPTY
                 val subDir = (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("subDir", false))
                 val embedded = (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("embedded", false))
                 val fileName = if (embedded) path.substringAfterLast("/") else MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
                 folders.forEach { folder ->
                     if (checkSAFDirUsability(folder.path, context)) {
-                        findFile(path, folder, context, subDir, embedded)?.also { lyricPath = it }
+                        findFile(path, folder, context, subDir, embedded, pathsDatabase = pathsDatabaseHelper)?.also {
+                            lyricPath = it
+                            pathsDatabaseHelper.addPath(PathsDatabaseHelper.Companion.Path(path, it.toString(), embedded))
+                        }
                     } else {
-                        databaseHelper.removeFolder(folder)
+                        foldersDatabaseHelper.removeFolder(folder)
                     }
                 }
-                lyrics = if(lyricPath.isNotBlank())
+                lyrics = if(lyricPath != Uri.EMPTY)
                     readFile(lyricPath, context, embedded, fileName)
                 else
                     Lyrics(context.resources.getString(R.string.no_lrc_hint), false)
@@ -213,10 +220,10 @@ object LrcWindow {
         NotificationManagerCompat.from(context).notify(212, builder.build())
     }
 
-    private suspend fun readFile(path: String, context: Context, embedded: Boolean, name: String) = withContext(Dispatchers.IO){
+    private suspend fun readFile(uri: Uri, context: Context, embedded: Boolean, name: String) = withContext(Dispatchers.IO){
         var lyrics = context.resources.getString(R.string.no_lrc_hint)
         var found = false
-        val ins: BufferedInputStream? = context.contentResolver.openInputStream(Uri.parse(path))?.buffered()
+        val ins: BufferedInputStream? = context.contentResolver.openInputStream(uri)?.buffered()
         if (embedded) {
             val mp3CacheFile = File(context.cacheDir, name)
             launch(Dispatchers.IO) {
@@ -276,7 +283,7 @@ object LrcWindow {
         return encoding
     }
 
-    private fun checkSAFDirUsability (path: String, context: Context): Boolean {
+    private fun checkSAFDirUsability(path: String, context: Context): Boolean {
         val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         return try {
             context.contentResolver.takePersistableUriPermission(Uri.parse(path), takeFlags)
@@ -286,41 +293,55 @@ object LrcWindow {
         }
     }
 
-    private fun findFile (filePath: String, folder: FoldersDatabaseHelper.Companion.Folder, context: Context, subDir: Boolean, embedded: Boolean): String?{
-        var treeFile = DocumentFile.fromTreeUri(context, Uri.parse(folder.path))
+    private fun findFile(filePath: String, folder: FoldersDatabaseHelper.Companion.Folder, context: Context, subDir: Boolean, embedded: Boolean, pathsDatabase: PathsDatabaseHelper? = null): Uri?{
+        finalUri = Uri.EMPTY
+        val treeUri = Uri.parse(folder.path)
         var file: DocumentFile? = null
         val elements = if (embedded) filePath.split("/") else MiscUtil.extractAndReplaceExt(filePath).split("/")
         if (subDir) {
-            val accessFolderName = treeFile?.name
-            var startingIndex = 0
-            if (accessFolderName in elements) {
-                // 给予权限的文件夹为歌曲路径中的文件夹，那么在文件夹中开始搜索
-                startingIndex = elements.indexOf(accessFolderName)
-            }
-            // 给予权限的文件夹并非歌曲路径中的文件夹，有两种可能
-            // 一种是根文件夹以 UID 命名，一种是其它文件夹，除非确保非根文件夹，否则只应该从头到尾循环
-            elements.forEachIndexed {index, element ->
-                if (index > startingIndex) {
-                    val subTreeFile = treeFile?.findFile(element)
-                    if (subTreeFile != null) {
-                        if (subTreeFile.isDirectory) {
-                            treeFile = subTreeFile
-                        }
-                        else if (subTreeFile.isFile) {
-                            file = subTreeFile
-                        }
-                    }
+            pathsDatabase?.queryPath(filePath, embedded)?.forEach {
+                val fileByMap = DocumentFile.fromSingleUri(context, Uri.parse(it))
+                if (fileByMap != null && fileByMap.isFile && fileByMap.canRead()) {
+                    return fileByMap.uri
+                } else {
+                    pathsDatabase.removePath(it)
                 }
             }
+            file = findInSubfolder(treeUri, elements[elements.count() - 1], context)
         } else {
             DocumentFile.fromTreeUri(context, Uri.parse(folder.path))?.let {
                 file = it.findFile(elements[elements.count() - 1])
             }
         }
         if (file != null && file!!.exists()) {
-            return file!!.uri.toString()
+            return file!!.uri
         }
         return null
+    }
+
+    private fun findInSubfolder(treeUri: Uri, fileName: String, context: Context): DocumentFile? {
+        val treeContractUri: Uri = try {
+            DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, DocumentsContract.getDocumentId(treeUri))
+        } catch (e: Exception) {
+            DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, DocumentsContract.getTreeDocumentId(treeUri))
+        }
+        val dirList = mutableListOf<Uri>()
+        context.contentResolver.query(treeContractUri, arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_DISPLAY_NAME), null, null, null)?.use { cursor ->
+            while (cursor.moveToNext()) {
+                val id = cursor.getString(0)
+                val type = cursor.getString(1)
+                val name = cursor.getString(2)
+                if (type == DocumentsContract.Document.MIME_TYPE_DIR) {
+                    dirList.add(DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, id))
+                } else if (name == fileName) {
+                    finalUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, id)
+                }
+            }
+        }
+        dirList.forEach {
+            findInSubfolder(it, fileName, context)
+        }
+        return if (finalUri != Uri.EMPTY) DocumentFile.fromTreeUri(context, finalUri) else null
     }
 
     class Lyrics(val text: String, val found: Boolean)

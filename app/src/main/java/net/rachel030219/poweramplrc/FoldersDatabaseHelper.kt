@@ -13,9 +13,7 @@ class FoldersDatabaseHelper(context: Context?) :
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_PHOTOS_TABLE =
-            "CREATE TABLE $TABLE_FOLDERS($FOLDER_NAME_KEY TEXT,$FOLDER_PATH_KEY TEXT)"
-        db.execSQL(CREATE_PHOTOS_TABLE)
+        db.execSQL("CREATE TABLE $TABLE_FOLDERS($FOLDER_NAME_KEY TEXT,$FOLDER_PATH_KEY TEXT)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
