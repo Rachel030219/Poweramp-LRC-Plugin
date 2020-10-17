@@ -43,6 +43,7 @@
         app:iconSpaceReserved="false">
 
         <SwitchPreferenceCompat
+
             app:key="encoding"
             app:title="@string/preference_experimental_encoding"
             app:summary="@string/preference_experimental_encoding_description"

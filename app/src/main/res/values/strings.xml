@@ -29,12 +29,12 @@
     <string name="preference_ui_duration">Animation duration</string>
     <string name="preference_ui_duration_description">Default is 250 ms, current:\u0020</string>
     <string name="preference_ui_height">Window height</string>
-    <string name="preference_ui_height_description">Default is 64 dp, current:\u0020</string>
+    <string name="preference_ui_height_description">Default is 64 dp, current: %s</string>
     <string name="preference_ui_textsize">Text size</string>
-    <string name="preference_ui_textsize_description">Default is 18 sp, current:\u0020</string>
+    <string name="preference_ui_textsize_description">Default is 18 sp, current: %s</string>
     <string name="preference_ui_text">Lyrics color</string>
     <string name="preference_ui_opacity">Window background opacity</string>
-    <string name="preference_ui_opacity_description">Default is 64, current:\u0020 (max 255)</string>
+    <string name="preference_ui_opacity_description">Default is 64, current: %s (max 255)</string>
     <string name="preference_experimental">Experimental features</string>
     <string name="preference_experimental_standalone">File access in standalone mode</string>
     <string name="preference_experimental_standalone_description">Look for all your lyric files only in selected folders.</string>
