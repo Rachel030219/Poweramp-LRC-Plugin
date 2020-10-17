@@ -23,7 +23,7 @@
         </activity>
         <activity android:name=".PermissionActivity" />
         <activity android:name=".ConfigurationActivity"
-            android:excludeFromRecents="true" />
+            android:theme="@style/PreferenceScreenStyle" />
         <activity android:name=".DoneActivity"
             android:excludeFromRecents="true" />
         <activity android:name=".FoldersActivity"

@@ -83,17 +83,27 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
     private fun applyInitialization (vararg preferenceItems: EditTextPreference?) {
         for (item in preferenceItems) {
             item?.apply {
-                val description = when (key) {
-                    "height" -> resources.getString(R.string.preference_ui_height_description)
-                    "textSize" -> resources.getString(R.string.preference_ui_textsize_description)
-                    "opacity" -> getString(R.string.preference_ui_opacity_description)
-                    else -> resources.getString(R.string.error)
-                }
-                summaryProvider = Preference.SummaryProvider<EditTextPreference> { preference ->
-                    if (TextUtils.isEmpty(preference.text)) {
-                        description + resources.getString(R.string.preference_default)
-                    } else {
-                        description + preference.text
+                summaryProvider = Preference.SummaryProvider<EditTextPreference> { item ->
+                    when (key) {
+                        "height" -> {
+                            if (TextUtils.isEmpty(item.text))
+                                resources.getString(R.string.preference_ui_height_description, getString(R.string.preference_default))
+                            else
+                                resources.getString(R.string.preference_ui_height_description, item.text)
+                        }
+                        "textSize" -> {
+                            if (TextUtils.isEmpty(item.text))
+                                resources.getString(R.string.preference_ui_textsize_description, getString(R.string.preference_default))
+                            else
+                                resources.getString(R.string.preference_ui_textsize_description, item.text)
+                        }
+                        "opacity" -> {
+                            if (TextUtils.isEmpty(item.text))
+                                resources.getString(R.string.preference_ui_opacity_description, getString(R.string.preference_default))
+                            else
+                                resources.getString(R.string.preference_ui_opacity_description, item.text)
+                        }
+                        else -> resources.getString(R.string.error)
                     }
                 }
                 setOnBindEditTextListener {
