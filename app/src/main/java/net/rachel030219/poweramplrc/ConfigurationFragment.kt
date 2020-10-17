@@ -23,7 +23,15 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
         applyInitialization(findPreference("height"), findPreference("textSize"), findPreference("opacity"))
         val colors: MutableList<Int> = ArrayList()
-        for (color in arrayOf(R.color.lrc_current_red, R.color.lrc_current_blue, R.color.lrc_current_green, R.color.lrc_current_yellow, R.color.lrc_current_purple, R.color.lrc_current_white)) {
+        for (color in arrayOf(
+            R.color.lrc_current_red,
+            R.color.lrc_current_darkred,
+            R.color.lrc_current_blue,
+            R.color.lrc_current_green,
+            R.color.lrc_current_yellow,
+            R.color.lrc_current_purple,
+            R.color.lrc_current_white,
+            R.color.lrc_current_black)) {
             colors.add(ResourcesCompat.getColor(resources, color, requireActivity().theme))
         }
         findPreference<Preference>("textColor")?.setOnPreferenceClickListener {
