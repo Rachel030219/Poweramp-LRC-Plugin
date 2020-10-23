@@ -20,12 +20,13 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import com.maxmpz.poweramp.player.PowerampAPI
-import com.mpatric.mp3agic.Mp3File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.wcy.lrcview.LrcView
+import org.jaudiotagger.audio.AudioFileIO
+import org.jaudiotagger.tag.FieldKey
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.BufferedInputStream
 import java.io.File
@@ -225,22 +226,24 @@ object LrcWindow {
         var found = false
         val ins: BufferedInputStream? = context.contentResolver.openInputStream(uri)?.buffered()
         if (embedded) {
-            val mp3CacheFile = File(context.cacheDir, name)
+            val audioCacheFile = File(context.cacheDir, name)
             launch(Dispatchers.IO) {
-                FileOutputStream(mp3CacheFile).buffered().use {
+                FileOutputStream(audioCacheFile).buffered().use {
                     ins?.copyTo(it)
                     it.flush()
                 }
             }.join()
-            if (mp3CacheFile.exists()) {
-                val mp3File = Mp3File(mp3CacheFile)
-                if (mp3File.hasId3v2Tag() && mp3File.id3v2Tag.lyrics != null && mp3File.id3v2Tag.lyrics.isNotEmpty()) {
-                    lyrics = mp3File.id3v2Tag.lyrics
-                    found = true
+            if (audioCacheFile.exists()) {
+                val audioFile = AudioFileIO.read(audioCacheFile)
+                if (audioFile.tag != null) {
+                    if (audioFile.tag.hasField(FieldKey.LYRICS) && audioFile.tag.getFirst(FieldKey.LYRICS).isNotBlank()) {
+                        lyrics = audioFile.tag.getFirst(FieldKey.LYRICS)
+                        found = true
+                    }
                 } else {
                     found = false
                 }
-                mp3CacheFile.delete()
+                audioCacheFile.delete()
             }
         } else {
             try {
