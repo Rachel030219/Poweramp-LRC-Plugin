@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Poweramp 歌詞外掛</string>
-    <string name="main_message">這個簡單的應用程式為 Poweramp 提供本地歌詞功能。開始之前，我們需要一些權限，來使它正常運作。\n若所有權限都已正確獲取，則將進入設定頁面。</string>
+    <string name="main_message">這個簡單的應用程式為 Poweramp 提供本地歌詞功能。開始之前，我們需要一些權限才能正常運作。\n若所有權限都已獲取，則將進入設定頁面。</string>
     <string name="main_configuration">權限已獲取，馬上進入設定頁！</string>
     <string name="permission_folder_check">管理資料夾</string>
     <string name="permission_folder_hint">從 1.6 版本開始，舊有的檔案存取方式已被獨立檔案存取方式取代。本應用程式只會在選擇的資料夾裏尋找歌詞/歌曲檔案。</string>
-    <string name="permission_floating_hint">要顯示歌詞浮動視窗，需要繪製權限。</string>
-    <string name="permission_floating_granted">已獲取繪製權限</string>
-    <string name="permission_floating_denied">繪製權限被拒絕</string>
-    <string name="permission_floating_check">檢查顯示權限</string>
-    <string name="done_hint">準備好了！開啟 Poweramp，開始播放，點選通知，享受吧！</string>
+    <string name="permission_floating_hint">要顯示歌詞浮動視窗，需要浮動顯示權限。</string>
+    <string name="permission_floating_granted">已獲取浮動顯示權限</string>
+    <string name="permission_floating_denied">浮動顯示權限被拒絕</string>
+    <string name="permission_floating_check">檢查浮動顯示權限</string>
+    <string name="done_hint">準備好了！開啟 Poweramp 播放音樂，選擇彈出通知，盡情享受吧！</string>
     <string name="done_extra">注意： 若歌詞延遲，請嘗試暫停並恢復播放。此外， Poweramp 導致的延遲也可能是原因。因 Poweramp 僅彙報以秒為單位的位置，從而當歌詞過快或從一秒的中間開始（比如 00:01.50）則會不可避免地出現延遲。如果您認為所碰到的確實是 bug，請在 GitHub 開一個附帶了重現步驟及 Poweramp 延遲的 issue。</string>
 
     <string name="notification_entrance_channel_name">顯示歌詞提示</string>
@@ -25,18 +25,21 @@
     <string name="no_charset_hint">暫不支援此歌詞檔案編碼方式</string>
     <string name="lrc_loading">歌詞載入中…</string>
 
-    <string name="preference_include">Include sub-folders</string>
+    <string name="preference_include">包括子資料夾</string>
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">動畫時長</string>
     <string name="preference_ui_duration_description">預設 250 毫秒，目前\u0020</string>
     <string name="preference_ui_height">視窗高度</string>
-    <string name="preference_ui_height_description">預設 64 dp，目前\u0020</string>
+    <string name="preference_ui_height_description">預設 64 dp，目前 %s</string>
     <string name="preference_ui_textsize">字體大小</string>
-    <string name="preference_ui_textsize_description">預設 18 sp, 目前\u0020</string>
+    <string name="preference_ui_textsize_description">預設 18 sp，目前 %s</string>
     <string name="preference_ui_text">歌詞顏色</string>
     <string name="preference_ui_opacity">視窗背景不透明度</string>
-    <string name="preference_ui_opacity_description">預設 64 （最大 255）, 目前\u0020</string>
+    <string name="preference_ui_opacity_description">預設 64，目前 %s（最大 255）</string>
     <string name="preference_experimental">實驗性功能</string>
+    <string name="preference_experimental_standalone">使用獨立檔案存取方式</string>
+    <string name="preference_experimental_standalone_add">增加資料夾</string>
+    <string name="preference_experimental_standalone_manage">管理資料夾</string>
     <string name="preference_experimental_legacy">使用舊檔案訪問方式</string>
     <string name="preference_experimental_legacy_description">（僅 Android 10）可能在正常模式不工作時有用，但若如此也請報告問題</string>
     <string name="preference_experimental_encoding">使用 GB18030 編碼</string>
