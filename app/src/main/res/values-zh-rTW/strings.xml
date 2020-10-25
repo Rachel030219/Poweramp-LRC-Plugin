@@ -55,4 +55,6 @@
     <string name="preference_after_reload">將在歌詞重新載入後生效。</string>
     <string name="preference_default">預設</string>
     <string name="error">發生了一點問題</string>
+
+    <string name="pick_a_color">選擇顏色</string>
 </resources>

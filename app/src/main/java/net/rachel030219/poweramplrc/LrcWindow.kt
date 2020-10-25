@@ -245,6 +245,18 @@ object LrcWindow {
                 }
                 audioCacheFile.delete()
             }
+            if (!found) {
+                val insNew: BufferedInputStream? = context.contentResolver.openInputStream(Uri.parse(MiscUtil.extractAndReplaceExt(uri.toString())))?.buffered()
+                try {
+                    insNew?.bufferedReader(charset = findCharset(insNew, context))?.use {
+                        lyrics = it.readText()
+                        found = true
+                    }
+                } catch (e: UnsupportedCharsetException) {
+                    lyrics = context.resources.getString(R.string.no_charset_hint)
+                    found = false
+                }
+            }
         } else {
             try {
                 ins?.bufferedReader(charset = findCharset(ins, context))?.use {

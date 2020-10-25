@@ -56,4 +56,6 @@
     <string name="preference_after_reload">Things won\'t get changed until lyrics reload.</string>
     <string name="preference_default">default</string>
     <string name="error">Something wrong occurred</string>
+
+    <string name="pick_a_color">Pick a color</string>
 </resources>
