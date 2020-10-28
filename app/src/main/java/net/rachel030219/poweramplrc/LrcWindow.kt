@@ -221,7 +221,7 @@ object LrcWindow {
         NotificationManagerCompat.from(context).notify(212, builder.build())
     }
 
-    private suspend fun readFile(uri: Uri, context: Context, embedded: Boolean, name: String) = withContext(Dispatchers.IO){
+    private suspend fun readFile(uri: Uri, context: Context, embedded: Boolean, name: String) = withContext(Dispatchers.IO) {
         var lyrics = context.resources.getString(R.string.no_lrc_hint)
         var found = false
         val ins: BufferedInputStream? = context.contentResolver.openInputStream(uri)?.buffered()
@@ -246,15 +246,22 @@ object LrcWindow {
                 audioCacheFile.delete()
             }
             if (!found) {
-                val insNew: BufferedInputStream? = context.contentResolver.openInputStream(Uri.parse(MiscUtil.extractAndReplaceExt(uri.toString())))?.buffered()
-                try {
-                    insNew?.bufferedReader(charset = findCharset(insNew, context))?.use {
-                        lyrics = it.readText()
-                        found = true
+                val lrcUri = Uri.parse(MiscUtil.extractAndReplaceExt(uri.toString()))
+                val lrcDocumentFile = DocumentFile.fromSingleUri(context, lrcUri)
+                if (lrcDocumentFile != null) {
+                    if (lrcDocumentFile.exists()) {
+                        val insNew: BufferedInputStream? =
+                            context.contentResolver.openInputStream(lrcUri)?.buffered()
+                        try {
+                            insNew?.bufferedReader(charset = findCharset(insNew, context))?.use {
+                                lyrics = it.readText()
+                                found = true
+                            }
+                        } catch (e: UnsupportedCharsetException) {
+                            lyrics = context.resources.getString(R.string.no_charset_hint)
+                            found = false
+                        }
                     }
-                } catch (e: UnsupportedCharsetException) {
-                    lyrics = context.resources.getString(R.string.no_charset_hint)
-                    found = false
                 }
             }
         } else {
