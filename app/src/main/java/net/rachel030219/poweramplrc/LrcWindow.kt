@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.graphics.Point
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -41,7 +42,9 @@ object LrcWindow {
     var params: WindowManager.LayoutParams? = null
     var displaying = false
     var initialized = false
+    var lastX: Float = 0f
     var lastY: Float = 0f
+    var lastXForClick: Float = 0F
     var lastYForClick: Float = 0F // used to determine being clicked
     var nowPlayingFile = ""
     // components, initialized and refreshed separately
@@ -69,6 +72,11 @@ object LrcWindow {
             else
                 WindowManager.LayoutParams.TYPE_TOAST
             format = PixelFormat.TRANSLUCENT
+
+            // set width to screen width (in portrait) to avoid padding to whole screen in landscape
+            val screen = Point()
+            window!!.defaultDisplay.getSize(screen)
+            width = if (screen.x < screen.y) screen.x else screen.y
         }
         closeButton = layout.findViewById(R.id.close)
         lockButton = layout.findViewById(R.id.lock)
@@ -77,20 +85,27 @@ object LrcWindow {
             if (displaying) {
                 when (event!!.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        lastX = event.rawX
                         lastY = event.rawY
+                        lastXForClick = event.rawX
                         lastYForClick = event.rawY
                     }
                     MotionEvent.ACTION_MOVE -> {
+                        val rawX = event.rawX
                         val rawY = event.rawY
                         params!!.y += (rawY - lastY).toInt()
+                        params!!.x += (rawX - lastX).toInt()
+                        lastX = rawX
                         lastY = rawY
                         window!!.updateViewLayout(layout, params)
                     }
                     MotionEvent.ACTION_UP -> {
-                        if (abs(event.rawY - lastYForClick) <= 5) {
+                        if (abs(event.rawX - lastXForClick) <= 5 && abs(event.rawY - lastYForClick) <= 5) {
                             layout.callOnClick()
                         }
+                        lastX = event.rawX
                         lastY = event.rawY
+                        lastXForClick = event.rawX
                         lastYForClick = event.rawY
                     }
                 }
