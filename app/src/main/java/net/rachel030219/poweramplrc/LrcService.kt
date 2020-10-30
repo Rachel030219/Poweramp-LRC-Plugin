@@ -118,16 +118,15 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                     mWindow!!.callOnClick()
                                     LrcWindow.params?.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                                     LrcWindow.window?.updateViewLayout(mWindow!!, LrcWindow.params)
-                                    val lockNotification = NotificationCompat.Builder(this, "LOCK").let {
-                                        it.setSmallIcon(R.drawable.ic_lock)
-                                        it.setContentTitle(this.resources.getString(R.string.notification_lock_title))
-                                        it.setContentText(this.resources.getString(R.string.notification_lock_message))
-                                        it.setContentIntent(PendingIntent.getService(this, LrcWindow.REQUEST_UNLOCK, Intent(this, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UNLOCK), PendingIntent.FLAG_CANCEL_CURRENT))
-                                        it.priority = NotificationCompat.PRIORITY_MIN
-                                        it.setOnlyAlertOnce(true)
-                                        it.setAutoCancel(true)
-                                        it.build()
-                                    }
+                                    val lockNotification = NotificationCompat.Builder(this, "LOCK").apply {
+                                        setSmallIcon(R.drawable.ic_lock)
+                                        setContentTitle(resources.getString(R.string.notification_lock_title))
+                                        setContentText(resources.getString(R.string.notification_lock_message))
+                                        setContentIntent(PendingIntent.getService(this@LrcService, LrcWindow.REQUEST_UNLOCK, Intent(this@LrcService, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UNLOCK), PendingIntent.FLAG_CANCEL_CURRENT))
+                                        priority = NotificationCompat.PRIORITY_MIN
+                                        setOnlyAlertOnce(true)
+                                        setAutoCancel(true)
+                                    }.build()
                                     NotificationManagerCompat.from(this).notify(213, lockNotification)
                                 }
                                 LrcWindow.initialize(this, mWindow!!)
