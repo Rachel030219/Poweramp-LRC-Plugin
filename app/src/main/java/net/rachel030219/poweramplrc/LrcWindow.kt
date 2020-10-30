@@ -281,11 +281,13 @@ object LrcWindow {
         } else {
             if (embedded) {
                 updateLyrics(lrcView, path, false, context)
-            } else
+            } else {
                 lrcView.apply {
                     setLabel(lyrics.text)
                     loadLrc("")
                 }
+                nowPlayingFile = path
+            }
         }
     }
 
