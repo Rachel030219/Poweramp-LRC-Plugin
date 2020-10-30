@@ -102,22 +102,20 @@ object LrcWindow {
         initialized = true
     }
 
-    fun refresh(layout: View, extras: Bundle, popup: Boolean, context: Context, forceEmbedded: Boolean? = null) {
+    fun refresh(layout: View, extras: Bundle, popup: Boolean, context: Context) {
         // refresh settings
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val embedded = forceEmbedded ?: preferences.getBoolean("embedded", false)
-        if (forceEmbedded == null) {
-            lrcView?.apply {
-                setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-                setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-                setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
-                layoutParams = layoutParams.apply {
-                    height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
-                }
+        val embedded = preferences.getBoolean("embedded", false)
+        lrcView?.apply {
+            setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+            setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+            setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
+            layoutParams = layoutParams.apply {
+                height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
             }
-            if (nowPlayingFile != extras.getString(PowerampAPI.Track.PATH)) {
-                layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
-            }
+        }
+        if (nowPlayingFile != extras.getString(PowerampAPI.Track.PATH)) {
+            layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
         }
         updateLyrics(layout.findViewById(R.id.lrcview), extras.getString(PowerampAPI.Track.PATH).toString(), embedded, context)
         refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
