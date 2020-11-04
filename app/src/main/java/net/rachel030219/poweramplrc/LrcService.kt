@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -70,9 +71,11 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                 when (intent.getIntExtra("request", 0)) {
                     LrcWindow.REQUEST_WINDOW -> {
                         timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
+                            pauseTimer()
                             remoteTrackTime!!.stopSongProgress()
                             false
                         } else {
+                            startTimer()
                             remoteTrackTime!!.startSongProgress()
                             true
                         }
@@ -174,10 +177,39 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
 
     override fun onTrackPositionChanged(position: Int) {
         mCurrentPosition = position
-        LrcWindow.refreshTime(position, mWindow!!)
+        if (timerOn)
+            restartTimer()
+        else
+            pauseTimer()
+        LrcWindow.refreshTime(position, mWindow!!, 0)
     }
 
     override fun onTrackDurationChanged(duration: Int) {
 
+    }
+
+    // precise timer (with an interval of 250 ms)
+    private var offset = 0L
+    private var timerHandler = Handler()
+    private var timerRunnable: Runnable = object: Runnable {
+        override fun run() {
+            offset = if (offset < 1000) offset + 250 else 0
+            LrcWindow.refreshTime(mCurrentPosition, mWindow!!, offset)
+            timerHandler.postDelayed(this, 250)
+        }
+    }
+
+    private fun startTimer() {
+        timerHandler.postDelayed(timerRunnable, 250)
+    }
+
+    private fun pauseTimer() {
+        timerHandler.removeCallbacks(timerRunnable)
+    }
+
+    private fun restartTimer() {
+        pauseTimer()
+        offset = 0L
+        startTimer()
     }
 }

@@ -133,7 +133,7 @@ object LrcWindow {
             layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
         }
         updateLyrics(layout.findViewById(R.id.lrcview), extras.getString(PowerampAPI.Track.PATH).toString(), embedded, context)
-        refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout)
+        refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout, 0)
         if (popup && !displaying) {
             layout.visibility = View.VISIBLE
             displaying = true
@@ -143,9 +143,9 @@ object LrcWindow {
         }
     }
 
-    fun refreshTime(time: Int, layout: View) {
+    fun refreshTime(time: Int, layout: View, offset: Long) {
         if (time != -1) {
-            val timeInMillis = TimeUnit.MILLISECONDS.convert(time.toLong(), TimeUnit.SECONDS)
+            val timeInMillis = TimeUnit.MILLISECONDS.convert(time.toLong(), TimeUnit.SECONDS) + offset
             layout.findViewById<LrcView>(R.id.lrcview).updateTime(timeInMillis)
         }
     }
