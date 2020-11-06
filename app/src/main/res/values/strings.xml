@@ -9,7 +9,7 @@
     <string name="permission_floating_denied">Drawing permission denied.</string>
     <string name="permission_floating_check">Check display permission</string>
     <string name="done_hint">All ready! Open Poweramp, start playing, click the notification and enjoy! Click next to make customizations!</string>
-    <string name="done_extra">Note: \nWhen lyrics delay, try pausing and resuming playing. Delay caused by Poweramp may also be the cause, as Poweramp reports position in seconds, thus when the lyrics change too often or are at the middle of a second there will unavoidably exist delay. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
+    <string name="done_extra">Note: \nWhen lyrics delay, try pausing and resuming playing. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
 
     <string name="notification_entrance_channel_name">Window toggle</string>
     <string name="notification_message_hide">Click to hide</string>

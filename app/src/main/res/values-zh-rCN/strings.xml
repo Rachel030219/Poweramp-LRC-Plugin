@@ -10,7 +10,7 @@
     <string name="permission_floating_denied">绘制权限被拒绝</string>
     <string name="permission_floating_check">检查显示权限</string>
     <string name="done_hint">准备好了！ 打开 Poweramp，开始播放，点击通知，享受吧！马上进入配置页！</string>
-    <string name="done_extra">注意：\n若歌词延迟，请尝试暂停并恢复播放。此外， Poweramp 导致的延迟也可能是原因，并且 Poweramp 仅汇报以秒为单位的位置，从而当歌词过快或从一秒的中间开始（比如 00:01.50）则会不可避免地出现延迟。如果您认为所碰到的确实是 bug ，请在 GitHub 开一个附带了重现步骤及 Poweramp 延迟的 issue 。</string>
+    <string name="done_extra">注意：\n若歌词延迟，请尝试暂停并恢复播放。如果您认为所碰到的确实是 bug ，请在 GitHub 开一个附带了重现步骤及 Poweramp 延迟的 issue 。</string>
 
     <string name="notification_entrance_channel_name">浮窗入口</string>
     <string name="notification_message_hide">点击隐藏</string>

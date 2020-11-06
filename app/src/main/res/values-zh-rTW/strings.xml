@@ -10,7 +10,7 @@
     <string name="permission_floating_denied">浮動顯示權限被拒絕</string>
     <string name="permission_floating_check">檢查浮動顯示權限</string>
     <string name="done_hint">準備好了！開啟 Poweramp 播放音樂，選擇彈出通知，盡情享受吧！</string>
-    <string name="done_extra">注意： 若歌詞延遲，請嘗試暫停並恢復播放。此外， Poweramp 導致的延遲也可能是原因。因 Poweramp 僅彙報以秒為單位的位置，從而當歌詞過快或從一秒的中間開始（比如 00:01.50）則會不可避免地出現延遲。如果您認為所碰到的確實是 bug，請在 GitHub 開一個附帶了重現步驟及 Poweramp 延遲的 issue。</string>
+    <string name="done_extra">注意： 若歌詞延遲，請嘗試暫停並恢復播放。如果您認為所碰到的確實是 bug，請在 GitHub 開一個附帶了重現步驟及 Poweramp 延遲的 issue。</string>
 
     <string name="notification_entrance_channel_name">顯示歌詞提示</string>
     <string name="notification_message_hide">點選隱藏</string>
