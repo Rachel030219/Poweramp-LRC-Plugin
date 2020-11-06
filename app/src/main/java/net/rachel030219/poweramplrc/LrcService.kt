@@ -145,9 +145,11 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                             remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
                             timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
                                 remoteTrackTime!!.stopSongProgress()
+                                pauseTimer()
                                 false
                             } else {
                                 remoteTrackTime!!.startSongProgress()
+                                startTimer()
                                 true
                             }
                         }

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.*
 import dev.sasikanth.colorsheet.ColorSheet
@@ -47,18 +46,8 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
             }
         }
         findPreference<SwitchPreferenceCompat>("embedded")?.apply {
-            setOnPreferenceChangeListener { _, value ->
-                if (value is Boolean) {
-                    if (value) {
-                        AlertDialog.Builder(requireContext()).apply {
-                            setTitle(R.string.preference_experimental_embedded)
-                            setMessage(R.string.preference_experimental_embedded_description_full)
-                            setPositiveButton("OK", null)
-                            show()
-                        }
-                    } else
-                        Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
-                }
+            setOnPreferenceChangeListener { _, _ ->
+                Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
                 true
             }
         }

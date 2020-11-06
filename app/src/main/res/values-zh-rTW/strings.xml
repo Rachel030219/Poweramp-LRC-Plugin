@@ -46,7 +46,6 @@
     <string name="preference_experimental_encoding_description">大概能解決 QQ 音樂自動下載的歌詞全是亂碼的問題</string>
     <string name="preference_experimental_embedded">使用歌曲內嵌歌詞</string>
     <string name="preference_experimental_embedded_description">可能出現不穩定的情況</string>
-    <string name="preference_experimental_embedded_description_full">這個功能尚在測試階段。\n\n如您的歌曲內嵌了非 lrc 格式的歌詞時，您的 .lrc 檔案不會被讀取。\n\n該設定將在歌詞重新載入後生效。</string>
     <string name="preference_experimental_charset">自動偵測字集</string>
     <string name="preference_experimental_charset_description">可能可以解決「找不到歌詞」或歌詞亂碼的問題</string>
     <string name="preference_experimental_report">報告問題</string>
