@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.wcy.lrcview.LrcView
 import org.jaudiotagger.audio.AudioFileIO
+import org.jaudiotagger.audio.exceptions.CannotReadException
 import org.jaudiotagger.tag.FieldKey
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.BufferedInputStream
@@ -244,14 +245,20 @@ object LrcWindow {
                             }
                         }.join()
                         if (audioCacheFile.exists()) {
-                            val audioFile = AudioFileIO.read(audioCacheFile)
-                            if (audioFile.tag != null && audioFile.tag.hasField(FieldKey.LYRICS) && audioFile.tag.getFirst(FieldKey.LYRICS).isNotBlank()) {
-                                lyricText = audioFile.tag.getFirst(FieldKey.LYRICS)
-                                found = true
-                            } else {
-                                found = false
+                            launch(Dispatchers.IO) {
+                                try {
+                                    val audioFile = AudioFileIO.read(audioCacheFile)
+                                    if (audioFile.tag != null && audioFile.tag.hasField(FieldKey.LYRICS) && audioFile.tag.getFirst(FieldKey.LYRICS).isNotBlank()) {
+                                        lyricText = audioFile.tag.getFirst(FieldKey.LYRICS)
+                                        found = true
+                                    } else {
+                                        found = false
+                                    }
+                                    audioCacheFile.delete()
+                                } catch (e: CannotReadException) {
+                                    found = false
+                                }
                             }
-                            audioCacheFile.delete()
                         }
                     } else {
                         try {
