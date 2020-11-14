@@ -35,6 +35,8 @@
             app:lrcLabel="@string/no_lrc_hint"
             app:lrcNormalTextColor="@color/lrc_normal"
             app:lrcNormalTextSize="18sp"
+            app:lrcCurrentTextStrokeColor="@color/lrc_stroke_dark"
+            app:lrcCurrentTextStrokeWidth="2px"
             app:lrcPadding="18dp"
             app:lrcTextGravity="center"
             app:lrcTextSize="18sp"

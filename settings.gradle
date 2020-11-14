@@ -1,2 +1,3 @@
+include ':lrcview'
 include ':app', ':poweramp_api_lib'
 rootProject.name='Poweramp LRC Plugin'

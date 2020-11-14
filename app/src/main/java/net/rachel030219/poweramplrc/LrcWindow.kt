@@ -126,6 +126,8 @@ object LrcWindow {
             setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
             setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
             setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
+            setCurrentTextStrokeColor(preferences.getInt("strokeColor", ResourcesCompat.getColor(resources, R.color.lrc_stroke_dark, context.theme)))
+            setCurrentTextStrokeWidth(preferences.getString("strokeWidth", "5")!!.toFloat())
             layoutParams = layoutParams.apply {
                 height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
             }

@@ -17,6 +17,11 @@
         app:iconSpaceReserved="false">
 
         <EditTextPreference
+            app:key="duration"
+            app:title="@string/preference_ui_duration"
+            app:iconSpaceReserved="false"/>
+
+        <EditTextPreference
             app:key="height"
             app:title="@string/preference_ui_height"
             app:iconSpaceReserved="false"/>
@@ -33,7 +38,17 @@
 
         <Preference
             app:key="textColor"
-            app:title="@string/preference_ui_text"
+            app:title="@string/preference_ui_text_color"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
+            app:key="strokeColor"
+            app:title="@string/preference_ui_stroke_color"
+            app:iconSpaceReserved="false"/>
+
+        <EditTextPreference
+            app:key="strokeWidth"
+            app:title="@string/preference_ui_stroke_width"
             app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
@@ -41,15 +56,6 @@
     <PreferenceCategory
         app:title="@string/preference_experimental"
         app:iconSpaceReserved="false">
-
-        <SwitchPreferenceCompat
-
-            app:key="encoding"
-            app:title="@string/preference_experimental_encoding"
-            app:summary="@string/preference_experimental_encoding_description"
-            app:enabled="false"
-            app:defaultValue="false"
-            app:iconSpaceReserved="false"/>
 
         <SwitchPreferenceCompat
             app:key="embedded"

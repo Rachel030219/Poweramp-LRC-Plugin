@@ -20,8 +20,9 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
     private val CREATE_LOG = 1000
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
-        applyInitialization(findPreference("height"), findPreference("textSize"), findPreference("opacity"))
+        applyInitialization(findPreference("duration"), findPreference("height"), findPreference("textSize"), findPreference("opacity"), findPreference("strokeWidth"))
         val colors: MutableList<Int> = ArrayList()
+        val strokeColors: MutableList<Int> = ArrayList()
         for (color in arrayOf(
             R.color.lrc_current_red,
             R.color.lrc_current_darkred,
@@ -33,10 +34,18 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
             R.color.lrc_current_black)) {
             colors.add(ResourcesCompat.getColor(resources, color, requireActivity().theme))
         }
+        for (color in arrayOf(R.color.lrc_stroke_dark, R.color.lrc_stroke_light))
+            strokeColors.add(ResourcesCompat.getColor(resources, color, requireActivity().theme))
         findPreference<Preference>("textColor")?.setOnPreferenceClickListener {
             ColorSheet().colorPicker(colors = colors.toIntArray(), listener = { color ->
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("textColor", color).apply()
             }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("textColor", colors[0])).show(parentFragmentManager)
+            true
+        }
+        findPreference<Preference>("strokeColor")?.setOnPreferenceClickListener {
+            ColorSheet().colorPicker(colors = strokeColors.toIntArray(), listener = { color ->
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("strokeColor", color).apply()
+            }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("strokeColor", colors[0])).show(parentFragmentManager)
             true
         }
         findPreference<SwitchPreferenceCompat>("encoding")?.apply {
@@ -74,6 +83,12 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
             item?.apply {
                 summaryProvider = Preference.SummaryProvider<EditTextPreference> { item ->
                     when (key) {
+                        "duration" -> {
+                            if (TextUtils.isEmpty(item.text))
+                                resources.getString(R.string.preference_ui_duration_description, getString(R.string.preference_default))
+                            else
+                                resources.getString(R.string.preference_ui_duration_description, item.text)
+                        }
                         "height" -> {
                             if (TextUtils.isEmpty(item.text))
                                 resources.getString(R.string.preference_ui_height_description, getString(R.string.preference_default))
@@ -91,6 +106,12 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                                 resources.getString(R.string.preference_ui_opacity_description, getString(R.string.preference_default))
                             else
                                 resources.getString(R.string.preference_ui_opacity_description, item.text)
+                        }
+                        "strokeWidth" -> {
+                            if (TextUtils.isEmpty(item.text))
+                                resources.getString(R.string.preference_ui_stroke_width_description, getString(R.string.preference_default))
+                            else
+                                resources.getString(R.string.preference_ui_stroke_width_description, item.text)
                         }
                         else -> resources.getString(R.string.error)
                     }

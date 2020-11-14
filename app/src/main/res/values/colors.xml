@@ -10,6 +10,9 @@
     <color name="lrc_current_darkred">#b71c1c</color>
     <color name="lrc_normal">#BDBDBD</color>
 
+    <color name="lrc_stroke_dark">#807E7E7E</color>
+    <color name="lrc_stroke_light">#E6FFFFFF</color>
+
     <color name="text_success">#00C851</color>
     <color name="text_failure">#CC0000</color>
     <color name="text_normal">#222</color>
