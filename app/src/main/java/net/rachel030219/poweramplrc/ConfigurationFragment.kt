@@ -48,12 +48,6 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
             }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("strokeColor", colors[0])).show(parentFragmentManager)
             true
         }
-        findPreference<SwitchPreferenceCompat>("encoding")?.apply {
-            setOnPreferenceChangeListener { _, _ ->
-                Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
-                true
-            }
-        }
         findPreference<SwitchPreferenceCompat>("embedded")?.apply {
             setOnPreferenceChangeListener { _, _ ->
                 Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()

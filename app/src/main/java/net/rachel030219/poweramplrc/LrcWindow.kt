@@ -28,6 +28,7 @@ import kotlinx.coroutines.withContext
 import me.wcy.lrcview.LrcView
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.exceptions.CannotReadException
+import org.jaudiotagger.audio.exceptions.CannotReadVideoException
 import org.jaudiotagger.tag.FieldKey
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.BufferedInputStream
@@ -259,6 +260,8 @@ object LrcWindow {
                                     }
                                     audioCacheFile.delete()
                                 } catch (e: CannotReadException) {
+                                    found = false
+                                } catch (e: CannotReadVideoException) {
                                     found = false
                                 }
                             }

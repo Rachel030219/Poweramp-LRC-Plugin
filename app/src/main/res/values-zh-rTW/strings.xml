@@ -40,7 +40,6 @@
     <string name="preference_ui_opacity">視窗背景不透明度</string>
     <string name="preference_ui_opacity_description">預設 64，目前 %s（最大 255）</string>
     <string name="preference_experimental">實驗性功能</string>
-    <string name="preference_experimental_standalone">使用獨立檔案存取方式</string>
     <string name="preference_experimental_standalone_add">增加資料夾</string>
     <string name="preference_experimental_standalone_manage">管理資料夾</string>
     <string name="preference_experimental_embedded">使用歌曲內嵌歌詞</string>

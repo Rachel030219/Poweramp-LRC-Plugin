@@ -40,9 +40,6 @@
     <string name="preference_ui_opacity">窗口背景不透明度</string>
     <string name="preference_ui_opacity_description">默认 64，目前 %s（最大 255）</string>
     <string name="preference_experimental">实验性功能</string>
-    <string name="preference_experimental_standalone">使用独立文件访问方案</string>
-    <string name="preference_experimental_standalone_description">仅在选择的文件夹内寻找歌词。</string>
-    <string name="preference_experimental_standalone_description_full">这个功能尚在测试阶段。\n\n启用后，您将被要求选择歌词所在的文件夹，本应用将仅从这些文件夹内寻找对应的歌词。同时，若您一直收到「歌词不存在」的提示，这个选项也有所帮助。\n\n该设置将在歌词重载后生效。</string>
     <string name="preference_experimental_standalone_add">添加文件夹</string>
     <string name="preference_experimental_standalone_manage">管理文件夹</string>
     <string name="preference_experimental_embedded">使用歌曲内置歌词</string>
