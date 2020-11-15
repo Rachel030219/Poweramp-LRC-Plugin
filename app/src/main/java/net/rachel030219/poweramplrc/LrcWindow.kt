@@ -264,7 +264,7 @@ object LrcWindow {
                                 } catch (e: CannotReadVideoException) {
                                     found = false
                                 }
-                            }
+                            }.join()
                         }
                     } else {
                         try {

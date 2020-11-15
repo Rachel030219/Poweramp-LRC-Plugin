@@ -28,6 +28,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var mCurrentPosition = -1
     private var remoteTrackTime: RemoteTrackTime? = null
     private var opacity: Int? = 64
+    private var showingBg = true
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -41,7 +42,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             mWindow = LayoutInflater.from(this).inflate(R.layout.lrc_window, null)
         }
         mWindow?.apply {
-            if (opacity != null)
+            if (opacity != null && showingBg)
                 background = ColorDrawable(Color.argb(opacity!!, 0, 0, 0))
         }
         if (intent!!.getBooleanExtra("foreground", false)) {
@@ -89,7 +90,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                             }
                             if (!LrcWindow.initialized && mWindow != null) {
-                                var showingBg = true
                                 mWindow!!.setOnClickListener {
                                     if (showingBg) {
                                         mWindow!!.background = ContextCompat.getDrawable(this, android.R.color.transparent)
@@ -128,6 +128,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                         setContentIntent(PendingIntent.getService(this@LrcService, LrcWindow.REQUEST_UNLOCK, Intent(this@LrcService, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UNLOCK), PendingIntent.FLAG_CANCEL_CURRENT))
                                         priority = NotificationCompat.PRIORITY_MIN
                                         setOnlyAlertOnce(true)
+                                        setOngoing(true)
                                         setAutoCancel(true)
                                     }.build()
                                     NotificationManagerCompat.from(this).notify(213, lockNotification)
