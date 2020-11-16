@@ -291,10 +291,12 @@ public class LrcView extends View {
 
         mLrcStrokePaint.setColor(mCurrentTextStrokeColor);
         mLrcStrokePaint.setStrokeWidth(mCurrentTextStrokeWidth);
+        mLrcStrokePaint.setTextSize(mCurrentTextSize);
 
         // 无歌词文件
         if (!hasLrc()) {
             mLrcPaint.setColor(mCurrentTextColor);
+            mLrcPaint.setTextSize(mCurrentTextSize);
             StaticLayout staticLayout = new StaticLayout(mDefaultLabel, mLrcPaint,
                     (int) getLrcWidth(), Layout.Alignment.ALIGN_CENTER, 1f, 0f, false);
             StaticLayout staticStrokeLayout = new StaticLayout(mDefaultLabel, mLrcStrokePaint,
