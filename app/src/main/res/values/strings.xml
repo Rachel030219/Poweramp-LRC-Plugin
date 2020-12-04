@@ -10,6 +10,7 @@
     <string name="permission_floating_check">Check display permission</string>
     <string name="done_hint">All ready! Open Poweramp, start playing, click the notification and enjoy! Click next to make customizations!</string>
     <string name="done_extra">Note: \nWhen lyrics delay, try pausing and resuming playing. If you believe what you meet is a bug, please open a issue attached with procedures to reproduce the bug and delay caused by Poweramp on GitHub.</string>
+    <string name="crash_hint">Error occurred and log is stored at %s . To help us address the problem, please send the log to us.</string>
 
     <string name="notification_entrance_channel_name">Window toggle</string>
     <string name="notification_message_hide">Click to hide</string>

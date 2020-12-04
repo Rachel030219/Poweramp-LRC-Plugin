@@ -242,29 +242,25 @@ object LrcWindow {
                     val ins: BufferedInputStream? = context.contentResolver.openInputStream(lyricPath)?.buffered()
                     if (embedded) {
                         val audioCacheFile = File(context.cacheDir, fileName)
-                        launch(Dispatchers.IO) {
-                            FileOutputStream(audioCacheFile).buffered().use {
-                                ins?.copyTo(it)
-                                it.flush()
-                            }
-                        }.join()
+                        FileOutputStream(audioCacheFile).buffered().use {
+                            ins?.copyTo(it)
+                            it.flush()
+                        }
                         if (audioCacheFile.exists()) {
-                            launch(Dispatchers.IO) {
-                                try {
-                                    val audioFile = AudioFileIO.read(audioCacheFile)
-                                    if (audioFile.tag != null && audioFile.tag.hasField(FieldKey.LYRICS) && audioFile.tag.getFirst(FieldKey.LYRICS).isNotBlank()) {
-                                        lyricText = audioFile.tag.getFirst(FieldKey.LYRICS)
-                                        found = true
-                                    } else {
-                                        found = false
-                                    }
-                                    audioCacheFile.delete()
-                                } catch (e: CannotReadException) {
-                                    found = false
-                                } catch (e: CannotReadVideoException) {
+                            try {
+                                val audioFile = AudioFileIO.read(audioCacheFile)
+                                if (audioFile.tag != null && audioFile.tag.hasField(FieldKey.LYRICS) && audioFile.tag.getFirst(FieldKey.LYRICS).isNotBlank()) {
+                                    lyricText = audioFile.tag.getFirst(FieldKey.LYRICS)
+                                    found = true
+                                } else {
                                     found = false
                                 }
-                            }.join()
+                                audioCacheFile.delete()
+                            } catch (e: CannotReadException) {
+                                found = false
+                            } catch (e: CannotReadVideoException) {
+                                found = false
+                            }
                         }
                     } else {
                         try {

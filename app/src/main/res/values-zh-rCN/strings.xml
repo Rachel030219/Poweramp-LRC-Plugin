@@ -11,6 +11,7 @@
     <string name="permission_floating_check">检查显示权限</string>
     <string name="done_hint">准备好了！ 打开 Poweramp，开始播放，点击通知，享受吧！马上进入配置页！</string>
     <string name="done_extra">注意：\n若歌词延迟，请尝试暂停并恢复播放。如果您认为所碰到的确实是 bug ，请在 GitHub 开一个附带了重现步骤及 Poweramp 延迟的 issue 。</string>
+    <string name="crash_hint">发生错误，日志文件已保存到 %s 。若希望帮助我们更快地解决问题，请将日志文件发送给我们。</string>
 
     <string name="notification_entrance_channel_name">浮窗入口</string>
     <string name="notification_message_hide">点击隐藏</string>

@@ -11,6 +11,7 @@
     <string name="permission_floating_check">檢查浮動顯示權限</string>
     <string name="done_hint">準備好了！開啟 Poweramp 播放音樂，選擇彈出通知，盡情享受吧！</string>
     <string name="done_extra">注意： 若歌詞延遲，請嘗試暫停並恢復播放。如果您認為所碰到的確實是 bug，請在 GitHub 開一個附帶了重現步驟及 Poweramp 延遲的 issue。</string>
+    <string name="crash_hint">發生錯誤，日誌檔案已儲存到 %s 。若希望幫助我們更快地解決問題，請將日誌檔案傳送給我們。</string>
 
     <string name="notification_entrance_channel_name">顯示歌詞提示</string>
     <string name="notification_message_hide">點選隱藏</string>

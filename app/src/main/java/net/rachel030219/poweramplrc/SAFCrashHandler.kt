@@ -2,7 +2,6 @@ package net.rachel030219.poweramplrc
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
 import android.os.Looper
 import android.os.Process
 import android.widget.Toast
@@ -39,7 +38,7 @@ class SAFCrashHandler: Thread.UncaughtExceptionHandler {
         val dirFile = context!!.getExternalFilesDir(null)!!
         Thread {
             Looper.prepare()
-            Toast.makeText(context, "Error occurred, log stored at " + dirFile.absolutePath + "/$fileName", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context!!.resources.getString(R.string.crash_hint,  dirFile.absolutePath + "/$fileName"), Toast.LENGTH_LONG).show()
             Looper.loop()
         }.start()
         BufferedOutputStream(File(dirFile, fileName).outputStream()).run {
