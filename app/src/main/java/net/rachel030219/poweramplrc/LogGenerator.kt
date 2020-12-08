@@ -12,30 +12,17 @@ class LogGenerator(private val context: Context) {
 
     private fun init () {
         message = StringBuilder()
-        message.append(genTitle("DEVICE INFORMATION"))
-        message.append("Brand: ")
-        message.append(Build.BRAND)
-        message.append("\n")
-        message.append("Device: ")
-        message.append(Build.DEVICE)
-        message.append("\n")
-        message.append("Model: ")
-        message.append(Build.MODEL)
-        message.append("\n")
-        message.append("Id: ")
-        message.append(Build.ID)
-        message.append("\n")
-        message.append("Product: ")
-        message.append(Build.PRODUCT)
-        message.append("\n")
-        message.append(genTitle("FIRMWARE"))
-        message.append("SDK Version: ")
-        message.append(Build.VERSION.SDK_INT)
-        message.append("\n")
-        message.append("Release: ")
-        message.append(Build.VERSION.RELEASE)
-        message.append("\n")
-        message.append(genTitle("PATHS"))
+        message.append(genTitle("DEVICE INFORMATION") +
+                "Brand: " + Build.BRAND + "\n" +
+                "Device: " + Build.DEVICE + "\n" +
+                "Model: " + Build.MODEL + "\n" +
+                "Id: " + Build.ID + "\n" +
+                "Product: " + Build.PRODUCT + "\n" +
+                genTitle("FIRMWARE") +
+                "SDK Version: " + Build.VERSION.SDK_INT + "\n" +
+                "Release: " + Build.VERSION.RELEASE + "\n" +
+                "App Version:" + context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode + "\n" +
+                genTitle("PATHS"))
         context.run {
             for ((key, value) in getSharedPreferences("paths", Context.MODE_PRIVATE).all) {
                 message.append("key: $key, value: $value\n")
