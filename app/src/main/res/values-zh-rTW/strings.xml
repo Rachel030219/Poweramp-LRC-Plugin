@@ -27,6 +27,8 @@
     <string name="lrc_loading">歌詞載入中…</string>
 
     <string name="preference_include">包括子資料夾</string>
+    <string name="preference_offset">歌詞偏移</string>
+    <string name="preference_offset_description">歌詞時間的全域性偏移。正數代表歌詞更前。預設 0，目前 %s 毫秒</string>
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">動畫時長</string>
     <string name="preference_ui_duration_description">預設 250 毫秒，目前 %s</string>

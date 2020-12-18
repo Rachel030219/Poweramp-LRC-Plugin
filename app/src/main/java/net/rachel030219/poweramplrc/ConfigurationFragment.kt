@@ -20,7 +20,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
     private val CREATE_LOG = 1000
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
-        applyInitialization(findPreference("duration"), findPreference("height"), findPreference("textSize"), findPreference("opacity"), findPreference("strokeWidth"))
+        applyInitialization(findPreference("offset"), findPreference("duration"), findPreference("height"), findPreference("textSize"), findPreference("opacity"), findPreference("strokeWidth"))
         val colors: MutableList<Int> = ArrayList()
         val strokeColors: MutableList<Int> = ArrayList()
         for (color in arrayOf(
@@ -77,6 +77,12 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
             item?.apply {
                 summaryProvider = Preference.SummaryProvider<EditTextPreference> { item ->
                     when (key) {
+                        "offset" -> {
+                            if (TextUtils.isEmpty(item.text))
+                                resources.getString(R.string.preference_offset_description, getString(R.string.preference_default))
+                            else
+                                resources.getString(R.string.preference_offset_description, item.text)
+                        }
                         "duration" -> {
                             if (TextUtils.isEmpty(item.text))
                                 resources.getString(R.string.preference_ui_duration_description, getString(R.string.preference_default))
@@ -111,7 +117,10 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                     }
                 }
                 setOnBindEditTextListener {
-                    it.inputType = InputType.TYPE_CLASS_NUMBER
+                    if (key != "offset")
+                        it.inputType = InputType.TYPE_CLASS_NUMBER
+                    else
+                        it.inputType = InputType.TYPE_NUMBER_FLAG_SIGNED or InputType.TYPE_CLASS_NUMBER
                 }
                 setOnPreferenceChangeListener { _, _ ->
                     if (key != "opacity")

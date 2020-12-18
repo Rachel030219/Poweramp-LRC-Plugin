@@ -12,6 +12,11 @@
         app:defaultValue="false"
         app:iconSpaceReserved="false"/>
 
+    <EditTextPreference
+        app:key="offset"
+        app:title="@string/preference_offset"
+        app:iconSpaceReserved="false"/>
+
     <PreferenceCategory
         app:title="@string/preference_ui"
         app:iconSpaceReserved="false">

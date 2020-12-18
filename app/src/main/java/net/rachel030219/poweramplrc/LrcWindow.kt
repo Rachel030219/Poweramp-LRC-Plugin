@@ -55,6 +55,8 @@ object LrcWindow {
     var lockButton: Button? = null
     // used to determine whether a file was found in sub dir mode
     var finalUri: Uri = Uri.EMPTY
+    // the global offset
+    var globalOffset: Long? = 0
 
     private val readScope = CoroutineScope(Dispatchers.IO)
     const val REQUEST_WINDOW = 1
@@ -151,7 +153,10 @@ object LrcWindow {
     fun refreshTime(time: Int, layout: View, offset: Long) {
         if (time != -1) {
             val timeInMillis = TimeUnit.MILLISECONDS.convert(time.toLong(), TimeUnit.SECONDS) + offset
-            layout.findViewById<LrcView>(R.id.lrcview).updateTime(timeInMillis)
+            if (globalOffset != null)
+                layout.findViewById<LrcView>(R.id.lrcview).updateTime(timeInMillis + globalOffset!!)
+            else
+                layout.findViewById<LrcView>(R.id.lrcview).updateTime(timeInMillis)
         }
     }
 

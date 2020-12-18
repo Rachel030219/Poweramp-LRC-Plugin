@@ -26,7 +26,9 @@
     <string name="no_charset_hint">歌词文件编码暂不支持</string>
     <string name="lrc_loading">歌词加载中…</string>
 
-    <string name="preference_include">包括子資料夾</string>
+    <string name="preference_include">包括子文件夹</string>
+    <string name="preference_offset">歌词偏移</string>
+    <string name="preference_offset_description">歌词时间的全局偏移。正数代表歌词更前。默认 0，目前 %s 毫秒</string>
     <string name="preference_ui">UI</string>
     <string name="preference_ui_duration">动画时长</string>
     <string name="preference_ui_duration_description">默认 250 毫秒，目前 %s 毫秒</string>

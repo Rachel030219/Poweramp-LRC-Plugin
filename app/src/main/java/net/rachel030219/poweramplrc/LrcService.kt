@@ -38,6 +38,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     @SuppressLint("InflateParams")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         opacity = PreferenceManager.getDefaultSharedPreferences(this).getString("opacity", "64")?.toIntOrNull()
+        LrcWindow.globalOffset = PreferenceManager.getDefaultSharedPreferences(this).getString("offset", "0")?.toLongOrNull()
         if (mWindow == null) {
             mWindow = LayoutInflater.from(this).inflate(R.layout.lrc_window, null)
         }
@@ -53,7 +54,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             }
             val pendingIntent = PendingIntent.getActivity(
                 this,
-                PathActivity.REQUEST_PATH,
+                PathActivity.REQUEST_FOLDER,
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
