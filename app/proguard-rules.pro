@@ -20,4 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class org.jaudiotagger.* { *; }
+-keep class org.jaudiotagger** { *; }
+-keepclassmembers class org.jaudiotagger** { *; }
