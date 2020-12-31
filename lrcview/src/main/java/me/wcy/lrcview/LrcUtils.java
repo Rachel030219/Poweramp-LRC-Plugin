@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 class LrcUtils {
     private static final Pattern PATTERN_LINE = Pattern.compile("((\\[\\d\\d:\\d\\d\\.\\d{2,3}\\])+)(.+)");
     private static final Pattern PATTERN_TIME = Pattern.compile("\\[(\\d\\d):(\\d\\d)\\.(\\d{2,3})\\]");
+    private static long previousTime = 0;
 
     /**
      * 从文本解析双语歌词
@@ -72,10 +73,7 @@ class LrcUtils {
         List<LrcEntry> entryList = new ArrayList<>();
         String[] array = lrcText.split("\\n");
         for (String line : array) {
-            List<LrcEntry> list = parseLine(line);
-            if (list != null && !list.isEmpty()) {
-                entryList.addAll(list);
-            }
+            parseLine(line, entryList);
         }
 
         Collections.sort(entryList);
@@ -85,21 +83,20 @@ class LrcUtils {
     /**
      * 解析一行歌词
      */
-    private static List<LrcEntry> parseLine(String line) {
+    private static void parseLine(String line, List<LrcEntry> entryList) {
         if (TextUtils.isEmpty(line)) {
-            return null;
+            return;
         }
 
         line = line.trim();
         // [00:17.65]让我掉下眼泪的
         Matcher lineMatcher = PATTERN_LINE.matcher(line);
         if (!lineMatcher.matches()) {
-            return null;
+            return;
         }
 
         String times = lineMatcher.group(1);
         String text = lineMatcher.group(3);
-        List<LrcEntry> entryList = new ArrayList<>();
 
         // [00:17.65]
         Matcher timeMatcher = PATTERN_TIME.matcher(times);
@@ -113,9 +110,12 @@ class LrcUtils {
                 mil = mil * 10;
             }
             long time = min * DateUtils.MINUTE_IN_MILLIS + sec * DateUtils.SECOND_IN_MILLIS + mil;
-            entryList.add(new LrcEntry(time, text));
+            if (!entryList.isEmpty() && previousTime == time)
+                entryList.get(entryList.size() - 1).setSecondText(text);
+            else
+                entryList.add(new LrcEntry(time, text));
+            previousTime = time;
         }
-        return entryList;
     }
 
     static void resetDurationScale() {
