@@ -1,27 +1,23 @@
 apply plugin: 'com.android.library'
 
+dependencies {
+    compile files('libs/org.eclipse.jdt.annotation_1.1.100.v20160418-1457.jar')
+}
+
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 }
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    api 'org.eclipse.jdt:org.eclipse.jdt.annotation:2.0.0'
-
-    testImplementation 'junit:junit:4.12'
-}

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-2018 Maksim Petrov
+Copyright (C) 2011-2020 Maksim Petrov
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted for widgets, plugins, applications and other software
@@ -20,9 +20,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.maxmpz.poweramp.widgetpackcommon;
 
-import java.util.Arrays;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -32,6 +29,11 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import java.util.Arrays;
 
 /**
  * Base widget provider for PowerampAPI based app widgets
@@ -75,19 +77,12 @@ public abstract class BaseWidgetProvider extends AppWidgetProvider implements
 	
 	/**
 	 * Creates and caches widgetupdater suitable for updating this provider. Called when provider is called by system or by widget configure. Implmentation should be thread safe
-	 * @param context
-	 * @return
 	 */
 	// REVISIT: threading - actually always called on gui thread 
 	protected abstract @NonNull WidgetUpdater getWidgetUpdater(Context context);
 
 	/**
 	 * THREADING: any
-	 * @param context
-	 * @param data
-	 * @param prefs
-	 * @param id
-	 * @return
 	 */
 	public abstract @NonNull RemoteViews update(Context context, @NonNull WidgetUpdateData data, @NonNull SharedPreferences prefs, int id);
 

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-2018 Maksim Petrov
+Copyright (C) 2011-2020 Maksim Petrov
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted for widgets, plugins, applications and other software
@@ -20,11 +20,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.maxmpz.poweramp.plugin;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 
 public class PluginMsgHelper {
 	public static class PluginMsgException extends RuntimeException {
@@ -102,8 +103,10 @@ public class PluginMsgHelper {
 		return buf;
 	}
 
-	// NOTE: returned ByteBuffer is positioned to the first data position
-	// NOTE: direct buffer makes no sense in our case and is slower.
+	/**
+	 * NOTE: returned ByteBuffer is positioned to the first data position<br>
+	 * NOTE: direct buffer makes no sense in our case and is slower<br>
+	 */
 	public static @NonNull ByteBuffer createBufferMsgBuffer(int pluginID, int msgID, int flags, int desiredSizeBytes) {
 		if(desiredSizeBytes > MAX_SIZE_BYTES) {
 			throw new PluginMsgException("bad desiredSizeBytes=" + MAX_SIZE_BYTES + " MAX_SIZE_BYTES=" + MAX_SIZE_BYTES);
@@ -132,7 +135,7 @@ public class PluginMsgHelper {
 		buf.position(0);
 		IntBuffer intBuf = buf.asIntBuffer();
 		buf.position(pos);
-		int ar[] = new int[intBuf.capacity()];
+		int[] ar = new int[intBuf.capacity()];
 		intBuf.get(ar);
 		return toString(ar);
 	}

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-2018 Maksim Petrov
+Copyright (C) 2011-2020 Maksim Petrov
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted for widgets, plugins, applications and other software
@@ -52,7 +52,6 @@ public class RemoteTrackTime {
 
 
 	public interface TrackTimeListener {
-		@Deprecated
 		public void onTrackDurationChanged(int duration);
 		public void onTrackPositionChanged(int position);
 	}
@@ -67,12 +66,9 @@ public class RemoteTrackTime {
 	public void registerAndLoadStatus() {
 		IntentFilter filter = new IntentFilter(PowerampAPI.ACTION_TRACK_POS_SYNC);
 		mContext.registerReceiver(mTrackPosSyncReceiver, filter);
-		try {
-			mContext.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
-					.putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.POS_SYNC));
-		} catch(Throwable th) {
-			Log.e(TAG, "", th);
-		}
+
+		PowerampAPIHelper.sendPAIntent(mContext, new Intent(PowerampAPI.ACTION_API_COMMAND)
+						.putExtra(PowerampAPI.EXTRA_COMMAND, PowerampAPI.Commands.POS_SYNC));
 
 		if(mPlaying) {
 			mHandler.removeCallbacks(mTickRunnable);
@@ -103,7 +99,6 @@ public class RemoteTrackTime {
 		mTrackTimeListener = l;
 	}
 
-	// REVISIT: not used to update duration here ATM
 	public void updateTrackDuration(int duration) {
 		if(mTrackTimeListener != null) {
 			mTrackTimeListener.onTrackDurationChanged(duration);

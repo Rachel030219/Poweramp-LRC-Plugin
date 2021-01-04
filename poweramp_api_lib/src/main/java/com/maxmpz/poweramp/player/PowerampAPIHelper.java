@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-2018 Maksim Petrov
+Copyright (C) 2011-2020 Maksim Petrov
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted for widgets, plugins, applications and other software
@@ -20,11 +20,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.maxmpz.poweramp.player;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,9 +34,11 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.eclipse.jdt.annotation.Nullable;
+
 
 public class PowerampAPIHelper {
 	private static final String TAG = "PowerampAPIHelper";
@@ -46,7 +48,10 @@ public class PowerampAPIHelper {
 	private static ComponentName sPowerampPSComponentName;
 	private static int sPowerampBuild;
 	private static ComponentName sApiReceiverComponentName;
+	private static ComponentName sApiActivityComponentName;
 	private static ComponentName sBrowserServiceComponentName;
+	private static ComponentName sScanServiceComponentName;
+	private static ComponentName sMilkScanServiceComponentName;
 
 
 	/**
@@ -56,7 +61,7 @@ public class PowerampAPIHelper {
 	public static String getPowerampPackageName(Context context) {
 		String pak = sPowerampPak;
 		if(pak == null) {
-			ComponentName componentName = getPlayerServiceComponentName(context);
+			ComponentName componentName = getPlayerServiceComponentNameImpl(context);
 			if(componentName != null) {
 				pak = sPowerampPak = componentName.getPackageName();
 			}
@@ -67,8 +72,14 @@ public class PowerampAPIHelper {
 	/**
 	 * THREADING: can be called from any thread, though double initialization is possible, but it's OK
 	 * @return resolved and cached Poweramp PlayerService component name, or null if not installed
+	 * @deprecated use {@link #getApiReceiverComponentName(Context)}
 	 */
+	@Deprecated
 	public static ComponentName getPlayerServiceComponentName(Context context) {
+		return getPlayerServiceComponentNameImpl(context);
+	}
+
+	private static ComponentName getPlayerServiceComponentNameImpl(Context context) {
 		ComponentName componentName = sPowerampPSComponentName;
 		if(componentName == null) {
 			try {
@@ -102,12 +113,70 @@ public class PowerampAPIHelper {
 		return componentName;
 	}
 
+	/**
+	 * THREADING: can be called from any thread, though double initialization is possible, but it's OK
+	 * @return resolved and cached Poweramp Media Browser Service component name, or null if not installed
+	 */
+	public static ComponentName getScannerServiceComponentName(Context context) {
+		ComponentName componentName = sScanServiceComponentName;
+		if(componentName == null) {
+			try {
+				ResolveInfo info = context.getPackageManager().resolveService(new Intent(PowerampAPI.Scanner.ACTION_SCAN_DIRS).setPackage(getPowerampPackageName(context)), 0);
+				if(info != null && info.serviceInfo != null) {
+					componentName = sScanServiceComponentName = new ComponentName(info.serviceInfo.packageName, info.serviceInfo.name);
+				}
+			} catch(Throwable th) {
+				Log.e(TAG, "", th);
+			}
+		}
+		return componentName;
+	}
+
+	/**
+	 * THREADING: can be called from any thread, though double initialization is possible, but it's OK
+	 * @return resolved and cached Poweramp milk scanner service component name, or null if not installed
+	 */
+	public static ComponentName getMilkScannerServiceComponentName(Context context) {
+		ComponentName componentName = sMilkScanServiceComponentName;
+		if(componentName == null) {
+			try {
+				ResolveInfo info = context.getPackageManager().resolveService(new Intent(PowerampAPI.MilkScanner.ACTION_SCAN).setPackage(getPowerampPackageName(context)), 0);
+				if(info != null && info.serviceInfo != null) {
+					componentName = sMilkScanServiceComponentName = new ComponentName(info.serviceInfo.packageName, info.serviceInfo.name);
+				}
+			} catch(Throwable th) {
+				Log.e(TAG, "", th);
+			}
+		}
+		return componentName;
+	}
+
+	/**
+	 * THREADING: can be called from any thread, though double initialization is possible, but it's OK
+	 * @return resolved and cached Poweramp API receiver component name, or null if not installed
+	 */
 	public static ComponentName getApiReceiverComponentName(Context context) {
 		ComponentName componentName = sApiReceiverComponentName;
 		if(componentName == null) {
 			String pak = getPowerampPackageName(context);
 			if(pak != null) {
 				componentName = sApiReceiverComponentName = new ComponentName(pak, PowerampAPI.API_RECEIVER_NAME);
+			}
+		}
+		return componentName;
+	}
+
+	/**
+	 * NOTE: this is API activity - invisible activity to receive API commands. This one doesn't show any Poweramp UI.
+	 * THREADING: can be called from any thread, though double initialization is possible, but it's OK
+	 * @return resolved and cached Poweramp API activity component name, or null if not installed
+	 */
+	public static ComponentName getApiActivityComponentName(Context context) {
+		ComponentName componentName = sApiActivityComponentName;
+		if(componentName == null) {
+			String pak = getPowerampPackageName(context);
+			if(pak != null) {
+				componentName = sApiActivityComponentName = new ComponentName(pak, PowerampAPI.API_ACTIVITY_NAME);
 			}
 		}
 		return componentName;
@@ -144,15 +213,34 @@ public class PowerampAPIHelper {
 	/**
 	 * If we have Poweramp build 855+, send broadcast, otherwise use startForegroundService/startService which may be prone to ANR errors
 	 * and are deprecated for Poweramp builds 855+.<br><br>
+	 * NOTE: scanner intents
 	 * THREADING: can be called from any thread
 	 */
 	public static void sendPAIntent(Context context, Intent intent) {
+		sendPAIntent(context, intent, false);
+	}
+
+	/**
+	 * If we have Poweramp build 855+, send broadcast, otherwise use startForegroundService/startService which may be prone to ANR errors
+	 * and are deprecated for Poweramp builds 855+.<br><br>
+	 * NOTE: scanner intents
+	 * THREADING: can be called from any thread
+	 * @param sendToActivity if true, we're sending intent to the activity (build 862+)
+	 */
+	public static void sendPAIntent(Context context, Intent intent, boolean sendToActivity) {
 		int buildNum = getPowerampBuild(context);
-		if(buildNum >= 855) {
+		intent.putExtra(PowerampAPI.EXTRA_PACKAGE, context.getPackageName());
+		if(sendToActivity && buildNum >= 862) {
+			intent.setComponent(getApiActivityComponentName(context));
+			if(!(context instanceof Activity)) {
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			}
+			context.startActivity(intent);;
+		} else if(buildNum >= 855) {
 			intent.setComponent(getApiReceiverComponentName(context));
 			context.sendBroadcast(intent);
 		} else {
-			intent.setComponent(getPlayerServiceComponentName(context));
+			intent.setComponent(getPlayerServiceComponentNameImpl(context));
 			if(Build.VERSION.SDK_INT >= 26) {
 				context.startForegroundService(intent);
 			} else {
@@ -163,7 +251,7 @@ public class PowerampAPIHelper {
 
 	@Deprecated
 	public static void startPAServiceOld(Context context, Intent intent) {
-		intent.setComponent(getPlayerServiceComponentName(context));
+		intent.setComponent(getPlayerServiceComponentNameImpl(context));
 		if(Build.VERSION.SDK_INT >= 26) {
 			context.startForegroundService(intent);
 		} else {
@@ -187,16 +275,20 @@ public class PowerampAPIHelper {
 		try {
 			pfd = context.getContentResolver().openFileDescriptor(aaUri, "r");
 			if(pfd != null) {
-				// Get original bitmap size
 				BitmapFactory.Options opts = new BitmapFactory.Options();
-				opts.inJustDecodeBounds = true;
-				BitmapFactory.decodeFileDescriptor(pfd.getFileDescriptor(), null, opts);
+				// If this pfd is pipe, we can't reuse it for decoding, so don't do the subsample then
+				if(pfd.getStatSize() > 0) {
+					// Get original bitmap size
+					opts.inJustDecodeBounds = true;
+					BitmapFactory.decodeFileDescriptor(pfd.getFileDescriptor(), null, opts);
 
-				// Calculate subsample and load subsampled image
-				opts.inJustDecodeBounds = false;
-				if(subsampleWidth > 0 && subsampleHeight > 0) {
-					opts.inSampleSize = calcSubsample(subsampleWidth, subsampleHeight, opts.outWidth, opts.outHeight); // Subsamples images up to 2047x2047, should be safe, though this is up to 16mb per bitmap
+					// Calculate subsample and load subsampled image
+					opts.inJustDecodeBounds = false;
+					if(subsampleWidth > 0 && subsampleHeight > 0) {
+						opts.inSampleSize = calcSubsample(subsampleWidth, subsampleHeight, opts.outWidth, opts.outHeight); // Subsamples images up to 2047x2047, should be safe, though this is up to 16mb per bitmap
+					}
 				}
+
 
 				Bitmap b = BitmapFactory.decodeFileDescriptor(pfd.getFileDescriptor(), null, opts);
 

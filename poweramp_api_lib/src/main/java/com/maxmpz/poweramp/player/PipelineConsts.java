@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2011-2018 Maksim Petrov
+Copyright (C) 2011-2020 Maksim Petrov
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted for widgets, plugins, applications and other software
@@ -30,7 +30,7 @@ public interface PipelineConsts {
 
 	// For queueMsg()
 	public static final int PLUGIN_ID_SUBSYSTEM_PIPELINE   = 0;
-	public static final int PLUGIN_ID_SUBSYSTEM_DECODER_TH = 1; // NOTE: sync with NativePlguinManager.PLUGIN_ID_SUBSYSTEM_LAST
+	public static final int PLUGIN_ID_SUBSYSTEM_DECODER_TH = 1; // NOTE: sync with NativePluginManager.PLUGIN_ID_SUBSYSTEM_LAST
 	public static final int PLUGIN_ID_SUBSYSTEM_DSP_TH     = 2;
 
 	/*
@@ -91,4 +91,7 @@ public interface PipelineConsts {
 	
 	
 	public static final int UI_FLAG_NO_DVC_DUE_TO_BT_ABSVOL      = 0x0001;
+	
+	
+	public static final int MSG_SET_NO_DVC_HEADROOM_MB   = 0x0009; // NOTE: immediately applies this. NOTE: public - can be used by java code
 }
