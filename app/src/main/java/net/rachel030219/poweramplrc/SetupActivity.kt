@@ -6,10 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.preference.PreferenceManager
 import com.android.setupwizardlib.view.NavigationBar.NavigationBarListener
 import kotlinx.android.synthetic.main.activity_setup.*
 
@@ -18,9 +16,6 @@ class SetupActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setup)
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("permission", false)) {
-            showGoToConfig()
-        }
 
         // Initialize SetupWizardLayout
         main_setup.setHeaderText(R.string.app_name)
@@ -43,18 +38,9 @@ class SetupActivity: AppCompatActivity() {
                             createNotificationChannel(mLockChannel)
                         }
                     }
-                    if (PreferenceManager.getDefaultSharedPreferences(this@SetupActivity).getBoolean("permission", false)) {
-                        startActivity(Intent(this@SetupActivity, ConfigurationActivity::class.java))
-                        finish()
-                    }
-                    else {
-                        startActivity(Intent(this@SetupActivity, PermissionActivity::class.java))
-                        finish()
-                    }
+                    startActivity(Intent(this@SetupActivity, PermissionActivity::class.java))
+                    finish()
                 }
             })
-    }
-    private fun showGoToConfig() {
-        main_configuration.visibility = View.VISIBLE
     }
 }
