@@ -46,6 +46,26 @@ class PathsDatabaseHelper(context: Context?) :
         }
     }
 
+    fun isInstrumental (origPath: String): Boolean {
+        return readableDatabase.query(TABLE_PATHS, arrayOf(PATH_ORIG_KEY, PATH_FILE_KEY), "$PATH_ORIG_KEY = ?",
+            arrayOf(origPath), null, null, null).use { cursor ->
+                var instrumental = false
+                while (cursor.moveToNext() && !instrumental){
+                    if (cursor.getString(PATH_FILE) == "INSTRUMENTAL")
+                        instrumental = true
+                }
+                instrumental
+        }
+    }
+
+    fun setInstrumental (origPath: String) {
+        writableDatabase.insert(TABLE_PATHS, null, ContentValues().apply {
+            put(PATH_ORIG_KEY, origPath)
+            put(PATH_FILE_KEY, "INSTRUMENTAL")
+            put(PATH_EMBEDDED_KEY, "0")
+        })
+    }
+
     companion object {
         private const val DATABASE_NAME = "pathDatabase.db"
         private const val DATABASE_VERSION = 1

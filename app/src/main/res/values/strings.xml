@@ -24,6 +24,7 @@
     <string name="no_lrc_hint">Lyrics not found</string>
     <string name="no_charset_hint">Lyric charset not supported</string>
     <string name="lrc_loading">Loading lyrics</string>
+    <string name="instrumental_hint">Enjoy the music</string>
 
     <string name="preference_include">Include sub-directories</string>
     <string name="preference_offset">Lyric offset</string>
@@ -48,6 +49,11 @@
     <string name="preference_experimental_embedded_description">May lag or cause instability</string>
     <string name="preference_experimental_charset">Auto detect charset</string>
     <string name="preference_experimental_charset_description">Possibly fix \"Lyrics not found\" or garbled lyrics</string>
+    <string name="preference_experimental_independence">Independent lyric files</string>
+    <string name="preference_experimental_independence_description">Receive a notification to assign a song with a particular lyric file when none is found in your selected folders.</string>
+    <string name="preference_experimental_independence_notification_message">Would you like to assign a lyric file?</string>
+    <string name="preference_experimental_independence_notification_add">Select a file</string>
+    <string name="preference_experimental_independence_notification_instrumental">Mark as Instrumental</string>
     <string name="preference_experimental_report">Report problem</string>
     <string name="preference_experimental_report_description">Generate a detailed log of what might cause problems (not including personal information)</string>
     <string name="preference_after_restart">Things won\'t take effect until window reopens.</string>

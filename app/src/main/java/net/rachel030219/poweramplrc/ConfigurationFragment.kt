@@ -2,7 +2,11 @@ package net.rachel030219.poweramplrc
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
@@ -67,6 +71,22 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         findPreference<Preference>("report")?.apply {
             setOnPreferenceClickListener {
                 generateLog()
+                true
+            }
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        findPreference<SwitchPreferenceCompat>("independence")?.apply {
+            setOnPreferenceChangeListener { _, _ ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val mIndependenceChannel = NotificationChannel("INDEPENDENCE", resources.getString(R.string.preference_experimental_independence), NotificationManager.IMPORTANCE_DEFAULT)
+                    (requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
+                        createNotificationChannel(mIndependenceChannel)
+                    }
+                }
+                Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
                 true
             }
         }

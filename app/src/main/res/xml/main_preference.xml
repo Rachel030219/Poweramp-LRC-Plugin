@@ -76,6 +76,13 @@
             app:defaultValue="false"
             app:iconSpaceReserved="false"/>
 
+        <SwitchPreferenceCompat
+            app:key="independence"
+            app:title="@string/preference_experimental_independence"
+            app:summary="@string/preference_experimental_independence_description"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
         <Preference
             app:key="report"
             app:title="@string/preference_experimental_report"

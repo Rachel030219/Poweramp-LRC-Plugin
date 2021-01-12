@@ -25,6 +25,7 @@
     <string name="no_lrc_hint">找不到歌詞</string>
     <string name="no_charset_hint">暫不支援此歌詞檔案編碼方式</string>
     <string name="lrc_loading">歌詞載入中…</string>
+    <string name="instrumental_hint">享受音樂吧</string>
 
     <string name="preference_include">包括子資料夾</string>
     <string name="preference_offset">歌詞偏移</string>
@@ -49,6 +50,11 @@
     <string name="preference_experimental_embedded_description">可能出現不穩定的情況</string>
     <string name="preference_experimental_charset">自動偵測字集</string>
     <string name="preference_experimental_charset_description">可能可以解決「找不到歌詞」或歌詞亂碼的問題</string>
+    <string name="preference_experimental_independence">獨立歌詞檔案</string>
+    <string name="preference_experimental_independence_description">當找不到歌詞時，接受一條指定獨立歌詞檔案的通知</string>
+    <string name="preference_experimental_independence_notification_message">要指定一個歌詞檔案嗎？</string>
+    <string name="preference_experimental_independence_notification_add">選擇檔案</string>
+    <string name="preference_experimental_independence_notification_instrumental">標記為純音樂</string>
     <string name="preference_experimental_report">報告問題</string>
     <string name="preference_experimental_report_description">產生一個包含了所有可能出問題的東西的日誌（不會包含個人資訊）</string>
     <string name="preference_after_restart">將在浮動視窗重新啓動後生效。</string>

@@ -25,6 +25,7 @@
     <string name="no_lrc_hint">歌词不见了</string>
     <string name="no_charset_hint">歌词文件编码暂不支持</string>
     <string name="lrc_loading">歌词加载中…</string>
+    <string name="instrumental_hint">享受音乐吧</string>
 
     <string name="preference_include">包括子文件夹</string>
     <string name="preference_offset">歌词偏移</string>
@@ -49,6 +50,11 @@
     <string name="preference_experimental_embedded_description">可能造成卡顿或不稳定</string>
     <string name="preference_experimental_charset">自动检测字符集</string>
     <string name="preference_experimental_charset_description">可能会修复“歌词不见了”或歌词乱码</string>
+    <string name="preference_experimental_independence">独立歌词文件</string>
+    <string name="preference_experimental_independence_description">当找不到歌词时，接受一条指定独立歌词文件的通知</string>
+    <string name="preference_experimental_independence_notification_message">要指定一个歌词文件吗？</string>
+    <string name="preference_experimental_independence_notification_add">选择文件</string>
+    <string name="preference_experimental_independence_notification_instrumental">标记为纯音乐</string>
     <string name="preference_experimental_report">报告问题</string>
     <string name="preference_experimental_report_description">生成一个包含了所有可能出问题的东西的日志（不会包含个人信息）</string>
     <string name="preference_after_restart">将在歌词窗口重新打开后生效。</string>
