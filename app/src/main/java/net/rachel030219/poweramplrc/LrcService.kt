@@ -161,6 +161,11 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                             LrcWindow.unlock(mWindow!!)
                         }
                     }
+                    LrcWindow.REQUEST_INSTRUMENTAL -> {
+                        PathsDatabaseHelper(this).setInstrumental(intent.getStringExtra("path"))
+                        NotificationManagerCompat.from(this).cancel(210)
+                        LrcWindow.reloadLyrics(false, this)
+                    }
                 }
             }
         }
@@ -185,7 +190,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             restartTimer()
         else
             pauseTimer()
-        LrcWindow.refreshTime(position, mWindow!!, 0)
+        LrcWindow.refreshTime(position, 0)
     }
 
     override fun onTrackDurationChanged(duration: Int) {
@@ -198,7 +203,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     private var timerRunnable: Runnable = object: Runnable {
         override fun run() {
             offset = if (offset < 1000) offset + 250 else 0
-            LrcWindow.refreshTime(mCurrentPosition, mWindow!!, offset)
+            LrcWindow.refreshTime(mCurrentPosition, offset)
             timerHandler.postDelayed(this, 250)
         }
     }

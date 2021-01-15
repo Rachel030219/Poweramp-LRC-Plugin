@@ -2,11 +2,11 @@ package net.rachel030219.poweramplrc
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import com.android.setupwizardlib.view.NavigationBar.NavigationBarListener
 import kotlinx.android.synthetic.main.activity_setup.*
@@ -32,7 +32,7 @@ class SetupActivity: AppCompatActivity() {
                         val mEntranceChannel = NotificationChannel("ENTRANCE", resources.getString(R.string.notification_entrance_channel_name), NotificationManager.IMPORTANCE_LOW)
                         val mPlaceholderChannel = NotificationChannel("PLACEHOLDER", resources.getString(R.string.notification_placeholder_channel_name), NotificationManager.IMPORTANCE_LOW)
                         val mLockChannel = NotificationChannel("LOCK", resources.getString(R.string.notification_lock_channel_name), NotificationManager.IMPORTANCE_LOW)
-                        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).apply {
+                        NotificationManagerCompat.from(this@SetupActivity).apply {
                             createNotificationChannel(mEntranceChannel)
                             createNotificationChannel(mPlaceholderChannel)
                             createNotificationChannel(mLockChannel)

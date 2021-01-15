@@ -4,13 +4,16 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
 
 class PathActivity: Activity() {
     companion object {
         const val REQUEST_FOLDER = 11
     }
+    var path = "null"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (intent.hasExtra("request")) {
@@ -18,9 +21,20 @@ class PathActivity: Activity() {
                 when (intent.getIntExtra("request", 0)) {
                     REQUEST_FOLDER ->
                         startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), REQUEST_FOLDER)
+                    LrcWindow.REQUEST_SELECT -> {
+                        NotificationManagerCompat.from(this).cancel(210)
+                        if (intent.hasExtra("path"))
+                            path = intent.getStringExtra("path")
+                        startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                            type = "*/*"
+                        }, LrcWindow.REQUEST_SELECT)
+                    }
                 }
             } catch (e: ActivityNotFoundException) {
+                Log.e("TAG","error",e)
                 Toast.makeText(this, "Your device does not have DocumentsUI and is unsupported so far!", Toast.LENGTH_LONG).show()
+                finish()
             }
         }
     }
@@ -37,6 +51,16 @@ class PathActivity: Activity() {
                             if (file.isDirectory && file.name != null) {
                                 FoldersDatabaseHelper(this).addFolder(FoldersDatabaseHelper.Companion.Folder(file.name!!, treeUri.toString()))
                             }
+                        }
+                    }
+                    LrcWindow.REQUEST_SELECT -> {
+                        contentResolver.openFileDescriptor(treeUri, "r")?.use { parcelFileDescriptor ->
+                            Log.d("TAG", contentResolver.getType(treeUri))
+                            if (parcelFileDescriptor.fileDescriptor.valid()) {
+                                PathsDatabaseHelper(this).addPath(PathsDatabaseHelper.Companion.Path(path, treeUri.toString(), false))
+                                LrcWindow.reloadLyrics(false, this)
+                            }
+                            path = "null"
                         }
                     }
                 }

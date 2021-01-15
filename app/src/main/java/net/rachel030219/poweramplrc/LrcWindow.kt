@@ -57,11 +57,15 @@ object LrcWindow {
     var finalUri: Uri = Uri.EMPTY
     // the global offset
     var globalOffset: Long? = 0
+    // used for reloading without getting the intent again
+    var currentExtras: Bundle? = null
 
     private val readScope = CoroutineScope(Dispatchers.IO)
     const val REQUEST_WINDOW = 1
     const val REQUEST_UPDATE = 2
     const val REQUEST_UNLOCK = 3
+    const val REQUEST_SELECT = 4
+    const val REQUEST_INSTRUMENTAL = 5
 
     @SuppressLint("ClickableViewAccessibility")
     fun initialize(context: Context, layout: View){
@@ -122,41 +126,44 @@ object LrcWindow {
     }
 
     fun refresh(layout: View, extras: Bundle, popup: Boolean, context: Context) {
-        // refresh settings
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val embedded = preferences.getBoolean("embedded", false)
-        lrcView?.apply {
-            setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-            setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-            setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
-            setCurrentTextStrokeColor(preferences.getInt("strokeColor", ResourcesCompat.getColor(resources, R.color.lrc_stroke_dark, context.theme)))
-            setCurrentTextStrokeWidth(preferences.getString("strokeWidth", "5")!!.toFloat())
-            setAnimationDuration(preferences.getString("duration", "250")!!.toLong())
-            layoutParams = layoutParams.apply {
-                height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
+        currentExtras = extras
+        if (currentExtras != null) {
+            // refresh settings
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val embedded = preferences.getBoolean("embedded", false)
+            lrcView?.apply {
+                setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+                setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+                setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
+                setCurrentTextStrokeColor(preferences.getInt("strokeColor", ResourcesCompat.getColor(resources, R.color.lrc_stroke_dark, context.theme)))
+                setCurrentTextStrokeWidth(preferences.getString("strokeWidth", "5")!!.toFloat())
+                setAnimationDuration(preferences.getString("duration", "250")!!.toLong())
+                layoutParams = layoutParams.apply {
+                    height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
+                }
             }
-        }
-        if (nowPlayingFile != extras.getString(PowerampAPI.Track.PATH)) {
-            layout.findViewById<LrcView>(R.id.lrcview).setLabel(context.resources.getString(R.string.lrc_loading))
-        }
-        updateLyrics(layout.findViewById(R.id.lrcview), extras.getString(PowerampAPI.Track.PATH).toString(), embedded, context)
-        refreshTime(extras.getInt(PowerampAPI.Track.POSITION), layout, 0)
-        if (popup && !displaying) {
-            layout.visibility = View.VISIBLE
-            displaying = true
-        }
-        if (initialized) {
-            window!!.updateViewLayout(layout, params)
+            if (nowPlayingFile != currentExtras!!.getString(PowerampAPI.Track.PATH)) {
+                lrcView?.setLabel(context.resources.getString(R.string.lrc_loading))
+            }
+            updateLyrics(currentExtras!!.getString(PowerampAPI.Track.PATH).toString(), embedded, context)
+            refreshTime(currentExtras!!.getInt(PowerampAPI.Track.POSITION), 0)
+            if (popup && !displaying) {
+                layout.visibility = View.VISIBLE
+                displaying = true
+            }
+            if (initialized) {
+                window!!.updateViewLayout(layout, params)
+            }
         }
     }
 
-    fun refreshTime(time: Int, layout: View, offset: Long) {
+    fun refreshTime(time: Int, offset: Long) {
         if (time != -1) {
             val timeInMillis = TimeUnit.MILLISECONDS.convert(time.toLong(), TimeUnit.SECONDS) + offset
             if (globalOffset != null)
-                layout.findViewById<LrcView>(R.id.lrcview).updateTime(timeInMillis + globalOffset!!)
+                lrcView?.updateTime(timeInMillis + globalOffset!!)
             else
-                layout.findViewById<LrcView>(R.id.lrcview).updateTime(timeInMillis)
+                lrcView?.updateTime(timeInMillis)
         }
     }
 
@@ -208,111 +215,136 @@ object LrcWindow {
         NotificationManagerCompat.from(context).notify(212, builder.build())
     }
 
-    private fun updateLyrics(lrcView: LrcView, path: String, embedded: Boolean, context: Context? = null) {
-        // initialize variables persistent between iterations
-        var tempContext: Context? = null
-        if (context != null)
-            tempContext = context
-        
-        if (tempContext != null) {
-            // find and read files
-            val subDir = (PreferenceManager.getDefaultSharedPreferences(tempContext).getBoolean("subDir", false))
-            val fileName = if (embedded) path.substringAfterLast("/") else MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
-            // databases to store folders and paths to the files
-            val foldersDatabaseHelper = FoldersDatabaseHelper(tempContext)
-            val pathsDatabaseHelper = PathsDatabaseHelper(tempContext)
-            val folders = foldersDatabaseHelper.fetchFolders()
-            readScope.launch {
-                if (nowPlayingFile != path) {
-                    // path from intent passed by Poweramp
-                    // check first if song is instrumental
-                    if (!pathsDatabaseHelper.isInstrumental(path)) {
-                        var lyricPath = Uri.EMPTY
-                        pathsDatabaseHelper.queryPath(path, embedded).forEach {
-                            val fileByMap = DocumentFile.fromSingleUri(tempContext, Uri.parse(it))
-                            if (fileByMap != null && fileByMap.isFile && fileByMap.canRead()) {
-                                lyricPath = fileByMap.uri
-                            } else {
-                                pathsDatabaseHelper.removePath(it)
-                            }
+    private fun updateLyrics(path: String, embedded: Boolean, context: Context, force: Boolean = false) {
+        // find and read files
+        val subDir = (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("subDir", false))
+        val fileName = if (embedded) path.substringAfterLast("/") else MiscUtil.extractAndReplaceExt(path.substringAfterLast("/"))
+        // databases to store folders and paths to the files
+        val foldersDatabaseHelper = FoldersDatabaseHelper(context)
+        val pathsDatabaseHelper = PathsDatabaseHelper(context)
+        val folders = foldersDatabaseHelper.fetchFolders()
+        readScope.launch {
+            if (nowPlayingFile != path || force) {
+                NotificationManagerCompat.from(context).cancel(210)
+                // path from intent passed by Poweramp
+                // check first if song is instrumental
+                if (!pathsDatabaseHelper.isInstrumental(path)) {
+                    var lyricPath = Uri.EMPTY
+                    pathsDatabaseHelper.queryPath(path, embedded).forEach {
+                        val fileByMap = DocumentFile.fromSingleUri(context, Uri.parse(it))
+                        if (fileByMap != null && fileByMap.isFile && fileByMap.canRead()) {
+                            lyricPath = fileByMap.uri
+                        } else {
+                            pathsDatabaseHelper.removePath(it)
                         }
-                        if (lyricPath == Uri.EMPTY) {
-                            folders.forEach { folder ->
-                                if (checkSAFDirUsability(folder.path, tempContext)) {
-                                    findFile(path, folder, tempContext, subDir, embedded)?.also {
-                                        lyricPath = it
-                                        pathsDatabaseHelper.addPath(PathsDatabaseHelper.Companion.Path(path, it.toString(), embedded))
-                                    }
-                                } else {
-                                    foldersDatabaseHelper.removeFolder(folder)
-                                }
-                            }
-                        }
-                        // if the file is found, read it and return the content; else return "not found"
-                        if(lyricPath != Uri.EMPTY) {
-                            var lyricText = tempContext.resources.getString(R.string.no_lrc_hint)
-                            var found = false
-                            val ins: BufferedInputStream? = tempContext.contentResolver.openInputStream(lyricPath)?.buffered()
-                            if (embedded) {
-                                val audioCacheFile = File(tempContext.cacheDir, fileName)
-                                FileOutputStream(audioCacheFile).buffered().use {
-                                    ins?.copyTo(it)
-                                    it.flush()
-                                }
-                                if (audioCacheFile.exists()) {
-                                    try {
-                                        val audioFile = AudioFileIO.read(audioCacheFile)
-                                        if (audioFile.tag != null && audioFile.tag.hasField(FieldKey.LYRICS) && audioFile.tag.getFirst(FieldKey.LYRICS).isNotBlank()) {
-                                            lyricText = audioFile.tag.getFirst(FieldKey.LYRICS)
-                                            found = true
-                                        } else {
-                                            found = false
-                                        }
-                                        audioCacheFile.delete()
-                                    } catch (e: CannotReadException) {
-                                        found = false
-                                    } catch (e: CannotReadVideoException) {
-                                        found = false
-                                    }
+                    }
+                    if (lyricPath == Uri.EMPTY) {
+                        folders.forEach { folder ->
+                            if (checkSAFDirUsability(folder.path, context)) {
+                                findFile(path, folder, context, subDir, embedded)?.also {
+                                    lyricPath = it
+                                    pathsDatabaseHelper.addPath(PathsDatabaseHelper.Companion.Path(path, it.toString(), embedded))
                                 }
                             } else {
+                                foldersDatabaseHelper.removeFolder(folder)
+                            }
+                        }
+                    }
+                    // if the file is found, read it and return the content; else return "not found"
+                    if(lyricPath != Uri.EMPTY) {
+                        var lyricText = context.resources.getString(R.string.no_lrc_hint)
+                        var found = false
+                        val ins: BufferedInputStream? = context.contentResolver.openInputStream(lyricPath)?.buffered()
+                        if (embedded) {
+                            val audioCacheFile = File(context.cacheDir, fileName)
+                            FileOutputStream(audioCacheFile).buffered().use {
+                                ins?.copyTo(it)
+                                it.flush()
+                            }
+                            if (audioCacheFile.exists()) {
                                 try {
-                                    ins?.bufferedReader(charset = findCharset(ins, tempContext))?.use {
-                                        lyricText = it.readText()
+                                    val audioFile = AudioFileIO.read(audioCacheFile)
+                                    if (audioFile.tag != null && audioFile.tag.hasField(FieldKey.LYRICS) && audioFile.tag.getFirst(FieldKey.LYRICS).isNotBlank()) {
+                                        lyricText = audioFile.tag.getFirst(FieldKey.LYRICS)
                                         found = true
+                                    } else {
+                                        found = false
                                     }
-                                } catch (e: UnsupportedCharsetException) {
-                                    lyricText = tempContext.resources.getString(R.string.no_charset_hint)
+                                    audioCacheFile.delete()
+                                } catch (e: CannotReadException) {
+                                    found = false
+                                } catch (e: CannotReadVideoException) {
                                     found = false
                                 }
                             }
-                            updateLrcView(lrcView, path, embedded, Lyrics(lyricText, found))
-                        } else
-                            updateLrcView(lrcView, path, embedded, Lyrics(tempContext.resources.getString(R.string.no_lrc_hint), false))
+                        } else {
+                            try {
+                                ins?.bufferedReader(charset = findCharset(ins, context))?.use {
+                                    lyricText = it.readText()
+                                    found = true
+                                }
+                            } catch (e: UnsupportedCharsetException) {
+                                lyricText = context.resources.getString(R.string.no_charset_hint)
+                                found = false
+                            }
+                        }
+                        updateLrcView(path, embedded, Lyrics(lyricText, found), context)
                     } else {
-                        updateLrcView(lrcView, path, embedded, Lyrics(tempContext.resources.getString(R.string.instrumental_hint), false))
+                        updateLrcView(path, embedded, Lyrics(context.resources.getString(R.string.no_lrc_hint), false), context)
+                        // send notification to assign independent files if not embedded and no lyrics found
+                        if (!embedded && PreferenceManager.getDefaultSharedPreferences(context).getBoolean("independence", false)) {
+                            val selectAction = NotificationCompat.Action(
+                                null,
+                                context.resources.getString(R.string.preference_experimental_independence_notification_add),
+                                PendingIntent.getActivity(
+                                    context,
+                                    REQUEST_SELECT,
+                                    Intent(context, PathActivity::class.java).putExtra("request", REQUEST_SELECT).putExtra("path", path),
+                                    PendingIntent.FLAG_CANCEL_CURRENT
+                                )
+                            )
+                            val instrumentalAction = NotificationCompat.Action(
+                                null,
+                                context.resources.getString(R.string.preference_experimental_independence_notification_instrumental),
+                                PendingIntent.getService(
+                                    context,
+                                    REQUEST_INSTRUMENTAL,
+                                    Intent(context, LrcService::class.java).putExtra("request", REQUEST_INSTRUMENTAL).putExtra("path", path),
+                                    PendingIntent.FLAG_CANCEL_CURRENT
+                                )
+                            )
+                            val builder = NotificationCompat.Builder(context, "INDEPENDENCE").apply {
+                                setContentTitle(context.resources.getString(R.string.preference_experimental_independence))
+                                setContentText(context.resources.getString(R.string.preference_experimental_independence_notification_message))
+                                addAction(selectAction)
+                                addAction(instrumentalAction)
+                                setSmallIcon(R.drawable.ic_notification)
+                                setAutoCancel(false)
+                            }
+                            NotificationManagerCompat.from(context).notify(210, builder.build())
+                        }
                     }
+                } else {
+                    updateLrcView(path, embedded, Lyrics(context.resources.getString(R.string.instrumental_hint), false), context)
                 }
             }
         }
     }
 
-    private suspend fun updateLrcView (lrcView: LrcView, path: String, embedded: Boolean, lyrics: Lyrics) = withContext(Dispatchers.Main) {
+    private suspend fun updateLrcView (path: String, embedded: Boolean, lyrics: Lyrics, context: Context) = withContext(Dispatchers.Main) {
         if (lyrics.found) {
-            lrcView.apply {
+            lrcView?.apply {
                 loadLrc(lyrics.text)
                 setLabel(context.resources.getString(R.string.no_lrc_hint))
             }
             nowPlayingFile = path
         } else {
             if (embedded) {
-                updateLyrics(lrcView, path, false)
+                updateLyrics(path, false, context)
             } else {
-                lrcView.apply {
+                lrcView?.apply {
                     setLabel(lyrics.text)
                     loadLrc("")
-                    // TODO: send notifications here
-
                 }
                 nowPlayingFile = path
             }
@@ -392,6 +424,12 @@ object LrcWindow {
             findInSubfolder(it, fileName, context)
         }
         return if (finalUri != Uri.EMPTY) DocumentFile.fromTreeUri(context, finalUri) else null
+    }
+
+    fun reloadLyrics (embedded: Boolean, context: Context) {
+        if (lrcView != null) {
+            updateLyrics(nowPlayingFile, embedded, context, true)
+        }
     }
 
     class Lyrics(val text: String, val found: Boolean)
