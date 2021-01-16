@@ -52,7 +52,8 @@
     <string name="preference_experimental_charset_description">可能可以解決「找不到歌詞」或歌詞亂碼的問題</string>
     <string name="preference_experimental_independence">獨立歌詞檔案</string>
     <string name="preference_experimental_independence_description">當找不到歌詞時，接受一條指定獨立歌詞檔案的通知</string>
-    <string name="preference_experimental_independence_notification_message">要指定一個歌詞檔案嗎？</string>
+    <string name="preference_experimental_independence_notification_external_message">要指定一個歌詞檔案嗎？</string>
+    <string name="preference_experimental_independence_notification_embedded_message">要指定一個歌曲檔案嗎？</string>
     <string name="preference_experimental_independence_notification_add">選擇檔案</string>
     <string name="preference_experimental_independence_notification_instrumental">標記為純音樂</string>
     <string name="preference_experimental_report">報告問題</string>

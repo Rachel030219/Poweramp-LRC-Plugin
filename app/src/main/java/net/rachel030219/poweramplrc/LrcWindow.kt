@@ -292,14 +292,14 @@ object LrcWindow {
                     } else {
                         updateLrcView(path, embedded, Lyrics(context.resources.getString(R.string.no_lrc_hint), false), context)
                         // send notification to assign independent files if not embedded and no lyrics found
-                        if (!embedded && PreferenceManager.getDefaultSharedPreferences(context).getBoolean("independence", false)) {
+                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("independence", false)) {
                             val selectAction = NotificationCompat.Action(
                                 null,
                                 context.resources.getString(R.string.preference_experimental_independence_notification_add),
                                 PendingIntent.getActivity(
                                     context,
                                     REQUEST_SELECT,
-                                    Intent(context, PathActivity::class.java).putExtra("request", REQUEST_SELECT).putExtra("path", path),
+                                    Intent(context, PathActivity::class.java).putExtra("request", REQUEST_SELECT).putExtra("embedded", embedded).putExtra("path", path),
                                     PendingIntent.FLAG_CANCEL_CURRENT
                                 )
                             )
@@ -315,7 +315,7 @@ object LrcWindow {
                             )
                             val builder = NotificationCompat.Builder(context, "INDEPENDENCE").apply {
                                 setContentTitle(context.resources.getString(R.string.preference_experimental_independence))
-                                setContentText(context.resources.getString(R.string.preference_experimental_independence_notification_message))
+                                setContentText(if (embedded) context.resources.getString(R.string.preference_experimental_independence_notification_embedded_message) else context.resources.getString(R.string.preference_experimental_independence_notification_external_message))
                                 addAction(selectAction)
                                 addAction(instrumentalAction)
                                 setSmallIcon(R.drawable.ic_notification)
@@ -339,7 +339,8 @@ object LrcWindow {
             }
             nowPlayingFile = path
         } else {
-            if (embedded) {
+            // embedded fallback only when independence is not enabled
+            if (embedded && !PreferenceManager.getDefaultSharedPreferences(context).getBoolean("independence", false)) {
                 updateLyrics(path, false, context)
             } else {
                 lrcView?.apply {

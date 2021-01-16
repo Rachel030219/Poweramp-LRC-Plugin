@@ -14,6 +14,7 @@ class PathActivity: Activity() {
         const val REQUEST_FOLDER = 11
     }
     var path = "null"
+    var embedded = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (intent.hasExtra("request")) {
@@ -24,7 +25,9 @@ class PathActivity: Activity() {
                     LrcWindow.REQUEST_SELECT -> {
                         NotificationManagerCompat.from(this).cancel(210)
                         if (intent.hasExtra("path"))
-                            path = intent.getStringExtra("path")
+                            path = intent.getStringExtra("path") ?: "null"
+                        if (intent.hasExtra("embedded"))
+                            embedded = intent.getBooleanExtra("embedded", false)
                         startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
                             type = "*/*"
@@ -32,7 +35,6 @@ class PathActivity: Activity() {
                     }
                 }
             } catch (e: ActivityNotFoundException) {
-                Log.e("TAG","error",e)
                 Toast.makeText(this, "Your device does not have DocumentsUI and is unsupported so far!", Toast.LENGTH_LONG).show()
                 finish()
             }
@@ -56,7 +58,7 @@ class PathActivity: Activity() {
                     LrcWindow.REQUEST_SELECT -> {
                         contentResolver.openFileDescriptor(treeUri, "r")?.use { parcelFileDescriptor ->
                             Log.d("TAG", contentResolver.getType(treeUri))
-                            if (parcelFileDescriptor.fileDescriptor.valid()) {
+                            if (parcelFileDescriptor.fileDescriptor.valid() && path != "null") {
                                 PathsDatabaseHelper(this).addPath(PathsDatabaseHelper.Companion.Path(path, treeUri.toString(), false))
                                 LrcWindow.reloadLyrics(false, this)
                             }

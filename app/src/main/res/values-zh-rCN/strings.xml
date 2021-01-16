@@ -52,7 +52,8 @@
     <string name="preference_experimental_charset_description">可能会修复“歌词不见了”或歌词乱码</string>
     <string name="preference_experimental_independence">独立歌词文件</string>
     <string name="preference_experimental_independence_description">当找不到歌词时，接受一条指定独立歌词文件的通知</string>
-    <string name="preference_experimental_independence_notification_message">要指定一个歌词文件吗？</string>
+    <string name="preference_experimental_independence_notification_external_message">要指定一个歌词文件吗？</string>
+    <string name="preference_experimental_independence_notification_embedded_message">要指定一个歌曲文件吗？</string>
     <string name="preference_experimental_independence_notification_add">选择文件</string>
     <string name="preference_experimental_independence_notification_instrumental">标记为纯音乐</string>
     <string name="preference_experimental_report">报告问题</string>

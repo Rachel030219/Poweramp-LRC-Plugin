@@ -49,9 +49,10 @@
     <string name="preference_experimental_embedded_description">May lag or cause instability</string>
     <string name="preference_experimental_charset">Auto detect charset</string>
     <string name="preference_experimental_charset_description">Possibly fix \"Lyrics not found\" or garbled lyrics</string>
-    <string name="preference_experimental_independence">Independent lyric files</string>
-    <string name="preference_experimental_independence_description">Receive a notification to assign a song with a particular lyric file when none is found in your selected folders.</string>
-    <string name="preference_experimental_independence_notification_message">Would you like to assign a lyric file?</string>
+    <string name="preference_experimental_independence">Independent files</string>
+    <string name="preference_experimental_independence_description">Receive a notification to assign a song with a particular lyric or song file when none is found in your selected folders.</string>
+    <string name="preference_experimental_independence_notification_external_message">Would you like to assign a lyric file?</string>
+    <string name="preference_experimental_independence_notification_embedded_message">Would you like to assign a song file?</string>
     <string name="preference_experimental_independence_notification_add">Select a file</string>
     <string name="preference_experimental_independence_notification_instrumental">Mark as Instrumental</string>
     <string name="preference_experimental_report">Report problem</string>
