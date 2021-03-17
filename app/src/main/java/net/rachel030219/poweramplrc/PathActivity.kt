@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import androidx.documentfile.provider.DocumentFile
@@ -57,7 +56,6 @@ class PathActivity: Activity() {
                     }
                     LrcWindow.REQUEST_SELECT -> {
                         contentResolver.openFileDescriptor(treeUri, "r")?.use { parcelFileDescriptor ->
-                            Log.d("TAG", contentResolver.getType(treeUri))
                             if (parcelFileDescriptor.fileDescriptor.valid() && path != "null") {
                                 PathsDatabaseHelper(this).addPath(PathsDatabaseHelper.Companion.Path(path, treeUri.toString(), false))
                                 LrcWindow.reloadLyrics(false, this)

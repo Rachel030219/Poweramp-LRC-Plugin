@@ -91,6 +91,10 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                             }
                             if (!LrcWindow.initialized && mWindow != null) {
+                                // read saved position and apply them
+                                val positionPreference = getSharedPreferences("position", MODE_PRIVATE)
+                                val positionX = positionPreference.getInt("x", -1)
+                                val positionY = positionPreference.getInt("y", -1)
                                 mWindow!!.setOnClickListener {
                                     if (showingBg) {
                                         mWindow!!.background = ContextCompat.getDrawable(this, android.R.color.transparent)
@@ -120,7 +124,15 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 }
                                 mWindow!!.findViewById<Button>(R.id.lock).setOnClickListener {
                                     mWindow!!.callOnClick()
-                                    LrcWindow.params?.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                                    LrcWindow.params?.apply {
+                                        if (positionX > 0) {
+                                            x = positionX
+                                        }
+                                        if (positionY > 0) {
+                                            y = positionY
+                                        }
+                                        this.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                                    }
                                     LrcWindow.window?.updateViewLayout(mWindow!!, LrcWindow.params)
                                     val lockNotification = NotificationCompat.Builder(this, "LOCK").apply {
                                         setSmallIcon(R.drawable.ic_lock)
@@ -179,6 +191,15 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     }
 
     override fun onDestroy() {
+        // save window position
+        val windowPositionX = LrcWindow.params?.x
+        val windowPositionY = LrcWindow.params?.y
+        getSharedPreferences("position", MODE_PRIVATE).edit().apply {
+            putInt("x", windowPositionX ?: -1)
+            putInt("y", windowPositionY ?: -1)
+            apply()
+        }
+
         remoteTrackTime!!.setTrackTimeListener(null)
         remoteTrackTime!!.unregister()
         stopForeground(true)
