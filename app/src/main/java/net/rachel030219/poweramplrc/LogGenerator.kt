@@ -21,7 +21,7 @@ class LogGenerator(private val context: Context) {
                 genTitle("FIRMWARE") +
                 "SDK Version: " + Build.VERSION.SDK_INT + "\n" +
                 "Release: " + Build.VERSION.RELEASE + "\n" +
-                "App Version:" + context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode + "\n" +
+                "App Version:" + (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode else context.packageManager.getPackageInfo(context.packageName, 0).versionCode) + "\n" +
                 genTitle("PATHS"))
         context.run {
             for ((key, value) in getSharedPreferences("paths", Context.MODE_PRIVATE).all) {
@@ -62,7 +62,7 @@ class LogGenerator(private val context: Context) {
         val intentBuilder = StringBuilder()
         if (intent != null) {
             intentBuilder.append("$description debugDumpIntent action=" + intent.action + " extras=" + dumpBundle(intent.extras) + "\n")
-            val track = intent.getBundleExtra(PowerampAPI.TRACK)
+            val track = intent.getBundleExtra(PowerampAPI.EXTRA_TRACK)
             if (track != null) {
                 intentBuilder.append("track=" + dumpBundle(track) + "\n")
             }

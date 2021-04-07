@@ -15,9 +15,9 @@ class APIReceiver: BroadcastReceiver() {
             when (intent.action) {
                 PowerampAPI.ACTION_STATUS_CHANGED_EXPLICIT -> {
                     context.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED))?.let { trackIntent ->
-                        trackIntent.getBundleExtra(PowerampAPI.TRACK)?.let { bundle ->
+                        trackIntent.getBundleExtra(PowerampAPI.EXTRA_TRACK)?.let { bundle ->
                             bundle.putInt(PowerampAPI.Track.POSITION, intent.getIntExtra(PowerampAPI.Track.POSITION, -1))
-                            bundle.putBoolean(PowerampAPI.PAUSED, intent.getBooleanExtra(PowerampAPI.PAUSED, true))
+                            bundle.putBoolean(PowerampAPI.EXTRA_PAUSED, intent.getBooleanExtra(PowerampAPI.EXTRA_PAUSED, true))
                             if (LrcWindow.displaying) {
                                 LrcWindow.sendNotification(context, bundle, true)
                             } else {
@@ -30,9 +30,9 @@ class APIReceiver: BroadcastReceiver() {
 
                 PowerampAPI.ACTION_TRACK_CHANGED_EXPLICIT -> {
                     context.registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))?.let { statusIntent ->
-                        intent.getBundleExtra(PowerampAPI.TRACK)?.let { bundle ->
+                        intent.getBundleExtra(PowerampAPI.EXTRA_TRACK)?.let { bundle ->
                             bundle.putInt(PowerampAPI.Track.POSITION, 0)
-                            bundle.putBoolean(PowerampAPI.PAUSED, statusIntent.getBooleanExtra(PowerampAPI.PAUSED, true))
+                            bundle.putBoolean(PowerampAPI.EXTRA_PAUSED, statusIntent.getBooleanExtra(PowerampAPI.EXTRA_PAUSED, true))
                             if (LrcWindow.displaying) {
                                 LrcWindow.sendNotification(context, bundle, true)
                             } else {

@@ -72,7 +72,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
             intent.extras?.let { extras ->
                 when (intent.getIntExtra("request", 0)) {
                     LrcWindow.REQUEST_WINDOW -> {
-                        timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
+                        timerOn = if (extras.getBoolean(PowerampAPI.EXTRA_PAUSED)) {
                             pauseTimer()
                             remoteTrackTime!!.stopSongProgress()
                             false
@@ -157,7 +157,7 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                             LrcWindow.refresh(mWindow!!, extras, false, this)
                             remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                             remoteTrackTime!!.updateTrackDuration(extras.getInt(PowerampAPI.Track.DURATION))
-                            timerOn = if (extras.getBoolean(PowerampAPI.PAUSED)) {
+                            timerOn = if (extras.getBoolean(PowerampAPI.EXTRA_PAUSED)) {
                                 remoteTrackTime!!.stopSongProgress()
                                 pauseTimer()
                                 false
