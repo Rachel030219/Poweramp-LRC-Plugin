@@ -15,8 +15,8 @@
     <string name="notification_entrance_channel_name">Window toggle</string>
     <string name="notification_message_hide">Click to hide</string>
     <string name="notification_message_show">Click to show</string>
-    <string name="notification_placeholder_channel_name">Placeholder</string>
-    <string name="notification_placeholder_message">Running in the background (this notification can be disabled).</string>
+    <string name="notification_placeholder_channel_name">Placeholder (Disable this)</string>
+    <string name="notification_placeholder_message">Running in the background (this notification should be disabled).</string>
     <string name="notification_lock_channel_name">Lock state</string>
     <string name="notification_lock_title">Lyric window locked</string>
     <string name="notification_lock_message">Click to unlock</string>

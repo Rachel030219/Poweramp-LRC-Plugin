@@ -16,8 +16,8 @@
     <string name="notification_entrance_channel_name">顯示歌詞提示</string>
     <string name="notification_message_hide">點選隱藏</string>
     <string name="notification_message_show">點選顯示</string>
-    <string name="notification_placeholder_channel_name">常駐通知</string>
-    <string name="notification_placeholder_message">正在背景運行（可禁用該通知）。</string>
+    <string name="notification_placeholder_channel_name">常駐通知（請禁用）</string>
+    <string name="notification_placeholder_message">正在背景運行（請禁用該通知）。</string>
     <string name="notification_lock_channel_name">鎖定狀態</string>
     <string name="notification_lock_title">歌詞視窗已鎖定</string>
     <string name="notification_lock_message">點選來解鎖</string>

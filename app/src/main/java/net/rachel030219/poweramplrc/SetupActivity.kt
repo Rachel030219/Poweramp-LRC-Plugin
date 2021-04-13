@@ -29,7 +29,7 @@ class SetupActivity: AppCompatActivity() {
                 override fun onNavigateNext() {
                     // Create notification channel on Oreo and above
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val mEntranceChannel = NotificationChannel("ENTRANCE", resources.getString(R.string.notification_entrance_channel_name), NotificationManager.IMPORTANCE_LOW)
+                        val mEntranceChannel = NotificationChannel("ENTRANCE", resources.getString(R.string.notification_entrance_channel_name), NotificationManager.IMPORTANCE_HIGH)
                         val mPlaceholderChannel = NotificationChannel("PLACEHOLDER", resources.getString(R.string.notification_placeholder_channel_name), NotificationManager.IMPORTANCE_LOW)
                         val mLockChannel = NotificationChannel("LOCK", resources.getString(R.string.notification_lock_channel_name), NotificationManager.IMPORTANCE_LOW)
                         NotificationManagerCompat.from(this@SetupActivity).apply {

@@ -16,8 +16,8 @@
     <string name="notification_entrance_channel_name">浮窗入口</string>
     <string name="notification_message_hide">点击隐藏</string>
     <string name="notification_message_show">点击显示</string>
-    <string name="notification_placeholder_channel_name">常驻通知</string>
-    <string name="notification_placeholder_message">正在后台运行（可禁用该通知）。</string>
+    <string name="notification_placeholder_channel_name">常驻通知（请禁用）</string>
+    <string name="notification_placeholder_message">正在后台运行（请禁用该通知）。</string>
     <string name="notification_lock_channel_name">锁定状态</string>
     <string name="notification_lock_title">歌词窗口已锁定</string>
     <string name="notification_lock_message">点击来解锁</string>
