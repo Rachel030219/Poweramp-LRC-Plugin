@@ -14,7 +14,6 @@ import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
@@ -51,8 +50,6 @@ object LrcWindow {
     var nowPlayingFile = ""
     // components, initialized and refreshed separately
     var lrcView: LrcView? = null
-    var closeButton: Button? = null
-    var lockButton: Button? = null
     // used to determine whether a file was found in sub dir mode
     var finalUri: Uri = Uri.EMPTY
     // the global offset
@@ -70,6 +67,12 @@ object LrcWindow {
     @SuppressLint("ClickableViewAccessibility")
     fun initialize(context: Context, layout: View){
         window = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        // read saved position
+        val positionPreference = context.getSharedPreferences("position", Context.MODE_PRIVATE)
+        val positionX = positionPreference.getInt("x", 0)
+        val positionY = positionPreference.getInt("y", 0)
+
         params = WindowManager.LayoutParams().apply {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.WRAP_CONTENT
@@ -85,9 +88,11 @@ object LrcWindow {
             val screen = Point()
             window!!.defaultDisplay.getSize(screen)
             width = if (screen.x < screen.y) screen.x else screen.y
+
+            // apply saved position
+            x = positionX
+            y = positionY
         }
-        closeButton = layout.findViewById(R.id.close)
-        lockButton = layout.findViewById(R.id.lock)
         lrcView = layout.findViewById(R.id.lrcview)
         layout.setOnTouchListener { _, event ->
             if (displaying) {
@@ -115,6 +120,15 @@ object LrcWindow {
                         lastY = event.rawY
                         lastXForClick = event.rawX
                         lastYForClick = event.rawY
+
+                        // save window position
+                        val windowPositionX = params?.x
+                        val windowPositionY = params?.y
+                        context.getSharedPreferences("position", Context.MODE_PRIVATE).edit().apply {
+                            putInt("x", windowPositionX ?: 0)
+                            putInt("y", windowPositionY ?: 0)
+                            apply()
+                        }
                     }
                 }
             }

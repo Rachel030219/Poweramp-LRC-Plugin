@@ -91,15 +91,13 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                 remoteTrackTime!!.updateTrackPosition(extras.getInt(PowerampAPI.Track.POSITION))
                             }
                             if (!LrcWindow.initialized && mWindow != null) {
-                                // read saved position and apply them
-                                val positionPreference = getSharedPreferences("position", MODE_PRIVATE)
-                                val positionX = positionPreference.getInt("x", -1)
-                                val positionY = positionPreference.getInt("y", -1)
+                                val closeButton = mWindow!!.findViewById<Button>(R.id.close)
+                                val lockButton = mWindow!!.findViewById<Button>(R.id.lock)
                                 mWindow!!.setOnClickListener {
                                     if (showingBg) {
                                         mWindow!!.background = ContextCompat.getDrawable(this, android.R.color.transparent)
-                                        LrcWindow.closeButton?.visibility = View.INVISIBLE
-                                        LrcWindow.lockButton?.visibility = View.INVISIBLE
+                                        closeButton?.visibility = View.INVISIBLE
+                                        lockButton?.visibility = View.INVISIBLE
                                         showingBg = false
                                     } else {
                                         opacity = PreferenceManager.getDefaultSharedPreferences(this).getString("opacity", "64")?.toIntOrNull()
@@ -113,24 +111,18 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
                                         }
                                         else
                                             mWindow!!.background = ColorDrawable(Color.argb(64, 0, 0, 0))
-                                        LrcWindow.closeButton?.visibility = View.VISIBLE
-                                        LrcWindow.lockButton?.visibility = View.VISIBLE
+                                        closeButton?.visibility = View.VISIBLE
+                                        lockButton?.visibility = View.VISIBLE
                                         showingBg = true
                                     }
                                 }
-                                mWindow!!.findViewById<Button>(R.id.close).setOnClickListener {
+                                closeButton.setOnClickListener {
                                     LrcWindow.destroy(mWindow!!)
                                     LrcWindow.sendNotification(this, extras, false)
                                 }
-                                mWindow!!.findViewById<Button>(R.id.lock).setOnClickListener {
+                                lockButton.setOnClickListener {
                                     mWindow!!.callOnClick()
                                     LrcWindow.params?.apply {
-                                        if (positionX > 0) {
-                                            x = positionX
-                                        }
-                                        if (positionY > 0) {
-                                            y = positionY
-                                        }
                                         this.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                                     }
                                     LrcWindow.window?.updateViewLayout(mWindow!!, LrcWindow.params)
@@ -191,15 +183,6 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     }
 
     override fun onDestroy() {
-        // save window position
-        val windowPositionX = LrcWindow.params?.x
-        val windowPositionY = LrcWindow.params?.y
-        getSharedPreferences("position", MODE_PRIVATE).edit().apply {
-            putInt("x", windowPositionX ?: -1)
-            putInt("y", windowPositionY ?: -1)
-            apply()
-        }
-
         remoteTrackTime!!.setTrackTimeListener(null)
         remoteTrackTime!!.unregister()
         stopForeground(true)
