@@ -183,6 +183,8 @@ class LrcService: Service(), RemoteTrackTime.TrackTimeListener {
     }
 
     override fun onDestroy() {
+        LrcWindow.initialized = false
+        LrcWindow.destroy(mWindow!!)
         remoteTrackTime!!.setTrackTimeListener(null)
         remoteTrackTime!!.unregister()
         stopForeground(true)

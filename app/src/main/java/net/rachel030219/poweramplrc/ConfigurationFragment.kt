@@ -5,14 +5,17 @@ import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.text.InputType
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.*
+import com.maxmpz.poweramp.player.PowerampAPI
 import dev.sasikanth.colorsheet.ColorSheet
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
@@ -25,6 +28,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
         applyInitialization(findPreference("offset"), findPreference("duration"), findPreference("height"), findPreference("textSize"), findPreference("opacity"), findPreference("strokeWidth"))
+        // add colors to color list
         val colors: MutableList<Int> = ArrayList()
         val strokeColors: MutableList<Int> = ArrayList()
         for (color in arrayOf(
@@ -40,15 +44,18 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
         }
         for (color in arrayOf(R.color.lrc_stroke_dark, R.color.lrc_stroke_light))
             strokeColors.add(ResourcesCompat.getColor(resources, color, requireActivity().theme))
+        // initialize preferences and events
         findPreference<Preference>("textColor")?.setOnPreferenceClickListener {
             ColorSheet().colorPicker(colors = colors.toIntArray(), listener = { color ->
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("textColor", color).apply()
+                LrcWindow.refreshPreferences(requireContext())
             }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("textColor", colors[0])).show(parentFragmentManager)
             true
         }
         findPreference<Preference>("strokeColor")?.setOnPreferenceClickListener {
             ColorSheet().colorPicker(colors = strokeColors.toIntArray(), listener = { color ->
                 PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("strokeColor", color).apply()
+                LrcWindow.refreshPreferences(requireContext())
             }, selectedColor = PreferenceManager.getDefaultSharedPreferences(context).getInt("strokeColor", colors[0])).show(parentFragmentManager)
             true
         }
@@ -67,6 +74,30 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                 Toast.makeText(context, R.string.preference_after_reload, Toast.LENGTH_SHORT).show()
                 true
             }
+        }
+        findPreference<Preference>("restart")?.setOnPreferenceClickListener {
+            // send toast
+            val restartToast = Toast.makeText(requireActivity(), R.string.preference_experimental_restart_toast, Toast.LENGTH_LONG)
+            restartToast.show()
+            // stop service
+            requireActivity().stopService(Intent(requireActivity(), LrcService::class.java))
+            // fetch intents and start service
+            val statusIntent = requireActivity().registerReceiver(null, IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED))
+            val trackIntent = requireActivity().registerReceiver(null, IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED))
+            if (statusIntent != null && trackIntent != null) {
+                trackIntent.getBundleExtra(PowerampAPI.EXTRA_TRACK)?.let { bundle ->
+                    bundle.putInt(PowerampAPI.Track.POSITION, statusIntent.getIntExtra(PowerampAPI.Track.POSITION, -1))
+                    bundle.putBoolean(PowerampAPI.EXTRA_PAUSED, statusIntent.getBooleanExtra(PowerampAPI.EXTRA_PAUSED, true))
+                    LrcWindow.sendNotification(context, bundle, false)
+                    val intents = Intent(context, LrcService::class.java).putExtra("request", LrcWindow.REQUEST_UPDATE).putExtras(bundle)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        requireActivity().startForegroundService(intents.apply { putExtra("foreground", true) })
+                    else
+                        requireActivity().startService(intents)
+                    restartToast.setText(R.string.preference_experimental_restart_toast_succeeded)
+                }
+            }
+            true
         }
         findPreference<Preference>("report")?.apply {
             setOnPreferenceClickListener {
@@ -143,8 +174,7 @@ class ConfigurationFragment: PreferenceFragmentCompat() {
                         it.inputType = InputType.TYPE_NUMBER_FLAG_SIGNED or InputType.TYPE_CLASS_NUMBER
                 }
                 setOnPreferenceChangeListener { _, _ ->
-                    if (key != "opacity")
-                        Toast.makeText(context, R.string.preference_after_restart, Toast.LENGTH_SHORT).show()
+                    Handler().postDelayed({LrcWindow.refreshPreferences(requireContext())}, 500) // wait 0.5 s for the preferences to be written
                     true
                 }
             }

@@ -56,6 +56,9 @@
     <string name="preference_experimental_independence_notification_embedded_message">要指定一个歌曲文件吗？</string>
     <string name="preference_experimental_independence_notification_add">选择文件</string>
     <string name="preference_experimental_independence_notification_instrumental">标记为纯音乐</string>
+    <string name="preference_experimental_restart">重启服务</string>
+    <string name="preference_experimental_restart_toast">服务重启中…</string>
+    <string name="preference_experimental_restart_toast_succeeded">服务已重启</string>
     <string name="preference_experimental_report">报告问题</string>
     <string name="preference_experimental_report_description">生成一个包含了所有可能出问题的东西的日志（不会包含个人信息）</string>
     <string name="preference_after_restart">将在歌词窗口重新打开后生效。</string>

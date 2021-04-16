@@ -84,6 +84,11 @@
             app:iconSpaceReserved="false"/>
 
         <Preference
+            app:key="restart"
+            app:title="@string/preference_experimental_restart"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
             app:key="report"
             app:title="@string/preference_experimental_report"
             app:summary="@string/preference_experimental_report_description"

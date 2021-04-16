@@ -145,17 +145,7 @@ object LrcWindow {
             // refresh settings
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val embedded = preferences.getBoolean("embedded", false)
-            lrcView?.apply {
-                setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-                setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
-                setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
-                setCurrentTextStrokeColor(preferences.getInt("strokeColor", ResourcesCompat.getColor(resources, R.color.lrc_stroke_dark, context.theme)))
-                setCurrentTextStrokeWidth(preferences.getString("strokeWidth", "5")!!.toFloat())
-                setAnimationDuration(preferences.getString("duration", "250")!!.toLong())
-                layoutParams = layoutParams.apply {
-                    height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
-                }
-            }
+            refreshPreferences(context)
             if (nowPlayingFile != currentExtras!!.getString(PowerampAPI.Track.PATH)) {
                 lrcView?.setLabel(context.resources.getString(R.string.lrc_loading))
             }
@@ -178,6 +168,21 @@ object LrcWindow {
                 lrcView?.updateTime(timeInMillis + globalOffset!!)
             else
                 lrcView?.updateTime(timeInMillis)
+        }
+    }
+
+    fun refreshPreferences (context: Context) {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        lrcView?.apply {
+            setNormalTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+            setCurrentTextSize(MiscUtil.spToPx(preferences.getString("textSize", "18")!!.toFloat(), context))
+            setCurrentColor(preferences.getInt("textColor", ResourcesCompat.getColor(resources, R.color.lrc_current_red, context.theme)))
+            setCurrentTextStrokeColor(preferences.getInt("strokeColor", ResourcesCompat.getColor(resources, R.color.lrc_stroke_dark, context.theme)))
+            setCurrentTextStrokeWidth(preferences.getString("strokeWidth", "5")!!.toFloat())
+            setAnimationDuration(preferences.getString("duration", "250")!!.toLong())
+            layoutParams = layoutParams.apply {
+                height = MiscUtil.dpToPx(preferences.getString("height", "64")!!.toFloat(), context).toInt()
+            }
         }
     }
 

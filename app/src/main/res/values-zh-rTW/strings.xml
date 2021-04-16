@@ -56,6 +56,9 @@
     <string name="preference_experimental_independence_notification_embedded_message">要指定一個歌曲檔案嗎？</string>
     <string name="preference_experimental_independence_notification_add">選擇檔案</string>
     <string name="preference_experimental_independence_notification_instrumental">標記為純音樂</string>
+    <string name="preference_experimental_restart">重啟服務</string>
+    <string name="preference_experimental_restart_toast">服務重啟中…</string>
+    <string name="preference_experimental_restart_toast_succeeded">服務已重啟</string>
     <string name="preference_experimental_report">報告問題</string>
     <string name="preference_experimental_report_description">產生一個包含了所有可能出問題的東西的日誌（不會包含個人資訊）</string>
     <string name="preference_after_restart">將在浮動視窗重新啓動後生效。</string>
