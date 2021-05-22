@@ -9,6 +9,7 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.DocumentsContract
 import android.view.Gravity
 import android.view.MotionEvent
@@ -447,9 +448,11 @@ object LrcWindow {
     }
 
     fun reloadLyrics (embedded: Boolean, context: Context) {
-        if (lrcView != null) {
-            updateLyrics(nowPlayingFile, embedded, context, true)
-        }
+        Handler().postDelayed({
+            if (lrcView != null) {
+                updateLyrics(nowPlayingFile, embedded, context, true)
+            }
+        }, 500)
     }
 
     class Lyrics(val text: String, val found: Boolean)
